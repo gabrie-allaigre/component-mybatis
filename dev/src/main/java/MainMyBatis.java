@@ -1,6 +1,7 @@
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
+import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.mybatis.guice.MyBatisModule;
 import org.mybatis.guice.datasource.builtin.PooledDataSourceProvider;
@@ -14,11 +15,13 @@ public class MainMyBatis {
         Injector injector = Guice.createInjector(new MyBatisModule() {
             @Override
             protected void initialize() {
-                install(JdbcHelper.HSQLDB_Embedded);
+                install(JdbcHelper.HSQLDB_IN_MEMORY_NAMED);
 
                 bindDataSourceProviderType(PooledDataSourceProvider.class);
                 bindTransactionFactoryType(JdbcTransactionFactory.class);
                 bindObjectFactoryType(ComponentObjectFactory.class);
+                addInterceptorClass(ExamplePlugin.class);
+
                 addMapperClass(UserMapper.class);
 
                 Names.bindProperties(binder(), createTestProperties());
@@ -36,6 +39,9 @@ public class MainMyBatis {
                 return myBatisProperties;
             }
         });
+
+        Configuration configuration = injector.getInstance(Configuration.class);
+        //configuration.addResultMap();
 
         FooService fooService = injector.getInstance(FooService.class);
         fooService.init();

@@ -1,9 +1,13 @@
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import com.google.inject.Inject;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.guice.transactional.Transactional;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.StringReader;
 
 public class FooService {
@@ -18,8 +22,11 @@ public class FooService {
         SqlSession sqlSession = sqlSessionFactory.openSession();
 
         ScriptRunner scriptRunner = new ScriptRunner(sqlSession.getConnection());
-        scriptRunner.runScript(new StringReader("DROP TABLE user IF EXISTS;\nCREATE TABLE user (id INT,login VARCHAR(256));\nINSERT INTO USER (id,login) VALUES (1,'gabriel');\n"
-                + "INSERT INTO USER (id,login) VALUES (2,'sandra');"));
+        try {
+            scriptRunner.runScript(Resources.asCharSource(Resources.getResource("init-script.sql"), Charsets.UTF_8).openStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         sqlSession.commit();
         sqlSession.close();

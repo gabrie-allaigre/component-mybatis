@@ -10,6 +10,6 @@
     </resultMap>
 
     <select id="findUserByLogin" resultType="IUser">
-        select * from user where login = #{login}
+        select * from t_user where login = #{login}
     </select>
 </mapper>

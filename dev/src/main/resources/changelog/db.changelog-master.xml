@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog logicalFilePath="db.changelog-master.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <property name="tbsTable" value="tbs_default"/>
+    <property name="tbsIndex" value="tbs_index"/>
+    <property name="datetime" value="DATETIME"/>
+
+    <include file="version/db.changelog-1.0.xml" relativeToChangelogFile="true"/>
+    <!--<include file="version/db.changelog-1.1.xml" relativeToChangelogFile="true"/>-->
+
+</databaseChangeLog>

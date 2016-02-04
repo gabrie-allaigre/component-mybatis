@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog logicalFilePath="db.changelog-1.0.xml" xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet author="gaby" id="1.0-1">
+        <comment>Create table user.</comment>
+        <createTable tableName="t_user" tablespace="${tbsTable}">
+            <column name="id" type="VARCHAR(256)">
+                <constraints primaryKey="true" primaryKeyName="pk_user" nullable="false" primaryKeyTablespace="${tbsIndex}"/>
+            </column>
+            <column name="version" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="login" type="VARCHAR(256)"/>
+            <column name="country_code" type="VARCHAR(256)"/>
+            <column name="country_id" type="VARCHAR(256)"/>
+            <column name="address_id" type="VARCHAR(256)"/>
+            <column name="created_date" type="${datetime}"/>
+            <column name="created_by" type="VARCHAR(256)"/>
+            <column name="updated_date" type="${datetime}"/>
+            <column name="updated_by" type="VARCHAR(256)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="gaby" id="1.0-2">
+        <comment>Create table user.</comment>
+        <createTable tableName="t_country" tablespace="${tbsTable}">
+            <column name="id" type="VARCHAR(256)">
+                <constraints primaryKey="true" primaryKeyName="pk_country" nullable="false" primaryKeyTablespace="${tbsIndex}"/>
+            </column>
+            <column name="version" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code" type="VARCHAR(256)"/>
+            <column name="name" type="VARCHAR(256)"/>
+            <column name="created_date" type="${datetime}"/>
+            <column name="created_by" type="VARCHAR(256)"/>
+            <column name="updated_date" type="${datetime}"/>
+            <column name="updated_by" type="VARCHAR(256)"/>
+            <column name="canceled" type="BOOLEAN"/>
+            <column name="canceled_date" type="${datetime}"/>
+            <column name="canceled_by" type="VARCHAR(256)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="gaby" id="1.0-3">
+        <addDefaultValue columnName="canceled" defaultValueBoolean="true" tableName="t_country"/>
+    </changeSet>
+
+</databaseChangeLog>

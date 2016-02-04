@@ -1,0 +1,17 @@
+# 1.0.2
+
+    - Fix recursive problem with nls column
+
+# 1.0.1
+
+    - Fix bug in join
+
+# 1.0.0
+
+    - ResultMap
+    - Insert
+    - Update
+    - Delete
+    - FindById
+    - Cache
+    - Nls

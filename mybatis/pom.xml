@@ -10,4 +10,17 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>synaptix-mybatis</artifactId>
     <name>Synaptix - MyBatis</name>
+    <dependencies>
+        <dependency>
+            <groupId>com.synaptix</groupId>
+            <artifactId>synaptix-entity</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+        </dependency>
+
+    </dependencies>
 </project>

@@ -3,14 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.synaptix</groupId>
     <artifactId>synaptix-mybatis-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <modules>
-        <module>mybatis</module>
-        <module>dev</module>
-    </modules>
     <packaging>pom</packaging>
     <name>Synaptix - MyBatis - Parent</name>
     <properties>
@@ -38,7 +33,8 @@
 
         <generated.sources.dir>${project.build.directory}/generated-sources/apt</generated.sources.dir>
 
-        <synaptix-component.version>1.1.0</synaptix-component.version>
+        <persistence-api.version>1.0.2</persistence-api.version>
+        <synaptix-component.version>1.2.0-SNAPSHOT</synaptix-component.version>
         <mybatis.version>3.3.0</mybatis.version>
         <mybatis-guice.version>3.7.1</mybatis-guice.version>
         <guice.version>4.0</guice.version>
@@ -239,6 +235,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>persistence-api</artifactId>
+                <version>${persistence-api.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis-guice</artifactId>
                 <version>${mybatis-guice.version}</version>
@@ -252,6 +253,11 @@
                 <groupId>com.google.inject.extensions</groupId>
                 <artifactId>guice-multibindings</artifactId>
                 <version>${guice.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -295,12 +301,6 @@
             <version>${synaptix-component.version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.mybatis</groupId>
-            <artifactId>mybatis</artifactId>
-            <version>${mybatis.version}</version>
-        </dependency>
     </dependencies>
     <distributionManagement>
         <repository>
@@ -320,6 +320,7 @@
             </activation>
             <modules>
                 <module>mybatis</module>
+                <module>entity</module>
                 <module>dev</module>
             </modules>
         </profile>
@@ -330,6 +331,7 @@
             </activation>
             <modules>
                 <module>mybatis</module>
+                <module>entity</module>
             </modules>
         </profile>
     </profiles>

@@ -1,3 +1,5 @@
+package com.synaptix.mybatis.reflection.factory;
+
 import com.synaptix.component.factory.ComponentFactory;
 import org.apache.ibatis.reflection.factory.DefaultObjectFactory;
 
@@ -11,3 +13,4 @@ public class ComponentObjectFactory extends DefaultObjectFactory {
         return super.create(type);
     }
 }
+

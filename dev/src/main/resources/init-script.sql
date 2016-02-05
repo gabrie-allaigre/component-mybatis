@@ -5,13 +5,13 @@ DROP TABLE t_user
 IF EXISTS;
 
 CREATE TABLE t_user (
-  id    INT,
+  id    BIGINT,
   login VARCHAR(256)
 );
 
 CREATE TABLE t_group (
-  id     INT,
-  userId INT,
+  id     BIGINT,
+  userId BIGINT,
   name   VARCHAR(256)
 );
 

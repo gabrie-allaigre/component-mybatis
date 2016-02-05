@@ -9,7 +9,7 @@
         <result property="login" column="LOGIN"/>
     </resultMap>
 
-    <select id="findUserByLogin" resultType="IUser">
+    <select id="findUserByLogin" resultMap="IUser">
         select * from t_user where login = #{login}
     </select>
 </mapper>

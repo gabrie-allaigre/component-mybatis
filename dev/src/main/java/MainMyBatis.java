@@ -1,6 +1,7 @@
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
+import com.synaptix.mybatis.reflection.factory.ComponentObjectFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.mybatis.guice.MyBatisModule;
@@ -41,12 +42,13 @@ public class MainMyBatis {
         });
 
         Configuration configuration = injector.getInstance(Configuration.class);
+
         //configuration.addResultMap();
 
         FooService fooService = injector.getInstance(FooService.class);
-        fooService.init();
-        System.out.println(fooService.findUserById("1"));
-        System.out.println(fooService.findUserByLogin("sandra"));
+        //fooService.init();
+        /*System.out.println(fooService.findUserById("1"));
+        System.out.println(fooService.findUserByLogin("sandra"));*/
     }
 }
 

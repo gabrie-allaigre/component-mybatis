@@ -3,9 +3,9 @@ import com.synaptix.component.IComponent;
 public interface IUser extends IComponent {
 
     @EqualsKey
-    int getId();
+    Long getId();
 
-    void setId(int id);
+    void setId(Long id);
 
     String getLogin();
 

@@ -13,10 +13,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @MappedTypes({ IId.class, IdFactory.IdString.class })
-public class IdTypeHandler extends BaseTypeHandler<IId> {
+public class IdTypeHandler extends BaseTypeHandler<Object> {
 
     @Override
-    public void setParameter(PreparedStatement ps, int i, IId parameter, JdbcType jdbcType) throws SQLException {
+    public void setParameter(PreparedStatement ps, int i, Object parameter, JdbcType jdbcType) throws SQLException {
         if (parameter == null) {
             try {
                 ps.setNull(i, jdbcType.VARCHAR.TYPE_CODE);
@@ -30,8 +30,14 @@ public class IdTypeHandler extends BaseTypeHandler<IId> {
     }
 
     @Override
-    public void setNonNullParameter(PreparedStatement ps, int i, IId parameter, JdbcType jdbcType) throws SQLException {
-        ps.setString(i, ((IdFactory.IdString) parameter).getId());
+    public void setNonNullParameter(PreparedStatement ps, int i, Object parameter, JdbcType jdbcType) throws SQLException {
+        if (parameter instanceof IdFactory.IdString) {
+            ps.setString(i, ((IdFactory.IdString) parameter).getId());
+        } else if (parameter instanceof String) {
+            ps.setString(i, (String) parameter);
+        } else {
+            throw new IllegalArgumentException("Not IId for parameter=" + parameter);
+        }
     }
 
     @Override

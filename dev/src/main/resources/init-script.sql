@@ -1,3 +1,6 @@
+DROP TABLE t_country
+IF EXISTS;
+
 DROP TABLE t_group
 IF EXISTS;
 
@@ -5,21 +8,50 @@ DROP TABLE t_user
 IF EXISTS;
 
 CREATE TABLE t_user (
-  id      VARCHAR(256),
-  version INT,
-  login   VARCHAR(256)
+  id           VARCHAR(256),
+  version      INT,
+  login        VARCHAR(256),
+  country_id   VARCHAR(256),
+  created_date DATETIME,
+  created_by   VARCHAR(240),
+  updated_date DATETIME,
+  updated_by   VARCHAR(240)
 );
 
 CREATE TABLE t_group (
-  id      VARCHAR(256),
-  version INT,
-  userId  VARCHAR(256),
-  name    VARCHAR(256)
+  id           VARCHAR(256),
+  version      INT,
+  user_id      VARCHAR(256),
+  name         VARCHAR(256),
+  created_date DATETIME,
+  created_by   VARCHAR(240),
+  updated_date DATETIME,
+  updated_by   VARCHAR(240),
+  check_cancel BOOLEAN DEFAULT FALSE,
+  cancel_date  DATETIME,
+  cancel_by    VARCHAR(240)
 );
 
-INSERT INTO t_user (id, version, login) VALUES ('1', 0, 'gabriel');
-INSERT INTO t_user (id, version, login) VALUES ('2', 0, 'sandra');
+CREATE TABLE t_country (
+  id           VARCHAR(256),
+  version      INT,
+  name         VARCHAR(256),
+  created_date DATETIME,
+  created_by   VARCHAR(240),
+  updated_date DATETIME,
+  updated_by   VARCHAR(240),
+  check_cancel BOOLEAN DEFAULT FALSE,
+  cancel_date  DATETIME,
+  cancel_by    VARCHAR(240)
+);
 
-INSERT INTO t_group (id, version, userId, name) VALUES ('1', 0, '1', 'admin');
-INSERT INTO t_group (id, version, userId, name) VALUES ('2', 0, '1', 'system');
-INSERT INTO t_group (id, version, userId, name) VALUES ('3', 0, '2', 'user');
+INSERT INTO t_country (id, version, name, created_date, created_by) VALUES ('1', 0, 'france', SYSDATE, 'GABY');
+INSERT INTO t_country (id, version, name, created_date, created_by) VALUES ('2', 0, 'chine', SYSDATE, 'GABY');
+
+INSERT INTO t_user (id, version, login, country_id, created_date, created_by) VALUES ('1', 0, 'gabriel', '1', SYSDATE, 'GABY');
+INSERT INTO t_user (id, version, login, country_id, created_date, created_by) VALUES ('2', 0, 'sandra', '1', SYSDATE, 'GABY');
+
+INSERT INTO t_group (id, version, user_id, name, created_date, created_by) VALUES ('1', 0, '1', 'admin', SYSDATE, 'GABY');
+INSERT INTO t_group (id, version, user_id, name, created_date, created_by) VALUES ('2', 0, '1', 'system', SYSDATE, 'GABY');
+INSERT INTO t_group (id, version, user_id, name, created_date, created_by) VALUES ('3', 0, '2', 'user', SYSDATE, 'GABY');
+INSERT INTO t_group (id, version, user_id, name, created_date, created_by, check_cancel, cancel_date, cancel_by) VALUES ('4', 0, '1', 'simple', SYSDATE, 'GABY', TRUE, SYSDATE, 'GABY');

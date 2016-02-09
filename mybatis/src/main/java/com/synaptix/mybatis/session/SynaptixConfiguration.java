@@ -1,43 +1,44 @@
 package com.synaptix.mybatis.session;
 
-import com.synaptix.component.IComponent;
-import com.synaptix.component.factory.ComponentFactory;
-import com.synaptix.mybatis.component.ComponentMappedStatementFactory;
-import com.synaptix.mybatis.component.ComponentResultMapFactory;
+import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
+import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;
+import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.session.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.regex.Pattern;
-
 public class SynaptixConfiguration extends Configuration {
 
     private static final Logger LOG = LogManager.getLogger(SynaptixConfiguration.class);
 
-    private static final Pattern findEntityByIdPattern = Pattern.compile("([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*/findEntityById");
+    protected IMappedStatementFactoryRegistry mappedStatementFactoryRegistry = null;
 
-    private static final Pattern findChildrenByIdParentPattern = Pattern.compile("([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*/findChildrenByIdParent\\?[a-zA-Z_$][a-zA-Z\\d_$]*");
+    protected IResultMapFactoryRegistry resultMapFactoryRegistry = null;
 
-    protected ComponentMappedStatementFactory componentMappedStatementFactory = new ComponentMappedStatementFactory(this);
-
-    protected ComponentResultMapFactory componentResultMapFactory = new ComponentResultMapFactory(this);
-
-    public ComponentMappedStatementFactory getComponentMappedStatementFactory() {
-        return componentMappedStatementFactory;
+    public SynaptixConfiguration() {
+        super();
     }
 
-    public void setComponentMappedStatementFactory(ComponentMappedStatementFactory componentMappedStatementFactory) {
-        this.componentMappedStatementFactory = componentMappedStatementFactory;
+    public SynaptixConfiguration(Environment environment) {
+        super(environment);
     }
 
-    public ComponentResultMapFactory getComponentResultMapFactory() {
-        return componentResultMapFactory;
+    public IMappedStatementFactoryRegistry getMappedStatementFactoryRegistry() {
+        return mappedStatementFactoryRegistry;
     }
 
-    public void setComponentResultMapFactory(ComponentResultMapFactory componentResultMapFactory) {
-        this.componentResultMapFactory = componentResultMapFactory;
+    public void setMappedStatementFactoryRegistry(IMappedStatementFactoryRegistry mappedStatementFactoryRegistry) {
+        this.mappedStatementFactoryRegistry = mappedStatementFactoryRegistry;
+    }
+
+    public IResultMapFactoryRegistry getResultMapFactoryRegistry() {
+        return resultMapFactoryRegistry;
+    }
+
+    public void setResultMapFactoryRegistry(IResultMapFactoryRegistry resultMapFactoryRegistry) {
+        this.resultMapFactoryRegistry = resultMapFactoryRegistry;
     }
 
     @Override
@@ -57,14 +58,15 @@ public class SynaptixConfiguration extends Configuration {
         return super.getResultMap(id);
     }
 
-    private boolean verifyAndCreateComponentResultMap(String id) {
-        boolean res = false;
-        Class<? extends IComponent> componentClass = getComponentClass(id);
-        if (componentClass != null) {
-            ResultMap resultMap = componentResultMapFactory.createComponentResultMap(componentClass);
-            res = resultMap != null;
+    private synchronized boolean verifyAndCreateComponentResultMap(String id) {
+        if (resultMapFactoryRegistry != null) {
+            ResultMap resultMap = resultMapFactoryRegistry.createResultMap(this, id);
+            if (resultMap != null) {
+                addResultMap(resultMap);
+                return true;
+            }
         }
-        return res;
+        return false;
     }
 
     @Override
@@ -84,42 +86,14 @@ public class SynaptixConfiguration extends Configuration {
         return super.getMappedStatement(id, validateIncompleteStatements);
     }
 
-    private boolean verifyAndCreateComponentMappedStatement(String id) {
-        boolean res = false;
-        if (id != null) {
-            if (findEntityByIdPattern.matcher(id).matches()) {
-                String componentName = id.substring(0, id.indexOf("/"));
-                Class<? extends IComponent> componentClass = getComponentClass(componentName);
-                if (componentClass != null) {
-                    MappedStatement mappedStatement = componentMappedStatementFactory.createComponentFindEntityByIdMappedStatement(componentClass);
-                    res = mappedStatement != null;
-                }
-            } else if (findChildrenByIdParentPattern.matcher(id).matches()) {
-                String componentName = id.substring(0, id.indexOf("/"));
-                Class<? extends IComponent> componentClass = getComponentClass(componentName);
-                String idParentPropertyName = id.substring(id.lastIndexOf("?") + 1);
-                if (componentClass != null && idParentPropertyName != null) {
-                    MappedStatement mappedStatement = componentMappedStatementFactory.createComponentFindChildrenByIdParentMappedStatement(componentClass, idParentPropertyName);
-                    res = mappedStatement != null;
-                }
+    private synchronized boolean verifyAndCreateComponentMappedStatement(String id) {
+        if (mappedStatementFactoryRegistry != null) {
+            MappedStatement mappedStatement = mappedStatementFactoryRegistry.createMappedStatement(this, id);
+            if (mappedStatement != null) {
+                addMappedStatement(mappedStatement);
+                return true;
             }
         }
-        return res;
-    }
-
-    @SuppressWarnings("unchecked")
-    private Class<? extends IComponent> getComponentClass(String componentName) {
-        Class<? extends IComponent> res = null;
-        if (componentName != null) {
-            try {
-                Class<?> clazz = this.getClass().getClassLoader().loadClass(componentName);
-                if (ComponentFactory.getInstance().isComponentType(clazz)) {
-                    res = (Class<? extends IComponent>) clazz;
-                }
-            } catch (ClassNotFoundException e) {
-                LOG.error("Not found Component Class for " + componentName, e);
-            }
-        }
-        return res;
+        return false;
     }
 }

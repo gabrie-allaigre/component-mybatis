@@ -2,8 +2,8 @@ package com.synaptix.entity;
 
 import com.synaptix.component.IComponent;
 import com.synaptix.component.annotation.SynaptixComponent;
+import com.synaptix.entity.annotation.Column;
 
-import javax.persistence.Column;
 import java.util.Date;
 
 @SynaptixComponent

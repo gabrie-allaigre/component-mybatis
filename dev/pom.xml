@@ -51,6 +51,11 @@
             <artifactId>synaptix-mybatis</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.synaptix</groupId>
+            <artifactId>synaptix-mybatis-guice</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.hsqldb</groupId>

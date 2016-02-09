@@ -1,4 +1,4 @@
-package com.synaptix.mybatis.reflection.factory;
+package com.synaptix.mybatis.component.factory;
 
 import com.synaptix.component.factory.ComponentFactory;
 import org.apache.ibatis.reflection.factory.DefaultObjectFactory;

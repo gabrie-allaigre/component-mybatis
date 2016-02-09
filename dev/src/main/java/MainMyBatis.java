@@ -1,15 +1,23 @@
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.synaptix.entity.factory.IdFactory;
-import com.synaptix.mybatis.component.ComponentMappedStatementFactory;
-import com.synaptix.mybatis.component.ComponentResultMapFactory;
-import com.synaptix.mybatis.reflection.factory.ComponentObjectFactory;
-import guice.SimpleSynaptixMyBatisModule;
+import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
+import com.synaptix.mybatis.component.statement.FindComponentsByMappedStatementFactory;
+import com.synaptix.mybatis.component.statement.FindEntityByIdMappedStatementFactory;
+import com.synaptix.mybatis.guice.SimpleSynaptixMyBatisModule;
+import com.synaptix.mybatis.guice.SynaptixConfigurationProvider;
+import com.synaptix.mybatis.guice.registry.GuiceMappedStatementFactoryRegistry;
+import com.synaptix.mybatis.guice.registry.GuiceResultMapFactoryRegistry;
+import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
+import com.synaptix.mybatis.session.factory.IMappedStatementFactory;
+import com.synaptix.mybatis.session.factory.IResultMapFactory;
+import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
+import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;
 import mapper.UserMapper;
 import model.IUser;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.mybatis.guice.MyBatisModule;
 import org.mybatis.guice.datasource.builtin.PooledDataSourceProvider;
@@ -27,6 +35,7 @@ public class MainMyBatis {
 
                 install(new SimpleSynaptixMyBatisModule());
 
+                useConfigurationProvider(SynaptixConfigurationProvider.class);
                 bindDataSourceProviderType(PooledDataSourceProvider.class);
                 bindTransactionFactoryType(JdbcTransactionFactory.class);
                 bindObjectFactoryType(ComponentObjectFactory.class);
@@ -36,6 +45,16 @@ public class MainMyBatis {
 
                 Names.bindProperties(binder(), createTestProperties());
                 bind(FooService.class).in(Singleton.class);
+
+                bind(IResultMapFactoryRegistry.class).to(GuiceResultMapFactoryRegistry.class).in(Singleton.class);
+                bind(IMappedStatementFactoryRegistry.class).to(GuiceMappedStatementFactoryRegistry.class).in(Singleton.class);
+
+                Multibinder<IResultMapFactory> resultMapFactoryMultibinder = Multibinder.newSetBinder(binder(), IResultMapFactory.class);
+                resultMapFactoryMultibinder.addBinding().to(ComponentResultMapFactory.class);
+
+                Multibinder<IMappedStatementFactory> mappedStatementFactoryMultibinder = Multibinder.newSetBinder(binder(), IMappedStatementFactory.class);
+                mappedStatementFactoryMultibinder.addBinding().to(FindEntityByIdMappedStatementFactory.class);
+                mappedStatementFactoryMultibinder.addBinding().to(FindComponentsByMappedStatementFactory.class);
             }
 
             private Properties createTestProperties() {
@@ -50,19 +69,12 @@ public class MainMyBatis {
             }
         });
 
-        Configuration configuration = injector.getInstance(Configuration.class);
-
-        ComponentResultMapFactory componentResultMapHelper = new ComponentResultMapFactory(configuration);
-        ComponentMappedStatementFactory componentMappedStatementFactory = new ComponentMappedStatementFactory(configuration);
-
-        configuration.addResultMap(componentResultMapHelper.createComponentResultMap(IUser.class));
-        configuration.addMappedStatement(componentMappedStatementFactory.createComponentFindEntityByIdMappedStatement(IUser.class));
-
         FooService fooService = injector.getInstance(FooService.class);
         fooService.init();
 
-        fooService.findById(IUser.class, IdFactory.IdString.from("1"));
+        IUser user = fooService.findById(IUser.class, IdFactory.IdString.from("1"));
 
+        System.out.println(user.getCountry());
         //System.out.println(fooService.findUserById(IdFactory.IdString.from("1")));
         //System.out.println(fooService.findUserByLogin("sandra"));
     }

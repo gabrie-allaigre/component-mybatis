@@ -6,6 +6,9 @@
     <groupId>com.synaptix</groupId>
     <artifactId>synaptix-mybatis-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <modules>
+        <module>mybatis-guice</module>
+    </modules>
     <packaging>pom</packaging>
     <name>Synaptix - MyBatis - Parent</name>
     <properties>
@@ -33,10 +36,9 @@
 
         <generated.sources.dir>${project.build.directory}/generated-sources/apt</generated.sources.dir>
 
-        <persistence-api.version>1.0.2</persistence-api.version>
         <synaptix-component.version>1.2.0-SNAPSHOT</synaptix-component.version>
         <mybatis.version>3.3.0</mybatis.version>
-        <mybatis-guice.version>3.7.1</mybatis-guice.version>
+        <mybatis-guice.version>3.8.0.SYN-SNAPSHOT</mybatis-guice.version>
         <guice.version>4.0</guice.version>
     </properties>
     <organization>
@@ -234,11 +236,6 @@
     </pluginRepositories>
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>javax.persistence</groupId>
-                <artifactId>persistence-api</artifactId>
-                <version>${persistence-api.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis-guice</artifactId>

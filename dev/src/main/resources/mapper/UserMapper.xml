@@ -3,6 +3,14 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="mapper.UserMapper">
+    <resultMap id="userResultMap" type="model.IUser">
+        <id property="id" column="ID"/>
+        <result property="login" column="LOGIN"/>
+        <result property="countryId" column="COUNTRY_ID"/>
+        <result property="countryCode" column="COUNTRY_CODE"/>
+        <association property="countryOther" column="{value_0=COUNTRY_CODE,value_0=COUNTRY_ID}" select="model.ICountry/findComponentsBy?properties=code;id"/>
+    </resultMap>
+
     <select id="findUserByLogin" resultType="model.IUser">
         select * from t_user where login = #{login}
     </select>

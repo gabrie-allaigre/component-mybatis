@@ -11,6 +11,11 @@ import com.synaptix.entity.annotation.Entity;
 @SynaptixComponent
 public interface ICountry extends IEntity, ITracable, ICancellable {
 
+    @Column(name = "CODE")
+    String getCode();
+
+    void setCode(String code);
+
     @Column(name = "NAME")
     String getName();
 

@@ -4,6 +4,7 @@ import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.synaptix.entity.factory.IdFactory;
+import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
 import com.synaptix.mybatis.component.statement.FindComponentsByMappedStatementFactory;
 import com.synaptix.mybatis.component.statement.FindEntityByIdMappedStatementFactory;
@@ -11,12 +12,13 @@ import com.synaptix.mybatis.guice.SimpleSynaptixMyBatisModule;
 import com.synaptix.mybatis.guice.SynaptixConfigurationProvider;
 import com.synaptix.mybatis.guice.registry.GuiceMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.guice.registry.GuiceResultMapFactoryRegistry;
-import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.session.factory.IMappedStatementFactory;
 import com.synaptix.mybatis.session.factory.IResultMapFactory;
 import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;
 import mapper.UserMapper;
+import model.IAddress;
+import model.ICountry;
 import model.IUser;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.mybatis.guice.MyBatisModule;
@@ -34,6 +36,9 @@ public class MainMyBatis {
                 install(JdbcHelper.HSQLDB_IN_MEMORY_NAMED);
 
                 install(new SimpleSynaptixMyBatisModule());
+
+                lazyLoadingEnabled(true);
+                aggressiveLazyLoading(false);
 
                 useConfigurationProvider(SynaptixConfigurationProvider.class);
                 bindDataSourceProviderType(PooledDataSourceProvider.class);
@@ -73,8 +78,11 @@ public class MainMyBatis {
         fooService.init();
 
         IUser user = fooService.findById(IUser.class, IdFactory.IdString.from("1"));
-
-        System.out.println(user.getCountry());
+        //System.out.println(user.getCountry());
+        //System.out.println(user.getGroups().size());
+        IAddress address = user.getAddress();
+        ICountry country = address.getCountry();
+        //System.out.println(user.getGroups());
         //System.out.println(fooService.findUserById(IdFactory.IdString.from("1")));
         //System.out.println(fooService.findUserByLogin("sandra"));
     }

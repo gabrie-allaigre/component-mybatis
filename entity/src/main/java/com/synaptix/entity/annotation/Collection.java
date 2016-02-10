@@ -7,28 +7,35 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface Association {
+public @interface Collection {
 
     /**
-     * Property source
-     *
-     * @return one or multiple with comma
-     */
-    String[] propertySource();
-
-    /**
-     * Property target, use for auto select, default use Id
+     * Property source, default use Id
      *
      * @return one or multiple
      */
-    String[] propertyTarget() default {};
+    String[] propertySource() default {};
 
     /**
-     * Java type for association
+     * Property target, use for auto select
+     *
+     * @return one or multiple
+     */
+    String[] propertyTarget();
+
+    /**
+     * Java type for collection
      *
      * @return javaType or void.class for auto
      */
     Class<?> javaType() default void.class;
+
+    /**
+     * Java type for element in collection
+     *
+     * @return type of element or void.class for auto
+     */
+    Class<?> ofType() default void.class;
 
     /**
      * Select mapped statement

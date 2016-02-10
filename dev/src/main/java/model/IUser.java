@@ -5,6 +5,7 @@ import com.synaptix.entity.IEntity;
 import com.synaptix.entity.IId;
 import com.synaptix.entity.ITracable;
 import com.synaptix.entity.annotation.Association;
+import com.synaptix.entity.annotation.Collection;
 import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
 
@@ -19,6 +20,7 @@ public interface IUser extends IEntity, ITracable {
 
     void setLogin(String login);
 
+    @Collection(propertyTarget = GroupFields.userId)
     List<IGroup> getGroups();
 
     void setGroups(List<IGroup> groups);
@@ -32,5 +34,25 @@ public interface IUser extends IEntity, ITracable {
     ICountry getCountry();
 
     void setCountry(ICountry country);
+
+    @Column(name = "COUNTRY_CODE")
+    String getCountryCode();
+
+    void setCountryCode(String countryCode);
+
+    @Association(propertySource = { UserFields.countryCode, UserFields.countryId }, propertyTarget = { CountryFields.code, CountryFields.id })
+    ICountry getCountryOther();
+
+    void setCountryOther(ICountry countryOther);
+
+    @Column(name = "ADDRESS_ID")
+    IId getAddressId();
+
+    void setAddressId(IId addressId);
+
+    @Association(propertySource = UserFields.addressId)
+    IAddress getAddress();
+
+    void setAddress(IAddress address);
 
 }

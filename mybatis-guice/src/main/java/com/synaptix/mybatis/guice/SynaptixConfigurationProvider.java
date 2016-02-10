@@ -1,6 +1,7 @@
 package com.synaptix.mybatis.guice;
 
 import com.google.inject.Inject;
+import com.synaptix.mybatis.component.factory.ComponentProxyFactory;
 import com.synaptix.mybatis.session.SynaptixConfiguration;
 import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;
@@ -26,6 +27,7 @@ public class SynaptixConfigurationProvider extends ConfigurationProvider {
         SynaptixConfiguration synaptixConfiguration = new SynaptixConfiguration(environment);
         synaptixConfiguration.setMappedStatementFactoryRegistry(mappedStatementFactoryRegistry);
         synaptixConfiguration.setResultMapFactoryRegistry(resultMapFactoryRegistry);
+        synaptixConfiguration.setProxyFactory(new ComponentProxyFactory());
         return synaptixConfiguration;
     }
 }

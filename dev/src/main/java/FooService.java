@@ -47,6 +47,6 @@ public class FooService {
 
     @Transactional
     public <E extends IComponent> List<E> findChildrenByIdParent(Class<E> componentClass, String propertyName, IId id) {
-        return sqlSessionManager.<E>selectList(StatementNameHelper.buildFindComponentsByKey(componentClass, propertyName), id);
+        return sqlSessionManager.<E>selectList(StatementNameHelper.buildFindComponentsByKey(componentClass,true, propertyName), id);
     }
 }

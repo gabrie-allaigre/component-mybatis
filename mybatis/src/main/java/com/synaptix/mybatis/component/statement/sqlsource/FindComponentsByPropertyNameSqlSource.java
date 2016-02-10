@@ -6,6 +6,7 @@ import com.synaptix.component.factory.ComponentFactory;
 import com.synaptix.entity.ICancellable;
 import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
+import com.synaptix.mybatis.component.statement.StatementNameHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.jdbc.SQL;
@@ -24,23 +25,23 @@ public class FindComponentsByPropertyNameSqlSource<E extends IComponent> impleme
 
     private final SqlSource sqlSource;
 
-    private final boolean useCheckCancel;
+    private final boolean ignoreCancel;
 
-    public FindComponentsByPropertyNameSqlSource(Configuration configuration, Class<E> componentClass, boolean useCheckCancel, String... propertyNames) {
+    public FindComponentsByPropertyNameSqlSource(Configuration configuration, Class<E> componentClass, boolean ignoreCancel, String... propertyNames) {
         super();
 
-        this.useCheckCancel = useCheckCancel && ICancellable.class.isAssignableFrom(componentClass);
+        this.ignoreCancel = ignoreCancel && ICancellable.class.isAssignableFrom(componentClass);
 
         SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
 
-        String sql = buildFindComponentsByPropertyName(componentClass, useCheckCancel, propertyNames);
+        String sql = buildFindComponentsByPropertyName(componentClass, ignoreCancel, propertyNames);
         sqlSource = sqlSourceParser.parse(sql, Map.class, new HashMap<>());
     }
 
     @Override
     public BoundSql getBoundSql(Object parameterObject) {
         BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
-        if (useCheckCancel) {
+        if (ignoreCancel) {
             boundSql.setAdditionalParameter("checkCancel", false);
         }
         return boundSql;
@@ -60,7 +61,7 @@ public class FindComponentsByPropertyNameSqlSource<E extends IComponent> impleme
         SQL sqlBuilder = new SQL();
         sqlBuilder.SELECT("t.*");
         sqlBuilder.FROM(entity.name() + " t");
-        int i = 1;
+        int i = 0;
         for (String propertyName : propertyNames) {
             ComponentDescriptor.PropertyDescriptor propertyDescriptor = cd.getPropertyDescriptor(propertyName);
             if (propertyDescriptor == null) {
@@ -74,7 +75,8 @@ public class FindComponentsByPropertyNameSqlSource<E extends IComponent> impleme
             }
 
             String column = propertyDescriptor.getMethod().getAnnotation(Column.class).name();
-            sqlBuilder.WHERE("t." + column + " = #{value" + i + ",javaType=" + propertyDescriptor.getPropertyClass().getCanonicalName() + "}");
+            sqlBuilder.WHERE("t." + column + " = #{" + StatementNameHelper.buildParam(i) + ",javaType=" + propertyDescriptor.getPropertyClass().getCanonicalName() + "}");
+            i++;
         }
         if (useCheckCancel) {
             sqlBuilder.WHERE("t.check_cancel = #{checkCancel,javaType=java.lang.Boolean}");

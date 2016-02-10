@@ -12,10 +12,19 @@ public class StatementNameHelper {
 
     private static final String FIND_COMPONENTS_BY_NAME = "findComponentsBy";
 
+    private static final String PROPERTIES = "properties";
+
+    private static final String IGNORE_CANCEL = "ignoreCancel";
+
+    private static final String PARAM = "param";
+
+    private static final String PROPERTIES_SEPARATOR = ";";
+
     private static final Pattern FIND_ENTITY_BY_ID_PATTERN = Pattern.compile("(([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*)/" + FIND_ENTITY_BY_ID_NAME);
 
-    private static final Pattern FIND_COMPONENTS_BY_PATTERN = Pattern
-            .compile("(([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*)/" + FIND_COMPONENTS_BY_NAME + "\\?(([a-zA-Z_$][a-zA-Z\\d_$]*&)*[a-zA-Z_$][a-zA-Z\\d_$]*)");
+    private static final Pattern FIND_COMPONENTS_BY_PATTERN = Pattern.compile(
+            "(([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*)/" + FIND_COMPONENTS_BY_NAME + "\\?" + PROPERTIES + "=(([a-zA-Z_$][a-zA-Z\\d_$]*" + PROPERTIES_SEPARATOR
+                    + ")*[a-zA-Z_$][a-zA-Z\\d_$]*)(&(" + IGNORE_CANCEL + "))?");
 
     public static <E extends IComponent> String buildFindEntityByIdKey(Class<E> componentClass) {
         if (componentClass == null) {
@@ -41,11 +50,13 @@ public class StatementNameHelper {
         return m.group(1);
     }
 
-    public static <E extends IComponent> String buildFindComponentsByKey(Class<E> componentClass, String... propertyNames) {
+    public static <E extends IComponent> String buildFindComponentsByKey(Class<E> componentClass, boolean useCheckCancel, String... propertyNames) {
         if (componentClass == null || propertyNames == null || propertyNames.length == 0) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + FIND_COMPONENTS_BY_NAME + "?" + String.join("&", propertyNames);
+        return componentClass.getCanonicalName() + "/" + FIND_COMPONENTS_BY_NAME + "?" + PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, propertyNames) + (useCheckCancel ?
+                "&" + IGNORE_CANCEL :
+                "");
     }
 
     public static boolean isFindComponentsByKey(String key) {
@@ -71,6 +82,19 @@ public class StatementNameHelper {
         }
         Matcher m = FIND_COMPONENTS_BY_PATTERN.matcher(key);
         m.find();
-        return m.group(3).split("&");
+        return m.group(3).split(PROPERTIES_SEPARATOR);
+    }
+
+    public static boolean isIgnoreCancelInFindComponentsByKey(String key) {
+        if (!isFindComponentsByKey(key)) {
+            return false;
+        }
+        Matcher m = FIND_COMPONENTS_BY_PATTERN.matcher(key);
+        m.find();
+        return IGNORE_CANCEL.equals(m.group(6));
+    }
+
+    public static String buildParam(int i) {
+        return PARAM + i;
     }
 }

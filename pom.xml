@@ -40,6 +40,7 @@
         <mybatis.version>3.3.0</mybatis.version>
         <mybatis-guice.version>3.8.0.SYN-SNAPSHOT</mybatis-guice.version>
         <guice.version>4.0</guice.version>
+        <javassist.version>3.18.2-GA</javassist.version>
     </properties>
     <organization>
         <name>Synaptix-Labs</name>
@@ -255,6 +256,11 @@
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
                 <version>${mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.javassist</groupId>
+                <artifactId>javassist</artifactId>
+                <version>${javassist.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

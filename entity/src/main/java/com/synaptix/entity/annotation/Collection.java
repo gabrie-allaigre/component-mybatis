@@ -21,7 +21,7 @@ public @interface Collection {
      *
      * @return one or multiple
      */
-    String[] propertyTarget();
+    String[] propertyTarget() default {};
 
     /**
      * Java type for collection

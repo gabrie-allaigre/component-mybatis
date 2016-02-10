@@ -55,4 +55,9 @@ public interface IUser extends IEntity, ITracable {
 
     void setAddress(IAddress address);
 
+    @Collection(select = "mapper.UserMapper.selectAddressesByUserId")
+    List<IAddress> getAddresses();
+
+    void setAddresses(List<IAddress> addresses);
+
 }

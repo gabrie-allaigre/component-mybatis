@@ -63,6 +63,11 @@ CREATE TABLE t_country (
   cancel_by    VARCHAR(240)
 );
 
+CREATE TABLE t_asso_user_address (
+  user_id    VARCHAR(256),
+  address_id VARCHAR(256)
+);
+
 INSERT INTO t_country (id, version, code, name, created_date, created_by) VALUES ('1', 0, 'FRA', 'france', SYSDATE, 'GABY');
 INSERT INTO t_country (id, version, code, name, created_date, created_by) VALUES ('2', 0, 'CHI', 'chine', SYSDATE, 'GABY');
 INSERT INTO t_country (id, version, code, name, created_date, created_by) VALUES ('3', 0, 'ENG', 'england', SYSDATE, 'GABY');
@@ -74,6 +79,11 @@ INSERT INTO t_address (id, version, city, postal_zip, country_id, created_date, 
 
 INSERT INTO t_user (id, version, login, country_code, country_id, address_id, created_date, created_by) VALUES ('1', 0, 'gabriel', 'FRA', '1', '2', SYSDATE, 'GABY');
 INSERT INTO t_user (id, version, login, country_code, country_id, address_id, created_date, created_by) VALUES ('2', 0, 'sandra', 'CHI', '1', '1', SYSDATE, 'GABY');
+
+INSERT INTO t_asso_user_address (user_id, address_id) VALUES ('1', '1');
+INSERT INTO t_asso_user_address (user_id, address_id) VALUES ('1', '2');
+INSERT INTO t_asso_user_address (user_id, address_id) VALUES ('1', '3');
+INSERT INTO t_asso_user_address (user_id, address_id) VALUES ('2', '4');
 
 INSERT INTO t_group (id, version, user_id, name, created_date, created_by) VALUES ('1', 0, '1', 'admin', SYSDATE, 'GABY');
 INSERT INTO t_group (id, version, user_id, name, created_date, created_by) VALUES ('2', 0, '1', 'system', SYSDATE, 'GABY');

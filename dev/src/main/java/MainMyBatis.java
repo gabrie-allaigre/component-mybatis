@@ -82,6 +82,8 @@ public class MainMyBatis {
         //System.out.println(user.getGroups().size());
         IAddress address = user.getAddress();
         ICountry country = address.getCountry();
+
+        System.out.println(user.getAddresses());
         //System.out.println(user.getGroups());
         //System.out.println(fooService.findUserById(IdFactory.IdString.from("1")));
         //System.out.println(fooService.findUserByLogin("sandra"));

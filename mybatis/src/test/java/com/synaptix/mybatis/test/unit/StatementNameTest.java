@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class StatementNameTest {
 
@@ -45,7 +46,7 @@ public class StatementNameTest {
     }
 
     @Test
-    public void testBuildFindChildrenByIdParentKey() {
+    public void testBuildFindComponentsByKey() {
         SoftAssertions softAssertions = new SoftAssertions();
         softAssertions.assertThat(StatementNameHelper.buildFindComponentsByKey(null, false)).isNull();
         softAssertions.assertThat(StatementNameHelper.buildFindComponentsByKey(IUser.class, false)).isNull();
@@ -61,7 +62,7 @@ public class StatementNameTest {
     }
 
     @Test
-    public void testIsFindChildrenByIdParentKey() {
+    public void testIsFindComponentsByKey() {
         SoftAssertions softAssertions = new SoftAssertions();
         softAssertions.assertThat(StatementNameHelper.isFindComponentsByKey(null)).isFalse();
         softAssertions.assertThat(StatementNameHelper.isFindComponentsByKey("model.IUser/findComponentsBy?properties=login")).isTrue();
@@ -81,7 +82,7 @@ public class StatementNameTest {
     }
 
     @Test
-    public void testExtractComponentNameInFindChildrenByIdParentKey() {
+    public void testExtractComponentNameInFindComponentsByKey() {
         SoftAssertions softAssertions = new SoftAssertions();
         softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByKey(null)).isNull();
         softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByKey("IUser/findComponentsBy?properties=login")).isEqualTo("IUser");
@@ -94,7 +95,7 @@ public class StatementNameTest {
     }
 
     @Test
-    public void testExtractIdParentNameInFindChildrenByIdParentKey() {
+    public void testExtractIdParentNameInFindComponentsByKey() {
         SoftAssertions softAssertions = new SoftAssertions();
         softAssertions.assertThat(StatementNameHelper.extractPropertyNamesInFindComponentsByKey(null)).isNull();
         softAssertions.assertThat(StatementNameHelper.extractPropertyNamesInFindComponentsByKey("IUser/findComponentsBy?properties=login")).containsOnly("login");
@@ -152,6 +153,99 @@ public class StatementNameTest {
                 .isTrue();
         softAssertions.assertThat(StatementNameHelper.isFindComponentsByJoinTableKey(
                 "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=code,version&targetProperties=code&join=t_asso_group_toto;group_code,group_version;toto_id#t_asso_toto_user;toto_id;user_code"))
+                .isTrue();
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractComponentNameInFindComponentsByJoinTableKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByJoinTableKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=id&targetProperties=id&join=t_asso_group_user;group_id;user_id"))
+                .isEqualTo("com.synaptix.mybatis.test.data.IGroup");
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=code,version&targetProperties=code&join=t_asso_group_toto;group_code,group_version;toto_id#t_asso_toto_user;toto_id;user_code"))
+                .isEqualTo("com.synaptix.mybatis.test.data.IGroup");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractSourceComponentNameInFindComponentsByJoinTableKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractSourceComponentNameInFindComponentsByJoinTableKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractSourceComponentNameInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=id&targetProperties=id&join=t_asso_group_user;group_id;user_id"))
+                .isEqualTo("com.synaptix.mybatis.test.data.IUser");
+        softAssertions.assertThat(StatementNameHelper.extractSourceComponentNameInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=code,version&targetProperties=code&join=t_asso_group_toto;group_code,group_version;toto_id#t_asso_toto_user;toto_id;user_code"))
+                .isEqualTo("com.synaptix.mybatis.test.data.IUser");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractSourcePropertiesInFindComponentsByJoinTableKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractSourcePropertiesInFindComponentsByJoinTableKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractSourcePropertiesInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=id&targetProperties=targetId&join=t_asso_group_user;group_id;user_id"))
+                .containsOnly("id");
+        softAssertions.assertThat(StatementNameHelper.extractSourcePropertiesInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=code,version&targetProperties=code&join=t_asso_group_toto;group_code,group_version;toto_id#t_asso_toto_user;toto_id;user_code"))
+                .containsOnly("code", "version");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractTargetPropertiesInFindComponentsByJoinTableKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractTargetPropertiesInFindComponentsByJoinTableKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractTargetPropertiesInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=id&targetProperties=targetId&join=t_asso_group_user;group_id;user_id"))
+                .containsOnly("targetId");
+        softAssertions.assertThat(StatementNameHelper.extractTargetPropertiesInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=code,version&targetProperties=code&join=t_asso_group_toto;group_code,group_version;toto_id#t_asso_toto_user;toto_id;user_code"))
+                .containsOnly("code");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractJoinInFindComponentsByJoinTableKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractJoinInFindComponentsByJoinTableKey(null)).isNull();
+        List<Pair<String, Pair<String[], String[]>>> p1 = StatementNameHelper.extractJoinInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=id&targetProperties=targetId&join=t_asso_group_user;group_id;user_id");
+        softAssertions.assertThat(p1.size()).isEqualTo(1);
+        softAssertions.assertThat(p1.get(0).getLeft()).isEqualTo("t_asso_group_user");
+        softAssertions.assertThat(p1.get(0).getRight().getLeft()).containsExactly("group_id");
+        softAssertions.assertThat(p1.get(0).getRight().getRight()).containsExactly("user_id");
+        List<Pair<String, Pair<String[], String[]>>> p2 = StatementNameHelper.extractJoinInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=code,version&targetProperties=code&join=t_asso_group_toto;group_code,group_version;toto_id#t_asso_toto_user;toto_id;user_code");
+        softAssertions.assertThat(p2.size()).isEqualTo(2);
+        softAssertions.assertThat(p2.get(0).getLeft()).isEqualTo("t_asso_group_toto");
+        softAssertions.assertThat(p2.get(0).getRight().getLeft()).containsExactly("group_code", "group_version");
+        softAssertions.assertThat(p2.get(0).getRight().getRight()).containsExactly("toto_id");
+        softAssertions.assertThat(p2.get(1).getLeft()).isEqualTo("t_asso_toto_user");
+        softAssertions.assertThat(p2.get(1).getRight().getLeft()).containsExactly("toto_id");
+        softAssertions.assertThat(p2.get(1).getRight().getRight()).containsExactly("user_code");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testIsIgnoreCancelInFindComponentsByJoinTableKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.isIgnoreCancelInFindComponentsByJoinTableKey(null)).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isIgnoreCancelInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=id&targetProperties=targetId&join=t_asso_group_user;group_id;user_id"))
+                .isFalse();
+        softAssertions.assertThat(StatementNameHelper.isIgnoreCancelInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=id&targetProperties=targetId&join=t_asso_group_user;group_id;user_id&ignoreCancel"))
+                .isTrue();
+        softAssertions.assertThat(StatementNameHelper.isIgnoreCancelInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=code,version&targetProperties=code&join=t_asso_group_toto;group_code,group_version;toto_id#t_asso_toto_user;toto_id;user_code"))
+                .isFalse();
+        softAssertions.assertThat(StatementNameHelper.isIgnoreCancelInFindComponentsByJoinTableKey(
+                "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=code,version&targetProperties=code&join=t_asso_group_toto;group_code,group_version;toto_id#t_asso_toto_user;toto_id;user_code&ignoreCancel"))
                 .isTrue();
         softAssertions.assertAll();
     }

@@ -4,6 +4,7 @@ import com.synaptix.component.IComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -150,5 +151,65 @@ public class StatementNameHelper {
         }
         Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
         return m.matches();
+    }
+
+    public static String extractComponentNameInFindComponentsByJoinTableKey(String key) {
+        if (!isFindComponentsByJoinTableKey(key)) {
+            return null;
+        }
+        Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
+        m.find();
+        return m.group(1);
+    }
+
+    public static String extractSourceComponentNameInFindComponentsByJoinTableKey(String key) {
+        if (!isFindComponentsByJoinTableKey(key)) {
+            return null;
+        }
+        Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
+        m.find();
+        return m.group(3);
+    }
+
+    public static String[] extractSourcePropertiesInFindComponentsByJoinTableKey(String key) {
+        if (!isFindComponentsByJoinTableKey(key)) {
+            return null;
+        }
+        Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
+        m.find();
+        return m.group(5).split(PROPERTIES_SEPARATOR);
+    }
+
+    public static String[] extractTargetPropertiesInFindComponentsByJoinTableKey(String key) {
+        if (!isFindComponentsByJoinTableKey(key)) {
+            return null;
+        }
+        Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
+        m.find();
+        return m.group(7).split(PROPERTIES_SEPARATOR);
+    }
+
+    public static List<Pair<String, Pair<String[], String[]>>> extractJoinInFindComponentsByJoinTableKey(String key) {
+        if (!isFindComponentsByJoinTableKey(key)) {
+            return null;
+        }
+        Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
+        m.find();
+        String[] joins = m.group(9).split("#");
+        List<Pair<String, Pair<String[], String[]>>> res = new ArrayList<>();
+        for (String join : joins) {
+            String[] ss = join.split(";");
+            res.add(Pair.of(ss[0], Pair.of(ss[1].split(PROPERTIES_SEPARATOR), ss[2].split(PROPERTIES_SEPARATOR))));
+        }
+        return res;
+    }
+
+    public static boolean isIgnoreCancelInFindComponentsByJoinTableKey(String key) {
+        if (!isFindComponentsByJoinTableKey(key)) {
+            return false;
+        }
+        Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
+        m.find();
+        return IGNORE_CANCEL.equals(m.group(16));
     }
 }

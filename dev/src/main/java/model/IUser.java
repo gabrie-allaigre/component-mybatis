@@ -4,10 +4,7 @@ import com.synaptix.component.annotation.SynaptixComponent;
 import com.synaptix.entity.IEntity;
 import com.synaptix.entity.IId;
 import com.synaptix.entity.ITracable;
-import com.synaptix.entity.annotation.Association;
-import com.synaptix.entity.annotation.Collection;
-import com.synaptix.entity.annotation.Column;
-import com.synaptix.entity.annotation.Entity;
+import com.synaptix.entity.annotation.*;
 
 import java.util.List;
 
@@ -55,7 +52,8 @@ public interface IUser extends IEntity, ITracable {
 
     void setAddress(IAddress address);
 
-    @Collection(select = "mapper.UserMapper.selectAddressesByUserId")
+    @Collection(joinTable = { @JoinTable(name = "t_asso_user_toto", left = "user_id", right = "toto_id"), @JoinTable(name = "t_asso_toto_address", left = "toto_id", right = "address_id") })
+        // @Collection(joinTable = @JoinTable(name = "t_asso_user_address", left = "user_id", right = "address_id"))
     List<IAddress> getAddresses();
 
     void setAddresses(List<IAddress> addresses);

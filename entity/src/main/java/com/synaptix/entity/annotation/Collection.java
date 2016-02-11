@@ -51,4 +51,10 @@ public @interface Collection {
      */
     FetchType fetchType() default FetchType.DEFAULT;
 
+    /**
+     * Join table
+     *
+     * @return join table
+     */
+    JoinTable[] joinTable() default {};
 }

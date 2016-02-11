@@ -44,4 +44,10 @@ public @interface Association {
      */
     FetchType fetchType() default FetchType.DEFAULT;
 
+    /**
+     * Join table
+     *
+     * @return join table
+     */
+    JoinTable[] joinTable() default {};
 }

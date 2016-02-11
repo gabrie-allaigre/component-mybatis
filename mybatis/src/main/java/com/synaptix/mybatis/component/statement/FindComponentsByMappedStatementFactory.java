@@ -1,7 +1,7 @@
 package com.synaptix.mybatis.component.statement;
 
 import com.synaptix.component.IComponent;
-import com.synaptix.component.helper.ComponentHelper;
+import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.FindComponentsByPropertyNameSqlSource;
 import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -23,7 +23,7 @@ public class FindComponentsByMappedStatementFactory extends AbstractMappedStatem
             String componentName = StatementNameHelper.extractComponentNameInFindComponentsByKey(key);
             String[] propertyNames = StatementNameHelper.extractPropertyNamesInFindComponentsByKey(key);
             boolean ignoreCancel = StatementNameHelper.isIgnoreCancelInFindComponentsByKey(key);
-            Class<? extends IComponent> componentClass = ComponentHelper.getComponentClass(componentName);
+            Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(componentName);
             if (componentClass != null && propertyNames != null && propertyNames.length > 0) {
                 return createFindComponentsByMappedStatement(configuration, componentClass, ignoreCancel, propertyNames);
             }

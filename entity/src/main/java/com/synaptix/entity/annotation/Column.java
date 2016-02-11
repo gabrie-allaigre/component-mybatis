@@ -1,5 +1,9 @@
 package com.synaptix.entity.annotation;
 
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.TypeHandler;
+import org.apache.ibatis.type.UnknownTypeHandler;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -9,33 +13,31 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Column {
 
+    /**
+     * Column name in database
+     *
+     * @return
+     */
     String name();
 
     /**
-     * (Optional) Whether the database column is nullable.
+     * Java type for collection
+     *
+     * @return javaType or void.class for auto
      */
-    boolean nullable() default true;
+    Class<?> javaType() default void.class;
 
     /**
-     * (Optional) The column length. (Applies only if a
-     * string-valued column is used.)
+     * Jdbc Type
+     *
+     * @return
      */
-    int length() default 255;
+    JdbcType jdbcType() default JdbcType.UNDEFINED;
 
     /**
-     * (Optional) The precision for a decimal (exact numeric)
-     * column. (Applies only if a decimal column is used.)
-     * Value must be set by developer if used when generating
-     * the DDL for the column.
+     * Type handler
+     *
+     * @return
      */
-    int precision() default 0;
-
-    /**
-     * (Optional) The scale for a decimal (exact numeric) column.
-     * (Applies only if a decimal column is used.)
-     */
-    int scale() default 0;
-
-    JdbcTypesEnum jdbcType() default JdbcTypesEnum.NONE;
-
+    Class<? extends TypeHandler<?>> typeHandler() default UnknownTypeHandler.class;
 }

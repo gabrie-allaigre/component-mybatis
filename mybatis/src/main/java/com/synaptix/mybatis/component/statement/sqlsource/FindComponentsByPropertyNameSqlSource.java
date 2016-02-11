@@ -61,7 +61,7 @@ public class FindComponentsByPropertyNameSqlSource<E extends IComponent> impleme
         SQL sqlBuilder = new SQL();
         sqlBuilder.SELECT("t.*");
         sqlBuilder.FROM(entity.name() + " t");
-        int i = 0;
+        int param = 1;
         for (String propertyName : propertyNames) {
             ComponentDescriptor.PropertyDescriptor propertyDescriptor = cd.getPropertyDescriptor(propertyName);
             if (propertyDescriptor == null) {
@@ -75,8 +75,8 @@ public class FindComponentsByPropertyNameSqlSource<E extends IComponent> impleme
             }
 
             String column = propertyDescriptor.getMethod().getAnnotation(Column.class).name();
-            sqlBuilder.WHERE("t." + column + " = #{" + StatementNameHelper.buildParam(i) + ",javaType=" + propertyDescriptor.getPropertyClass().getCanonicalName() + "}");
-            i++;
+            sqlBuilder.WHERE("t." + column + " = #{" + StatementNameHelper.buildParam(param) + ",javaType=" + propertyDescriptor.getPropertyClass().getCanonicalName() + "}");
+            param++;
         }
         if (useCheckCancel) {
             sqlBuilder.WHERE("t.check_cancel = #{checkCancel,javaType=java.lang.Boolean}");

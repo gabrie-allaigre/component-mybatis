@@ -9,7 +9,7 @@ import java.util.Date;
 @SynaptixComponent
 public interface ICancellable extends IComponent {
 
-	@Column(name = "CHECK_CANCEL", nullable = false)
+	@Column(name = "CHECK_CANCEL")
 	boolean getCheckCancel();
 
 	void setCheckCancel(boolean checkCancel);
@@ -19,7 +19,7 @@ public interface ICancellable extends IComponent {
 
 	void setCancelDate(Date cancelDate);
 
-	@Column(name = "CANCEL_BY", length = 240)
+	@Column(name = "CANCEL_BY")
 	String getCancelBy();
 
 	void setCancelBy(String cancelBy);

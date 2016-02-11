@@ -14,7 +14,7 @@ public interface ITracable extends IComponent {
 
     void setCreatedDate(Date createdDate);
 
-    @Column(name = "CREATED_BY", length = 240)
+    @Column(name = "CREATED_BY")
     String getCreatedBy();
 
     void setCreatedBy(String createdBy);
@@ -24,7 +24,7 @@ public interface ITracable extends IComponent {
 
     void setUpdatedDate(Date updatedDate);
 
-    @Column(name = "UPDATED_BY", length = 240)
+    @Column(name = "UPDATED_BY")
     String getUpdatedBy();
 
     void setUpdatedBy(String updatedBy);

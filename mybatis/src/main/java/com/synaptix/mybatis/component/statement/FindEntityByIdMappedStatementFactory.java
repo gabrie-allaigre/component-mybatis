@@ -1,8 +1,8 @@
 package com.synaptix.mybatis.component.statement;
 
 import com.synaptix.component.IComponent;
-import com.synaptix.component.helper.ComponentHelper;
 import com.synaptix.entity.helper.EntityHelper;
+import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.FindComponentsByPropertyNameSqlSource;
 import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -22,7 +22,7 @@ public class FindEntityByIdMappedStatementFactory extends AbstractMappedStatemen
     public MappedStatement createMappedStatement(Configuration configuration, String key) {
         if (StatementNameHelper.isFindEntityByIdKey(key)) {
             String componentName = StatementNameHelper.extractComponentNameInFindEntityByIdKey(key);
-            Class<? extends IComponent> componentClass = ComponentHelper.getComponentClass(componentName);
+            Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(componentName);
             if (componentClass != null) {
                 return createFindEntityByIdMappedStatement(configuration, componentClass);
             }

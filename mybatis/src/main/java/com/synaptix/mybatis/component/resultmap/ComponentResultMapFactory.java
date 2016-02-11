@@ -4,10 +4,10 @@ import com.google.common.reflect.TypeToken;
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
-import com.synaptix.component.helper.ComponentHelper;
 import com.synaptix.entity.ICancellable;
 import com.synaptix.entity.annotation.*;
 import com.synaptix.entity.helper.EntityHelper;
+import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
 import com.synaptix.mybatis.session.factory.AbstractResultMapFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -16,6 +16,8 @@ import org.apache.ibatis.mapping.ResultFlag;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.UnknownTypeHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,7 +36,7 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
 
     @Override
     public ResultMap createResultMap(Configuration configuration, String key) {
-        Class<? extends IComponent> componentClass = ComponentHelper.getComponentClass(key);
+        Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(key);
         if (componentClass != null) {
             return createComponentResultMap(configuration, componentClass);
         }
@@ -78,14 +80,24 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
     }
 
     private ResultMapping buildColumnResultMapping(Configuration configuration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
-        String columnName = propertyDescriptor.getMethod().getAnnotation(Column.class).name();
+        Column column = propertyDescriptor.getMethod().getAnnotation(Column.class);
+
+        String columnName = column.name();
         if (StringUtils.isBlank(columnName)) {
             throw new IllegalArgumentException("Not name in column for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
         }
 
-        ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(configuration, propertyDescriptor.getPropertyName(), columnName, propertyDescriptor.getPropertyClass());
+        Class<?> javaType = column.javaType() == void.class ? propertyDescriptor.getPropertyClass() : column.javaType();
+
+        ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(configuration, propertyDescriptor.getPropertyName(), columnName, javaType);
         if (propertyDescriptor.getMethod().isAnnotationPresent(Id.class)) {
             resultMappingBuilder.flags(Arrays.asList(ResultFlag.ID));
+        }
+        if (column.jdbcType() != null && !JdbcType.UNDEFINED.equals(column.jdbcType())) {
+            resultMappingBuilder.jdbcType(column.jdbcType());
+        }
+        if (column.typeHandler() != null && !UnknownTypeHandler.class.equals(column.typeHandler())) {
+            resultMappingBuilder.typeHandler(configuration.getTypeHandlerRegistry().getTypeHandler(column.typeHandler()));
         }
         return resultMappingBuilder.build();
     }
@@ -117,13 +129,21 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
             }
             checkTraget(ComponentFactory.getInstance().getDescriptor(subComponentClass), propertyTarget);
 
-            if (propertyTarget.length != propertySource.length) {
-                throw new RuntimeException("Not same lenght property Association for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
-            }
+            JoinTable[] joinTables = assossiation.joinTable();
+            if (joinTables != null && joinTables.length > 0) {
+                List<Pair<String, Pair<String[], String[]>>> joins = joinTables(componentDescriptor, propertyDescriptor, joinTables, propertySource, propertyTarget);
+                resultMappingBuilder
+                        .nestedQueryId(StatementNameHelper.buildFindComponentsByJoinTableKey(componentDescriptor.getComponentClass(), subComponentClass, false, joins, propertySource, propertyTarget));
+            } else {
+                if (propertyTarget.length != propertySource.length) {
+                    throw new IllegalArgumentException(
+                            "Not same lenght property Association for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+                }
 
-            resultMappingBuilder.nestedQueryId(StatementNameHelper.buildFindComponentsByKey(subComponentClass, false, propertyTarget));
+                resultMappingBuilder.nestedQueryId(StatementNameHelper.buildFindComponentsByKey(subComponentClass, false, propertyTarget));
+            }
         } else {
-            throw new RuntimeException("Not accept Association for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+            throw new IllegalArgumentException("Not accept Association for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
         }
         return resultMappingBuilder.build();
     }
@@ -138,7 +158,7 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
 
         Class<?> javaType = collection.javaType() == void.class ? propertyDescriptor.getPropertyClass() : collection.javaType();
         if (!java.util.Collection.class.isAssignableFrom(javaType)) {
-            throw new RuntimeException(
+            throw new IllegalArgumentException(
                     "Not accept javaType for Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName() + " javaType=" + javaType);
         }
 
@@ -160,12 +180,12 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
             if (ofType == void.class) {
                 Type type = getCollectionElementType(TypeToken.of(propertyDescriptor.getPropertyType()));
                 if (type == null) {
-                    throw new RuntimeException("Not accept Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+                    throw new IllegalArgumentException("Not accept Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
                 }
                 ofType = TypeToken.of(type).getRawType();
             }
             if (!ComponentFactory.getInstance().isComponentType(ofType)) {
-                throw new RuntimeException("Not accept Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+                throw new IllegalArgumentException("Not accept Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
             }
 
             Class<? extends IComponent> subComponentClass = (Class<? extends IComponent>) ofType;
@@ -175,24 +195,79 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
             }
             checkTraget(ComponentFactory.getInstance().getDescriptor(subComponentClass), propertyTarget);
 
-            if (propertyTarget.length != propertySource.length) {
-                throw new RuntimeException("Not same lenght property Association for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
-            }
-
             boolean ignoreCancel = ICancellable.class.isAssignableFrom(subComponentClass);
-            resultMappingBuilder.nestedQueryId(StatementNameHelper.buildFindComponentsByKey(subComponentClass, ignoreCancel, propertyTarget));
+
+            JoinTable[] joinTables = collection.joinTable();
+            if (joinTables != null && joinTables.length > 0) {
+                List<Pair<String, Pair<String[], String[]>>> joins = joinTables(componentDescriptor, propertyDescriptor, joinTables, propertySource, propertyTarget);
+                resultMappingBuilder.nestedQueryId(
+                        StatementNameHelper.buildFindComponentsByJoinTableKey(componentDescriptor.getComponentClass(), subComponentClass, ignoreCancel, joins, propertySource, propertyTarget));
+            } else {
+                if (propertyTarget.length != propertySource.length) {
+                    throw new IllegalArgumentException(
+                            "Not same lenght property Association for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+                }
+
+                resultMappingBuilder.nestedQueryId(StatementNameHelper.buildFindComponentsByKey(subComponentClass, ignoreCancel, propertyTarget));
+            }
         }
         return resultMappingBuilder.build();
+    }
+
+    private List<Pair<String, Pair<String[], String[]>>> joinTables(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor, JoinTable[] joinTables,
+            String[] propertySource, String[] propertyTarget) {
+        List<Pair<String, Pair<String[], String[]>>> joins = new ArrayList<>();
+        int i = 0;
+        for (JoinTable joinTable : joinTables) {
+            if (StringUtils.isBlank(joinTable.name())) {
+                throw new IllegalArgumentException("JoinTable is empty for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+            }
+            if (joinTable.left() == null || joinTable.left().length == 0) {
+                throw new IllegalArgumentException(
+                        "JoinTable join=" + joinTable.name() + " left is empty for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+            }
+            if (joinTable.right() == null || joinTable.right().length == 0) {
+                throw new IllegalArgumentException(
+                        "JoinTable join=" + joinTable.name() + " right is empty for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+            }
+
+            if (i == 0) {
+                if (propertySource.length != joinTable.left().length) {
+                    throw new IllegalArgumentException(
+                            "JoinTable join=" + joinTable.name() + " left different size propertySource for Component=" + componentDescriptor.getComponentClass() + " with property="
+                                    + propertyDescriptor.getPropertyName());
+                }
+            }
+            if (i == joinTables.length - 1) {
+                if (propertyTarget.length != joinTable.right().length) {
+                    throw new IllegalArgumentException(
+                            "JoinTable join=" + joinTable.name() + " right different size propertyTarget for Component=" + componentDescriptor.getComponentClass() + " with property="
+                                    + propertyDescriptor.getPropertyName());
+                }
+            }
+            if (i > 0 && i < joinTables.length) {
+                if (joinTables[i - 1].right().length != joinTable.left().length) {
+                    throw new IllegalArgumentException(
+                            "JoinTable join=" + joinTable.name() + " left different size with previous join for Component=" + componentDescriptor.getComponentClass() + " with property="
+                                    + propertyDescriptor.getPropertyName());
+                }
+            }
+
+            joins.add(Pair.of(joinTable.name(), Pair.of(joinTable.left(), joinTable.right())));
+
+            i++;
+        }
+        return joins;
     }
 
     private void fillComposite(Configuration configuration, List<Pair<ComponentDescriptor.PropertyDescriptor, String>> sourceColumns, ResultMapping.Builder resultMappingBuilder) {
         if (sourceColumns.size() > 1) {
             List<ResultMapping> composites = new ArrayList<>();
-            int i = 0;
+            int param = 1;
             for (Pair<ComponentDescriptor.PropertyDescriptor, String> sourceColumn : sourceColumns) {
                 ComponentDescriptor.PropertyDescriptor pd = sourceColumn.getLeft();
-                composites.add(new ResultMapping.Builder(configuration, StatementNameHelper.buildParam(i), sourceColumn.getRight(), pd.getPropertyClass()).build());
-                i++;
+                composites.add(new ResultMapping.Builder(configuration, StatementNameHelper.buildParam(param), sourceColumn.getRight(), pd.getPropertyClass()).build());
+                param++;
             }
             resultMappingBuilder.composites(composites);
         }

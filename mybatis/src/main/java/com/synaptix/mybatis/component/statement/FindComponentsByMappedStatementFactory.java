@@ -25,17 +25,18 @@ public class FindComponentsByMappedStatementFactory extends AbstractMappedStatem
             boolean ignoreCancel = StatementNameHelper.isIgnoreCancelInFindComponentsByKey(key);
             Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(componentName);
             if (componentClass != null && propertyNames != null && propertyNames.length > 0) {
-                return createFindComponentsByMappedStatement(configuration, componentClass, ignoreCancel, propertyNames);
+                return createFindComponentsByMappedStatement(configuration, key, componentClass, ignoreCancel, propertyNames);
             }
         }
         return null;
     }
 
-    public <E extends IComponent> MappedStatement createFindComponentsByMappedStatement(Configuration configuration, Class<E> componentClass, boolean ignoreCancel, String... propertyNames) {
+    public <E extends IComponent> MappedStatement createFindComponentsByMappedStatement(Configuration configuration, String key, Class<E> componentClass, boolean ignoreCancel,
+            String... propertyNames) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create findComponentsBy for " + componentClass);
         }
-        String key = StatementNameHelper.buildFindComponentsByKey(componentClass, ignoreCancel, propertyNames);
+
         ResultMap inlineResultMap = configuration.getResultMap(componentClass.getName());
 
         MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new FindComponentsByPropertyNameSqlSource<E>(configuration, componentClass, ignoreCancel, propertyNames),

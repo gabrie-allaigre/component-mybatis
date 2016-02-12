@@ -24,18 +24,17 @@ public class FindEntityByIdMappedStatementFactory extends AbstractMappedStatemen
             String componentName = StatementNameHelper.extractComponentNameInFindEntityByIdKey(key);
             Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(componentName);
             if (componentClass != null) {
-                return createFindEntityByIdMappedStatement(configuration, componentClass);
+                return createFindEntityByIdMappedStatement(configuration,key, componentClass);
             }
         }
         return null;
     }
 
-    private <E extends IComponent> MappedStatement createFindEntityByIdMappedStatement(Configuration configuration, Class<E> componentClass) {
+    private <E extends IComponent> MappedStatement createFindEntityByIdMappedStatement(Configuration configuration,String key, Class<E> componentClass) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create findEntityById for " + componentClass);
         }
 
-        String key = StatementNameHelper.buildFindEntityByIdKey(componentClass);
         ResultMap inlineResultMap = configuration.getResultMap(componentClass.getName());
 
         String idPropertyName = EntityHelper.findIdPropertyName(componentClass);

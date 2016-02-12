@@ -27,7 +27,7 @@ public class ColumnResultMappingFactory extends AbstractResultMappingFactory<Col
             throw new IllegalArgumentException("Not name in column for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
         }
 
-        Class<?> javaType = column.javaType() == void.class ? propertyDescriptor.getPropertyClass() : column.javaType();
+        Class<?> javaType = column.javaType() != null && column.javaType() != void.class ? column.javaType() : propertyDescriptor.getPropertyClass();
 
         ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(configuration, propertyDescriptor.getPropertyName(), columnName, javaType);
         if (propertyDescriptor.getMethod().isAnnotationPresent(Id.class)) {

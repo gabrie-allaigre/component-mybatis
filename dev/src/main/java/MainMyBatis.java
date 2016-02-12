@@ -6,6 +6,7 @@ import com.google.inject.name.Names;
 import com.synaptix.entity.factory.IdFactory;
 import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
+import com.synaptix.mybatis.component.statement.FindComponentsByJoinTableMappedStatementFactory;
 import com.synaptix.mybatis.component.statement.FindComponentsByMappedStatementFactory;
 import com.synaptix.mybatis.component.statement.FindEntityByIdMappedStatementFactory;
 import com.synaptix.mybatis.guice.SimpleSynaptixMyBatisModule;
@@ -60,6 +61,7 @@ public class MainMyBatis {
                 Multibinder<IMappedStatementFactory> mappedStatementFactoryMultibinder = Multibinder.newSetBinder(binder(), IMappedStatementFactory.class);
                 mappedStatementFactoryMultibinder.addBinding().to(FindEntityByIdMappedStatementFactory.class);
                 mappedStatementFactoryMultibinder.addBinding().to(FindComponentsByMappedStatementFactory.class);
+                mappedStatementFactoryMultibinder.addBinding().to(FindComponentsByJoinTableMappedStatementFactory.class);
             }
 
             private Properties createTestProperties() {

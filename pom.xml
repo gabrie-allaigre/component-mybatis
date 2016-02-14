@@ -41,6 +41,7 @@
         <mybatis-guice.version>3.8.0.SYN-SNAPSHOT</mybatis-guice.version>
         <guice.version>4.0</guice.version>
         <javassist.version>3.18.2-GA</javassist.version>
+        <hsqldb.version>2.3.3</hsqldb.version>
     </properties>
     <organization>
         <name>Synaptix-Labs</name>
@@ -303,6 +304,12 @@
             <artifactId>synaptix-component-apt</artifactId>
             <version>${synaptix-component.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
         </dependency>
     </dependencies>
     <distributionManagement>

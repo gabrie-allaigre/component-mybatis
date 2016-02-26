@@ -37,8 +37,8 @@
         <generated.sources.dir>${project.build.directory}/generated-sources/apt</generated.sources.dir>
 
         <synaptix-component.version>1.2.0-SNAPSHOT</synaptix-component.version>
-        <mybatis.version>3.3.0</mybatis.version>
-        <mybatis-guice.version>3.8.0.SYN-SNAPSHOT</mybatis-guice.version>
+        <mybatis.version>3.3.1</mybatis.version>
+        <mybatis-guice.version>3.8.0-SNAPSHOT</mybatis-guice.version>
         <guice.version>4.0</guice.version>
         <javassist.version>3.18.2-GA</javassist.version>
         <hsqldb.version>2.3.3</hsqldb.version>
@@ -213,6 +213,27 @@
             </snapshots>
             <url>http://nexus.synaptix-labs.com/content/groups/public_snapshots</url>
         </repository>
+
+        <repository>
+            <id>sonatype-releases-repository</id>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>sonatype-snapshots-repository</id>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -263,6 +284,12 @@
                 <artifactId>javassist</artifactId>
                 <version>${javassist.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.hsqldb</groupId>
+                <artifactId>hsqldb</artifactId>
+                <version>${hsqldb.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -304,12 +331,6 @@
             <artifactId>synaptix-component-apt</artifactId>
             <version>${synaptix-component.version}</version>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>${hsqldb.version}</version>
         </dependency>
     </dependencies>
     <distributionManagement>

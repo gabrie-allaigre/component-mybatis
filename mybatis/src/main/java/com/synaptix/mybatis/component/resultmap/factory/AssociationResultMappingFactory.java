@@ -21,6 +21,7 @@ public class AssociationResultMappingFactory extends AbstractResultMappingFactor
         super(Association.class);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ResultMapping buildColumnResultMapping(Configuration configuration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         Association assossiation = propertyDescriptor.getMethod().getAnnotation(Association.class);

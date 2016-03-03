@@ -20,12 +20,13 @@
                         <id>process</id>
                         <phase>generate-sources</phase>
                         <goals>
-                            <goal>process</goal>
+                            <goal>process-test</goal>
                         </goals>
                         <configuration>
                             <processors>
                                 <processor>com.synaptix.component.annotation.processor.SynaptixComponentProcessor</processor>
                             </processors>
+                            <outputDirectory>${generated.test.sources.dir}</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

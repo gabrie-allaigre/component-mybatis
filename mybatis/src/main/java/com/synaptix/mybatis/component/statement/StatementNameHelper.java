@@ -18,6 +18,12 @@ public class StatementNameHelper {
 
     private static final String FIND_COMPONENTS_BY_JOIN_TABLE_NAME = "findComponentsByJoinTable";
 
+    private static final String INSERT_NAME = "insert";
+
+    private static final String UPDATE_NAME = "update";
+
+    private static final String DELETE_NAME = "delete";
+
     private static final String PROPERTIES = "properties";
 
     private static final String SOURCE_PROPERTIES = "sourceProperties";
@@ -52,6 +58,12 @@ public class StatementNameHelper {
     private static final Pattern FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN = Pattern.compile(
             "(" + COMPONENT_CLASS_PAT + ")/" + FIND_COMPONENTS_BY_JOIN_TABLE_NAME + "\\?" + SOURCE_COMPONENT + "=(" + COMPONENT_CLASS_PAT + ")&" + SOURCE_PROPERTIES + "=(" + PROPERTIES_PAT + ")&"
                     + TARGET_PROPERTIES + "=(" + PROPERTIES_PAT + ")&" + JOIN + "=(" + JOINS_PAT + ")(&(" + IGNORE_CANCEL + "))?");
+
+    private static final Pattern INSERT_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + INSERT_NAME);
+
+    private static final Pattern UPDATE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + UPDATE_NAME);
+
+    private static final Pattern DELETE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + DELETE_NAME);
 
     public static String buildParam(int i) {
         return PARAM + i;
@@ -211,5 +223,83 @@ public class StatementNameHelper {
         Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
         m.find();
         return IGNORE_CANCEL.equals(m.group(16));
+    }
+
+    // Insert
+
+    public static <E extends IComponent> String buildInsertKey(Class<E> componentClass) {
+        if (componentClass == null) {
+            return null;
+        }
+        return componentClass.getCanonicalName() + "/" + INSERT_NAME;
+    }
+
+    public static boolean isInsertKey(String key) {
+        if (StringUtils.isBlank(key)) {
+            return false;
+        }
+        Matcher m = INSERT_PATTERN.matcher(key);
+        return m.matches();
+    }
+
+    public static String extractComponentNameInInsertKey(String key) {
+        if (!isInsertKey(key)) {
+            return null;
+        }
+        Matcher m = INSERT_PATTERN.matcher(key);
+        m.find();
+        return m.group(1);
+    }
+
+    // Update
+
+    public static <E extends IComponent> String buildUpdateKey(Class<E> componentClass) {
+        if (componentClass == null) {
+            return null;
+        }
+        return componentClass.getCanonicalName() + "/" + UPDATE_NAME;
+    }
+
+    public static boolean isUpdateKey(String key) {
+        if (StringUtils.isBlank(key)) {
+            return false;
+        }
+        Matcher m = UPDATE_PATTERN.matcher(key);
+        return m.matches();
+    }
+
+    public static String extractComponentNameInUpdateKey(String key) {
+        if (!isUpdateKey(key)) {
+            return null;
+        }
+        Matcher m = UPDATE_PATTERN.matcher(key);
+        m.find();
+        return m.group(1);
+    }
+
+    // Delete
+
+    public static <E extends IComponent> String buildDeleteKey(Class<E> componentClass) {
+        if (componentClass == null) {
+            return null;
+        }
+        return componentClass.getCanonicalName() + "/" + DELETE_NAME;
+    }
+
+    public static boolean isDeleteKey(String key) {
+        if (StringUtils.isBlank(key)) {
+            return false;
+        }
+        Matcher m = DELETE_PATTERN.matcher(key);
+        return m.matches();
+    }
+
+    public static String extractComponentNameInDeleteKey(String key) {
+        if (!isDeleteKey(key)) {
+            return null;
+        }
+        Matcher m = DELETE_PATTERN.matcher(key);
+        m.find();
+        return m.group(1);
     }
 }

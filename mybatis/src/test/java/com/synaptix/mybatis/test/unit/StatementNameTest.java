@@ -249,4 +249,101 @@ public class StatementNameTest {
                 .isTrue();
         softAssertions.assertAll();
     }
+
+    @Test
+    public void testBuildInsertKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.buildInsertKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.buildInsertKey(IUser.class)).isEqualTo("com.synaptix.mybatis.test.data.IUser/insert");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testIsInsertKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.isInsertKey(null)).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isInsertKey("com.model.IUser/insert")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isInsertKey("com.model.IUser1/insert")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isInsertKey("model.IUser/insert")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isInsertKey("IUser/insert")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isInsertKey("model.IUser")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isInsertKey("/insert")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isInsertKey("model-IUser/insert")).isFalse();
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractComponentNameInInsertKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInInsertKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInInsertKey("IUser/insert")).isEqualTo("IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInInsertKey("model.IUser/insert")).isEqualTo("model.IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInInsertKey("com.model.IUser/insert")).isEqualTo("com.model.IUser");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testBuildUpdateKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.buildUpdateKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.buildUpdateKey(IUser.class)).isEqualTo("com.synaptix.mybatis.test.data.IUser/update");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testIsUpdateKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey(null)).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey("com.model.IUser/update")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey("com.model.IUser1/update")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey("model.IUser/update")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey("IUser/update")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey("model.IUser")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey("/update")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey("model-IUser/update")).isFalse();
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractComponentNameInUpdateKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInUpdateKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInUpdateKey("IUser/update")).isEqualTo("IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInUpdateKey("model.IUser/update")).isEqualTo("model.IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInUpdateKey("com.model.IUser/update")).isEqualTo("com.model.IUser");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testBuildDeleteKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.buildDeleteKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.buildDeleteKey(IUser.class)).isEqualTo("com.synaptix.mybatis.test.data.IUser/delete");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testIsDeleteKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.isDeleteKey(null)).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteKey("com.model.IUser/delete")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteKey("com.model.IUser1/delete")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteKey("model.IUser/delete")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteKey("IUser/delete")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteKey("model.IUser")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteKey("/delete")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteKey("model-IUser/delete")).isFalse();
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractComponentNameInDeleteKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInDeleteKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInDeleteKey("IUser/delete")).isEqualTo("IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInDeleteKey("model.IUser/delete")).isEqualTo("model.IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInDeleteKey("com.model.IUser/delete")).isEqualTo("com.model.IUser");
+        softAssertions.assertAll();
+    }
+
 }

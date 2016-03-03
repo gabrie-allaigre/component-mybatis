@@ -1,37 +1,53 @@
 package com.synaptix.mybatis.test.it;
 
-import com.synaptix.mybatis.component.factory.ComponentProxyFactory;
-import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
-import com.synaptix.mybatis.component.statement.FindEntityByIdMappedStatementFactory;
-import com.synaptix.mybatis.session.SynaptixConfiguration;
-import com.synaptix.mybatis.session.registry.MappedStatementFactoryRegistryBuilder;
-import com.synaptix.mybatis.session.registry.ResultMapFactoryRegistryBuilder;
-import org.apache.ibatis.datasource.pooled.PooledDataSource;
-import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
-import org.junit.Before;
+import com.synaptix.entity.factory.IdFactory;
+import com.synaptix.mybatis.component.statement.StatementNameHelper;
+import com.synaptix.mybatis.test.data.IAddress;
+import com.synaptix.mybatis.test.data.ICountry;
+import com.synaptix.mybatis.test.data.IUser;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
 
-public class FindByIdIT {
+public class FindByIdIT extends AbstractIntegration {
 
-    protected Configuration configuration;
+    @Test
+    public void testFindUserById() {
+        IUser user = sqlSessionManager.<IUser>selectOne(StatementNameHelper.buildFindEntityByIdKey(IUser.class), IdFactory.IdString.from("1"));
 
-    @Before
-    public void toto() {
-        Environment environment = new Environment.Builder("test").dataSource(new PooledDataSource(null, "org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:mybatis-guice_TEST", "sa", ""))
-                .transactionFactory(new JdbcTransactionFactory()).build();
-
-        SynaptixConfiguration synaptixConfiguration = new SynaptixConfiguration(environment);
-        synaptixConfiguration.setMappedStatementFactoryRegistry(MappedStatementFactoryRegistryBuilder.newBuilder().addMappedStatementFactory(new FindEntityByIdMappedStatementFactory()).build());
-        synaptixConfiguration.setResultMapFactoryRegistry(ResultMapFactoryRegistryBuilder.newBuilder().addResultMapFactory(new ComponentResultMapFactory()).build());
-        synaptixConfiguration.setProxyFactory(new ComponentProxyFactory());
-
-        this.configuration = synaptixConfiguration;
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(user.getId()).isEqualTo(IdFactory.IdString.from("1"));
+        softAssertions.assertThat(user.getVersion()).isEqualTo(0);
+        softAssertions.assertThat(user.getCountryCode()).isEqualTo("FRA");
+        softAssertions.assertThat(user.getCountryId()).isEqualTo(IdFactory.IdString.from("1"));
+        softAssertions.assertThat(user.getAddressId()).isEqualTo(IdFactory.IdString.from("2"));
+        softAssertions.assertThat(user.getCreatedBy()).isEqualTo("GABY");
+        softAssertions.assertAll();
     }
 
     @Test
-    public void testFindById() {
+    public void testAssociation() {
+        IUser user = sqlSessionManager.<IUser>selectOne(StatementNameHelper.buildFindEntityByIdKey(IUser.class), IdFactory.IdString.from("1"));
 
+        IAddress address = user.getAddress();;
+
+        Assertions.assertThat(address).isNotNull();
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(address.getId()).isEqualTo(IdFactory.IdString.from("2"));
+        softAssertions.assertThat(address.getVersion()).isEqualTo(0);
+        softAssertions.assertThat(address.getCity()).isEqualTo("Valence");
+        softAssertions.assertThat(address.getCountryId()).isEqualTo(IdFactory.IdString.from("1"));
+        softAssertions.assertThat(address.getPostalZip()).isEqualTo("26000");
+        softAssertions.assertThat(address.getCreatedBy()).isEqualTo("GABY");
+        softAssertions.assertAll();
+
+        ICountry country = address.getCountry();
+        Assertions.assertThat(country).isNotNull();
+        softAssertions.assertThat(country.getId()).isEqualTo(IdFactory.IdString.from("1"));
+        softAssertions.assertThat(country.getVersion()).isEqualTo(0);
+        softAssertions.assertThat(country.getCode()).isEqualTo("FRA");
+        softAssertions.assertThat(country.getName()).isEqualTo("france");
+        softAssertions.assertThat(country.getCreatedBy()).isEqualTo("GABY");
+        softAssertions.assertAll();
     }
 }

@@ -7,6 +7,15 @@ IF EXISTS;
 DROP TABLE t_user
 IF EXISTS;
 
+DROP TABLE t_address
+IF EXISTS;
+
+DROP TABLE t_country
+IF EXISTS;
+
+DROP TABLE t_asso_user_address
+IF EXISTS;
+
 CREATE TABLE t_user (
   id           VARCHAR(256),
   version      INT,

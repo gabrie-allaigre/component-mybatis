@@ -3,19 +3,18 @@ package com.synaptix.mybatis.test.data;
 import com.synaptix.component.annotation.SynaptixComponent;
 import com.synaptix.entity.ICancellable;
 import com.synaptix.entity.IEntity;
-import com.synaptix.entity.IId;
 import com.synaptix.entity.ITracable;
 import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
 
-@Entity(name = "T_GROUP")
+@Entity(name = "T_COUNTRY")
 @SynaptixComponent
-public interface IGroup extends IEntity, ITracable, ICancellable {
+public interface ICountry extends IEntity, ITracable, ICancellable {
 
-    @Column(name = "USER_ID")
-    IId getUserId();
+    @Column(name = "CODE")
+    String getCode();
 
-    void setUserId(IId userId);
+    void setCode(String code);
 
     @Column(name = "NAME")
     String getName();

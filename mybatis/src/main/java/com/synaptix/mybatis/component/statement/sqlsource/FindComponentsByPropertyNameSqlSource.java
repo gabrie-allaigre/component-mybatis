@@ -6,16 +6,13 @@ import com.synaptix.component.factory.ComponentFactory;
 import com.synaptix.entity.ICancellable;
 import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
+import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.TypeHandler;
-import org.apache.ibatis.type.UnknownTypeHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,15 +48,9 @@ public class FindComponentsByPropertyNameSqlSource<E extends IComponent> impleme
     }
 
     private String buildFindComponentsByPropertyName(Class<E> componentClass, String... propertyNames) {
-        ComponentDescriptor cd = ComponentFactory.getInstance().getDescriptor(componentClass);
+        ComponentDescriptor<E> cd = ComponentFactory.getInstance().getDescriptor(componentClass);
 
-        if (!componentClass.isAnnotationPresent(Entity.class)) {
-            throw new IllegalArgumentException("Not found annotation Entity for Component=" + componentClass);
-        }
-        Entity entity = componentClass.getAnnotation(Entity.class);
-        if (StringUtils.isBlank(entity.name())) {
-            throw new IllegalArgumentException("Not name in Entity for Component=" + componentClass);
-        }
+        Entity entity = ComponentMyBatisHelper.getEntityAnnotation(cd);
 
         SQL sqlBuilder = new SQL();
         sqlBuilder.SELECT("t.*");
@@ -70,21 +61,10 @@ public class FindComponentsByPropertyNameSqlSource<E extends IComponent> impleme
             if (propertyDescriptor == null) {
                 throw new IllegalArgumentException("Not exists property for Component=" + componentClass + " with property=" + propertyName);
             }
-            if (!propertyDescriptor.getMethod().isAnnotationPresent(Column.class)) {
-                throw new IllegalArgumentException("Not present annotation Column for Component=" + componentClass + " with property=" + propertyDescriptor.getPropertyName());
-            }
-            Column column = propertyDescriptor.getMethod().getAnnotation(Column.class);
-            if (StringUtils.isBlank(column.name())) {
-                throw new IllegalArgumentException("Not name in Column for Component=" + componentClass + " with property=" + propertyDescriptor.getPropertyName());
-            }
 
-            Class<?> javaType = column.javaType() != null && column.javaType() != void.class ? column.javaType() : propertyDescriptor.getPropertyClass();
-            JdbcType jdbcType = column.jdbcType() != null && !JdbcType.UNDEFINED.equals(column.jdbcType()) ? column.jdbcType() : null;
-            Class<? extends TypeHandler<?>> typeHandlerClass = column.typeHandler() != null && !UnknownTypeHandler.class.equals(column.typeHandler()) ? column.typeHandler() : null;
+            Column column = ComponentMyBatisHelper.getColumnAnnotation(cd, propertyDescriptor);
+            sqlBuilder.WHERE("t." + column.name() + " = " + ComponentMyBatisHelper.buildColumn(cd, propertyDescriptor, column, StatementNameHelper.buildParam(param)));
 
-            sqlBuilder.WHERE("t." + column.name() + " = #{" + StatementNameHelper.buildParam(param) + ",javaType=" + javaType.getCanonicalName() + (jdbcType != null ?
-                    ",jdbcType=" + jdbcType.name() :
-                    "") + (typeHandlerClass != null ? ",typeHandler=" + typeHandlerClass.getCanonicalName() : "") + "}");
             param++;
         }
         if (ignoreCancel) {

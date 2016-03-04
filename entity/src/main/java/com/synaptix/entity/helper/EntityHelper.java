@@ -34,7 +34,7 @@ public class EntityHelper {
     public static final <E extends IComponent> String findVersionPropertyName(Class<E> componentClass) {
         ComponentDescriptor<E> cd = ComponentFactory.getInstance().getDescriptor(componentClass);
         for (ComponentDescriptor.PropertyDescriptor pd : cd.getPropertyDescriptors()) {
-            if (pd.getMethod().isAnnotationPresent(Version.class)) {
+            if (pd.getMethod().isAnnotationPresent(Version.class) && Integer.class.equals(pd.getPropertyClass())) {
                 return pd.getPropertyName();
             }
         }

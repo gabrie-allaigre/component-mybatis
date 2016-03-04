@@ -76,7 +76,9 @@ public class FindComponentsByJoinTableSqlSource<E extends IComponent> implements
                     }
 
                     Column column = ComponentMyBatisHelper.getColumnAnnotation(sourceComponentDescriptor, propertyDescriptor);
-
+                    if (column == null) {
+                        throw new IllegalArgumentException("Not present annotation Column for Component=" + componentClass + " with property=" + propertyDescriptor.getPropertyName());
+                    }
                     ands.add(label + "." + rights[k] + " = t." + column.name());
                 }
             } else {
@@ -102,6 +104,9 @@ public class FindComponentsByJoinTableSqlSource<E extends IComponent> implements
             }
 
             Column column = ComponentMyBatisHelper.getColumnAnnotation(sourceComponentDescriptor, propertyDescriptor);
+            if (column == null) {
+                throw new IllegalArgumentException("Not present annotation Column for Component=" + componentClass + " with property=" + propertyDescriptor.getPropertyName());
+            }
             sqlBuilder.WHERE("u" + i + "." + lefts[j] + " = " + ComponentMyBatisHelper.buildColumn(sourceComponentDescriptor, propertyDescriptor, column, StatementNameHelper.buildParam(param)));
 
             param++;

@@ -63,6 +63,9 @@ public class FindComponentsByPropertyNameSqlSource<E extends IComponent> impleme
             }
 
             Column column = ComponentMyBatisHelper.getColumnAnnotation(cd, propertyDescriptor);
+            if (column == null) {
+                throw new IllegalArgumentException("Not present annotation Column for Component=" + componentClass + " with property=" + propertyDescriptor.getPropertyName());
+            }
             sqlBuilder.WHERE("t." + column.name() + " = " + ComponentMyBatisHelper.buildColumn(cd, propertyDescriptor, column, StatementNameHelper.buildParam(param)));
 
             param++;

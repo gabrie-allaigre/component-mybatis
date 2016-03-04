@@ -47,6 +47,21 @@ public class FooService {
 
     @Transactional
     public <E extends IComponent> List<E> findChildrenByIdParent(Class<E> componentClass, String propertyName, IId id) {
-        return sqlSessionManager.<E>selectList(StatementNameHelper.buildFindComponentsByKey(componentClass,true, propertyName), id);
+        return sqlSessionManager.<E>selectList(StatementNameHelper.buildFindComponentsByKey(componentClass, true, propertyName), id);
+    }
+
+    @Transactional
+    public <E extends IComponent> int insert(Class<E> componentClass, E component) {
+        return sqlSessionManager.insert(StatementNameHelper.buildInsertKey(componentClass), component);
+    }
+
+    @Transactional
+    public <E extends IComponent> int update(Class<E> componentClass, E component) {
+        return sqlSessionManager.update(StatementNameHelper.buildUpdateKey(componentClass), component);
+    }
+
+    @Transactional
+    public <E extends IComponent> int delete(Class<E> componentClass, E component) {
+        return sqlSessionManager.update(StatementNameHelper.buildDeleteKey(componentClass), component);
     }
 }

@@ -59,13 +59,20 @@ public class ComponentMyBatisHelper {
      */
     public static Column getColumnAnnotation(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         if (!propertyDescriptor.getMethod().isAnnotationPresent(Column.class)) {
-            throw new IllegalArgumentException("Not present annotation Column for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+            return null;
         }
         Column column = propertyDescriptor.getMethod().getAnnotation(Column.class);
         if (StringUtils.isBlank(column.name())) {
             throw new IllegalArgumentException("Not name in Column for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
         }
         return column;
+    }
+
+    public static Id getIdAnnotation(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
+        if (!propertyDescriptor.getMethod().isAnnotationPresent(Id.class)) {
+            return null;
+        }
+        return propertyDescriptor.getMethod().getAnnotation(Id.class);
     }
 
     /**
@@ -96,6 +103,9 @@ public class ComponentMyBatisHelper {
      */
     public static String buildSetColumn(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         Column column = getColumnAnnotation(componentDescriptor, propertyDescriptor);
+        if (column == null) {
+            return null;
+        }
         return column.name() + " = " + buildColumn(componentDescriptor, propertyDescriptor, column);
     }
 

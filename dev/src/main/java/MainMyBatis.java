@@ -6,9 +6,7 @@ import com.google.inject.name.Names;
 import com.synaptix.entity.factory.IdFactory;
 import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
-import com.synaptix.mybatis.component.statement.FindComponentsByJoinTableMappedStatementFactory;
-import com.synaptix.mybatis.component.statement.FindComponentsByMappedStatementFactory;
-import com.synaptix.mybatis.component.statement.FindEntityByIdMappedStatementFactory;
+import com.synaptix.mybatis.component.statement.*;
 import com.synaptix.mybatis.guice.SimpleSynaptixMyBatisModule;
 import com.synaptix.mybatis.guice.SynaptixConfigurationProvider;
 import com.synaptix.mybatis.guice.registry.GuiceMappedStatementFactoryRegistry;
@@ -18,9 +16,8 @@ import com.synaptix.mybatis.session.factory.IResultMapFactory;
 import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;
 import mapper.UserMapper;
-import model.IAddress;
-import model.ICountry;
 import model.IUser;
+import model.UserBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.mybatis.guice.MyBatisModule;
 import org.mybatis.guice.datasource.builtin.PooledDataSourceProvider;
@@ -62,6 +59,9 @@ public class MainMyBatis {
                 mappedStatementFactoryMultibinder.addBinding().to(FindEntityByIdMappedStatementFactory.class);
                 mappedStatementFactoryMultibinder.addBinding().to(FindComponentsByMappedStatementFactory.class);
                 mappedStatementFactoryMultibinder.addBinding().to(FindComponentsByJoinTableMappedStatementFactory.class);
+                mappedStatementFactoryMultibinder.addBinding().to(InsertMappedStatementFactory.class);
+                mappedStatementFactoryMultibinder.addBinding().to(UpdateMappedStatementFactory.class);
+                mappedStatementFactoryMultibinder.addBinding().to(DeleteMappedStatementFactory.class);
             }
 
             private Properties createTestProperties() {
@@ -80,15 +80,23 @@ public class MainMyBatis {
         fooService.init();
 
         IUser user = fooService.findById(IUser.class, IdFactory.IdString.from("1"));
-        //System.out.println(user.getCountry());
-        //System.out.println(user.getGroups().size());
-        IAddress address = user.getAddress();
-        ICountry country = address.getCountry();
+        System.out.println(user.getVersion());
 
-        System.out.println(user.getAddresses());
-        //System.out.println(user.getGroups());
-        //System.out.println(fooService.findUserById(IdFactory.IdString.from("1")));
-        //System.out.println(fooService.findUserByLogin("sandra"));
+        System.out.println(fooService.update(IUser.class, user));
+
+        user = fooService.findById(IUser.class, IdFactory.IdString.from("1"));
+        System.out.println(user.getVersion());
+
+        IUser user2 = UserBuilder.newBuilder().id(IdFactory.IdString.from("10")).login("test").build();
+        System.out.println(fooService.insert(IUser.class, user2));
+        System.out.println(user2);
+
+        user = fooService.findById(IUser.class, user2.getId());
+        System.out.println(user);
+
+        System.out.println(fooService.delete(IUser.class, user));
+        user = fooService.findById(IUser.class, user2.getId());
+        System.out.println(user);
     }
 }
 

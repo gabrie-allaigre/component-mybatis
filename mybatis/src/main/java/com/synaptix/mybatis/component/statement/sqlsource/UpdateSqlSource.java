@@ -76,14 +76,21 @@ public class UpdateSqlSource<E extends IComponent> implements SqlSource {
         sqlBuilder.UPDATE(entity.name());
         for (ComponentDescriptor.PropertyDescriptor propertyDescriptor : cd.getPropertyDescriptors()) {
             if (propertyDescriptor != idPropertyDescriptor && propertyDescriptor != versionPropertyDescriptor) {
-                sqlBuilder.SET(ComponentMyBatisHelper.buildSetColumn(cd, propertyDescriptor));
+                String c = ComponentMyBatisHelper.buildSetColumn(cd, propertyDescriptor);
+                if (c != null) {
+                    sqlBuilder.SET(c);
+                }
             }
         }
-        if (versionPropertyDescriptor != null) {
+        if (versionPropertyDescriptor != null && versionSetColumn != null) {
             sqlBuilder.SET(versionSetColumn + " + 1");
         }
-        sqlBuilder.WHERE(ComponentMyBatisHelper.buildSetIdColumn(cd, idPropertyDescriptor));
-        if (versionPropertyDescriptor != null) {
+        String i = ComponentMyBatisHelper.buildSetIdColumn(cd, idPropertyDescriptor);
+        if (i == null) {
+            throw new IllegalArgumentException("Not found annotation column for Component=" + componentClass + " property=" + idPropertyDescriptor.getPropertyName());
+        }
+        sqlBuilder.WHERE(i);
+        if (versionPropertyDescriptor != null && versionSetColumn != null) {
             sqlBuilder.WHERE(versionSetColumn);
         }
         String sql = sqlBuilder.toString();

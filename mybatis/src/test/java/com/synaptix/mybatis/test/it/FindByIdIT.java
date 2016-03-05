@@ -50,4 +50,14 @@ public class FindByIdIT extends AbstractIntegration {
         softAssertions.assertThat(country.getCreatedBy()).isEqualTo("GABY");
         softAssertions.assertAll();
     }
+
+    @Test
+    public void testCollection() {
+        IUser user = sqlSessionManager.<IUser>selectOne(StatementNameHelper.buildFindEntityByIdKey(IUser.class), IdFactory.IdString.from("1"));
+
+        Assertions.assertThat(user.getGroups()).isNotNull().hasSize(2);
+
+        Assertions.assertThat(user.getAddresses()).isNotNull().hasSize(3);
+
+    }
 }

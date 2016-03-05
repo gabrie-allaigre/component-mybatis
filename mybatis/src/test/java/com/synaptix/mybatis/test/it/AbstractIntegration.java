@@ -1,12 +1,12 @@
 package com.synaptix.mybatis.test.it;
 
+import com.synaptix.mybatis.component.cache.ComponentCacheFactory;
 import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.factory.ComponentProxyFactory;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
-import com.synaptix.mybatis.component.statement.FindComponentsByJoinTableMappedStatementFactory;
-import com.synaptix.mybatis.component.statement.FindComponentsByMappedStatementFactory;
-import com.synaptix.mybatis.component.statement.FindEntityByIdMappedStatementFactory;
+import com.synaptix.mybatis.component.statement.*;
 import com.synaptix.mybatis.session.SynaptixConfiguration;
+import com.synaptix.mybatis.session.registry.CacheFactoryRegistryBuilder;
 import com.synaptix.mybatis.session.registry.MappedStatementFactoryRegistryBuilder;
 import com.synaptix.mybatis.session.registry.ResultMapFactoryRegistryBuilder;
 import com.synaptix.mybatis.simple.handler.IdTypeHandler;
@@ -39,10 +39,15 @@ public abstract class AbstractIntegration {
 
         SynaptixConfiguration synaptixConfiguration = new SynaptixConfiguration(environment);
         synaptixConfiguration.setMappedStatementFactoryRegistry(MappedStatementFactoryRegistryBuilder.newBuilder().addMappedStatementFactory(new FindEntityByIdMappedStatementFactory())
-                .addMappedStatementFactory(new FindComponentsByMappedStatementFactory()).addMappedStatementFactory(new FindComponentsByJoinTableMappedStatementFactory()).build());
+                .addMappedStatementFactory(new FindComponentsByMappedStatementFactory()).addMappedStatementFactory(new FindComponentsByJoinTableMappedStatementFactory())
+                .addMappedStatementFactory(new InsertMappedStatementFactory()).addMappedStatementFactory(new UpdateMappedStatementFactory())
+                .addMappedStatementFactory(new DeleteMappedStatementFactory()).build());
         synaptixConfiguration.setResultMapFactoryRegistry(ResultMapFactoryRegistryBuilder.newBuilder().addResultMapFactory(new ComponentResultMapFactory()).build());
+        synaptixConfiguration.setCacheFactoryRegistry(CacheFactoryRegistryBuilder.newBuilder().addCacheFactory(new ComponentCacheFactory()).build());
         synaptixConfiguration.setObjectFactory(new ComponentObjectFactory());
         synaptixConfiguration.setProxyFactory(new ComponentProxyFactory());
+        synaptixConfiguration.setLazyLoadingEnabled(true);
+        synaptixConfiguration.setAggressiveLazyLoading(false);
         synaptixConfiguration.getTypeHandlerRegistry().register(IdTypeHandler.class);
 
         configuration = synaptixConfiguration;

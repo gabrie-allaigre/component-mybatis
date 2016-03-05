@@ -5,10 +5,12 @@ import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.entity.annotation.Id;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
+import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.InsertSqlSource;
 import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.executor.keygen.NoKeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -68,12 +70,11 @@ public class InsertMappedStatementFactory extends AbstractMappedStatementFactory
             }
         }
 
-            /*SynaptixCacheManager.CacheResult cacheResult = cacheManager.getCache(componentClass);
-            if (cacheResult != null && cacheResult.isEnabled()) {
-                msBuilder.flushCacheRequired(false);
-                msBuilder.cache(cacheResult.getCache());
-                msBuilder.useCache(true);
-            }*/
+        Cache cache = configuration.getCache(CacheNameHelper.buildCacheKey(componentClass));
+        msBuilder.flushCacheRequired(true);
+        msBuilder.cache(cache);
+        msBuilder.useCache(true);
+
         return msBuilder.build();
     }
 

@@ -40,19 +40,21 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
 
     @Override
     public ResultMap createResultMap(Configuration configuration, String key) {
-        Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(key);
-        if (componentClass != null) {
-            return createComponentResultMap(configuration, componentClass);
+        if (ResultMapNameHelper.isResultMapKey(key)) {
+            String componentName = ResultMapNameHelper.extractComponentNameInResultMapKey(key);
+            Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(componentName);
+            if (componentClass != null) {
+                return createComponentResultMap(configuration, componentClass, key);
+            }
         }
         return null;
     }
 
-    private ResultMap createComponentResultMap(Configuration configuration, Class<? extends IComponent> componentClass) {
+    private ResultMap createComponentResultMap(Configuration configuration, Class<? extends IComponent> componentClass, String key) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create ResultMap for " + componentClass);
         }
 
-        String key = componentClass.getName();
         List<ResultMapping> resultMappings = createResultMappings(configuration, componentClass);
         ResultMap.Builder inlineResultMapBuilder = new ResultMap.Builder(configuration, key, componentClass, resultMappings, null);
         return inlineResultMapBuilder.build();

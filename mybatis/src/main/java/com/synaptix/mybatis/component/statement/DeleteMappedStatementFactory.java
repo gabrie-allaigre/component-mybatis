@@ -2,8 +2,10 @@ package com.synaptix.mybatis.component.statement;
 
 import com.synaptix.component.IComponent;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
+import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.DeleteSqlSource;
 import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -38,12 +40,10 @@ public class DeleteMappedStatementFactory extends AbstractMappedStatementFactory
         ResultMap inlineResultMap = new ResultMap.Builder(configuration, key + "-Inline", Integer.class, new ArrayList<>(), null).build();
         MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new DeleteSqlSource<E>(configuration, componentClass), SqlCommandType.DELETE);
         msBuilder.resultMaps(Arrays.asList(inlineResultMap));
-            /*SynaptixCacheManager.CacheResult cacheResult = cacheManager.getCache(componentClass);
-            if (cacheResult != null && cacheResult.isEnabled()) {
-                msBuilder.flushCacheRequired(false);
-                msBuilder.cache(cacheResult.getCache());
-                msBuilder.useCache(true);
-            }*/
+        Cache cache = configuration.getCache(CacheNameHelper.buildCacheKey(componentClass));
+        msBuilder.flushCacheRequired(true);
+        msBuilder.cache(cache);
+        msBuilder.useCache(true);
         return msBuilder.build();
     }
 }

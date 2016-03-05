@@ -1,5 +1,6 @@
 package com.synaptix.mybatis.test.unit;
 
+import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
 import com.synaptix.mybatis.test.data.IGroup;
 import com.synaptix.mybatis.test.data.IUser;
@@ -345,5 +346,4 @@ public class StatementNameTest {
         softAssertions.assertThat(StatementNameHelper.extractComponentNameInDeleteKey("com.model.IUser/delete")).isEqualTo("com.model.IUser");
         softAssertions.assertAll();
     }
-
 }

@@ -4,15 +4,19 @@ import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.synaptix.entity.factory.IdFactory;
+import com.synaptix.mybatis.component.cache.ComponentCacheFactory;
 import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
 import com.synaptix.mybatis.component.statement.*;
 import com.synaptix.mybatis.guice.SimpleSynaptixMyBatisModule;
 import com.synaptix.mybatis.guice.SynaptixConfigurationProvider;
+import com.synaptix.mybatis.guice.registry.GuiceCacheFactoryRegistry;
 import com.synaptix.mybatis.guice.registry.GuiceMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.guice.registry.GuiceResultMapFactoryRegistry;
+import com.synaptix.mybatis.session.factory.ICacheFactory;
 import com.synaptix.mybatis.session.factory.IMappedStatementFactory;
 import com.synaptix.mybatis.session.factory.IResultMapFactory;
+import com.synaptix.mybatis.session.registry.ICacheFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;
 import mapper.UserMapper;
@@ -51,6 +55,7 @@ public class MainMyBatis {
 
                 bind(IResultMapFactoryRegistry.class).to(GuiceResultMapFactoryRegistry.class).in(Singleton.class);
                 bind(IMappedStatementFactoryRegistry.class).to(GuiceMappedStatementFactoryRegistry.class).in(Singleton.class);
+                bind(ICacheFactoryRegistry.class).to(GuiceCacheFactoryRegistry.class).in(Singleton.class);
 
                 Multibinder<IResultMapFactory> resultMapFactoryMultibinder = Multibinder.newSetBinder(binder(), IResultMapFactory.class);
                 resultMapFactoryMultibinder.addBinding().to(ComponentResultMapFactory.class);
@@ -62,6 +67,9 @@ public class MainMyBatis {
                 mappedStatementFactoryMultibinder.addBinding().to(InsertMappedStatementFactory.class);
                 mappedStatementFactoryMultibinder.addBinding().to(UpdateMappedStatementFactory.class);
                 mappedStatementFactoryMultibinder.addBinding().to(DeleteMappedStatementFactory.class);
+
+                Multibinder<ICacheFactory> cacheFactoryMultibinder = Multibinder.newSetBinder(binder(), ICacheFactory.class);
+                cacheFactoryMultibinder.addBinding().to(ComponentCacheFactory.class);
             }
 
             private Properties createTestProperties() {
@@ -80,13 +88,11 @@ public class MainMyBatis {
         fooService.init();
 
         IUser user = fooService.findById(IUser.class, IdFactory.IdString.from("1"));
-        System.out.println(user.getVersion());
-
+        System.out.println(user);
         System.out.println(fooService.update(IUser.class, user));
-
-        user = fooService.findById(IUser.class, IdFactory.IdString.from("1"));
-        System.out.println(user.getVersion());
-
+        IUser user2 = fooService.findById(IUser.class, IdFactory.IdString.from("1"));
+        //System.out.println(user.getVersion());
+/*
         IUser user2 = UserBuilder.newBuilder().id(IdFactory.IdString.from("10")).login("test").build();
         System.out.println(fooService.insert(IUser.class, user2));
         System.out.println(user2);
@@ -96,7 +102,7 @@ public class MainMyBatis {
 
         System.out.println(fooService.delete(IUser.class, user));
         user = fooService.findById(IUser.class, user2.getId());
-        System.out.println(user);
+        System.out.println(user);*/
     }
 }
 

@@ -1,7 +1,9 @@
 package com.synaptix.mybatis.session;
 
+import com.synaptix.mybatis.session.registry.ICacheFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
@@ -16,6 +18,8 @@ public class SynaptixConfiguration extends Configuration {
     protected IMappedStatementFactoryRegistry mappedStatementFactoryRegistry = null;
 
     protected IResultMapFactoryRegistry resultMapFactoryRegistry = null;
+
+    protected ICacheFactoryRegistry cacheFactoryRegistry = null;
 
     public SynaptixConfiguration() {
         super();
@@ -41,11 +45,47 @@ public class SynaptixConfiguration extends Configuration {
         this.resultMapFactoryRegistry = resultMapFactoryRegistry;
     }
 
+    public ICacheFactoryRegistry getCacheFactoryRegistry() {
+        return cacheFactoryRegistry;
+    }
+
+    public void setCacheFactoryRegistry(ICacheFactoryRegistry cacheFactoryRegistry) {
+        this.cacheFactoryRegistry = cacheFactoryRegistry;
+    }
+
+    @Override
+    public boolean hasCache(String id) {
+        boolean res = super.hasCache(id);
+        if (!res) {
+            res = verifyAndCreateCache(id);
+        }
+        return res;
+    }
+
+    @Override
+    public Cache getCache(String id) {
+        if (hasCache(id)) {
+            return super.getCache(id);
+        }
+        return super.getCache(id);
+    }
+
+    private synchronized boolean verifyAndCreateCache(String id) {
+        if (cacheFactoryRegistry != null) {
+            Cache cache = cacheFactoryRegistry.createCache(this, id);
+            if (cache != null) {
+                addCache(cache);
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean hasResultMap(String id) {
         boolean res = super.hasResultMap(id);
         if (!res) {
-            res = verifyAndCreateComponentResultMap(id);
+            res = verifyAndCreateResultMap(id);
         }
         return res;
     }
@@ -58,7 +98,7 @@ public class SynaptixConfiguration extends Configuration {
         return super.getResultMap(id);
     }
 
-    private synchronized boolean verifyAndCreateComponentResultMap(String id) {
+    private synchronized boolean verifyAndCreateResultMap(String id) {
         if (resultMapFactoryRegistry != null) {
             ResultMap resultMap = resultMapFactoryRegistry.createResultMap(this, id);
             if (resultMap != null) {
@@ -73,7 +113,7 @@ public class SynaptixConfiguration extends Configuration {
     public boolean hasStatement(String statementName, boolean validateIncompleteStatements) {
         boolean res = super.hasStatement(statementName, validateIncompleteStatements);
         if (!res) {
-            res = verifyAndCreateComponentMappedStatement(statementName);
+            res = verifyAndCreateMappedStatement(statementName);
         }
         return res;
     }
@@ -86,7 +126,7 @@ public class SynaptixConfiguration extends Configuration {
         return super.getMappedStatement(id, validateIncompleteStatements);
     }
 
-    private synchronized boolean verifyAndCreateComponentMappedStatement(String id) {
+    private synchronized boolean verifyAndCreateMappedStatement(String id) {
         if (mappedStatementFactoryRegistry != null) {
             MappedStatement mappedStatement = mappedStatementFactoryRegistry.createMappedStatement(this, id);
             if (mappedStatement != null) {

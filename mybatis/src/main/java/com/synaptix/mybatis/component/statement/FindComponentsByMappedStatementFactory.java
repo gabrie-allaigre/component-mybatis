@@ -2,8 +2,11 @@ package com.synaptix.mybatis.component.statement;
 
 import com.synaptix.component.IComponent;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
+import com.synaptix.mybatis.component.cache.CacheNameHelper;
+import com.synaptix.mybatis.component.resultmap.ResultMapNameHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.FindComponentsByPropertyNameSqlSource;
 import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -37,17 +40,15 @@ public class FindComponentsByMappedStatementFactory extends AbstractMappedStatem
             LOG.debug("Create findComponentsBy for " + componentClass);
         }
 
-        ResultMap inlineResultMap = configuration.getResultMap(componentClass.getName());
+        ResultMap inlineResultMap = configuration.getResultMap(ResultMapNameHelper.buildResultMapKey(componentClass));
 
         MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new FindComponentsByPropertyNameSqlSource<E>(configuration, componentClass, ignoreCancel, propertyNames),
                 SqlCommandType.SELECT);
         msBuilder.resultMaps(Arrays.asList(inlineResultMap));
-        /*SynaptixCacheManager.CacheResult cacheResult = cacheManager.getCache(componentClass);
-        if (cacheResult != null && cacheResult.isEnabled()) {
-            msBuilder.flushCacheRequired(false);
-            msBuilder.cache(cacheResult.getCache());
-            msBuilder.useCache(true);
-        }*/
+        Cache cache = configuration.getCache(CacheNameHelper.buildCacheKey(componentClass));
+        msBuilder.flushCacheRequired(false);
+        msBuilder.cache(cache);
+        msBuilder.useCache(true);
         return msBuilder.build();
     }
 }

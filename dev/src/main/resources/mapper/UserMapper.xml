@@ -4,10 +4,10 @@
 
 <mapper namespace="mapper.UserMapper">
 
-    <select id="selectAddressesByUserId" resultMap="model.IAddress">
+    <select id="selectAddressesByUserId" resultMap="model.IAddress/resultMap">
         select a.* from t_address a inner join t_asso_user_address u on u.address_id = a.id where u.user_id = #{param0}
     </select>
-    <select id="selectAddressesByUserId2" resultMap="model.IAddress">
+    <select id="selectAddressesByUserId2" resultMap="model.IAddress/resultMap">
         select a.* from t_address a inner join t_asso_toto_address u1 on u1.address_id = a.id inner join t_asso_user_toto u2 on u2.toto_id = u1.toto_id where u2.user_id = #{param0}
     </select>
 </mapper>

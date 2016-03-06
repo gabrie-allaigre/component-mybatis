@@ -38,7 +38,7 @@ public class DeleteMappedStatementFactory extends AbstractMappedStatementFactory
         }
 
         ResultMap inlineResultMap = new ResultMap.Builder(configuration, key + "-Inline", Integer.class, new ArrayList<>(), null).build();
-        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new DeleteSqlSource<E>(configuration, componentClass), SqlCommandType.DELETE);
+        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new DeleteSqlSource<>(configuration, componentClass), SqlCommandType.DELETE);
         msBuilder.resultMaps(Arrays.asList(inlineResultMap));
         Cache cache = configuration.getCache(CacheNameHelper.buildCacheKey(componentClass));
         msBuilder.flushCacheRequired(true);

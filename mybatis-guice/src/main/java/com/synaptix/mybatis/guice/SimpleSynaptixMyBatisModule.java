@@ -22,6 +22,6 @@ public class SimpleSynaptixMyBatisModule extends AbstractModule {
     }
 
     final <TH extends TypeHandler<? extends T>, T> void bindTypeHandler(Class<TH> typeHandlerType, Class<T> type) {
-        bind(typeHandlerType).toProvider(guicify(new TypeHandlerProvider<TH, T>(typeHandlerType, type))).in(Scopes.SINGLETON);
+        bind(typeHandlerType).toProvider(guicify(new TypeHandlerProvider<>(typeHandlerType, type))).in(Scopes.SINGLETON);
     }
 }

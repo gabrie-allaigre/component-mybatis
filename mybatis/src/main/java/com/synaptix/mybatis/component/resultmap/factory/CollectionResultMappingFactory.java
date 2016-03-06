@@ -26,6 +26,7 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
         super(Collection.class);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ResultMapping buildColumnResultMapping(Configuration configuration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         Collection collection = propertyDescriptor.getMethod().getAnnotation(Collection.class);
@@ -93,6 +94,7 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
         return resultMappingBuilder.build();
     }
 
+    @SuppressWarnings("unchecked")
     private <T> Type getCollectionElementType(TypeToken<T> typeToken) {
         Type collectionType = typeToken.getSupertype((Class<? super T>) java.util.Collection.class).getType();
 

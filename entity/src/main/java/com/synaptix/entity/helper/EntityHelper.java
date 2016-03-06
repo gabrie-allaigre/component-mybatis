@@ -8,13 +8,17 @@ import com.synaptix.entity.annotation.Version;
 
 public class EntityHelper {
 
+
+    private EntityHelper() {
+        super();
+    }
     /**
      * Find propertyName with annotation Id
      *
      * @param componentClass component class
      * @return propertyName
      */
-    public static final <E extends IComponent> String findIdPropertyName(Class<E> componentClass) {
+    public static <E extends IComponent> String findIdPropertyName(Class<E> componentClass) {
         ComponentDescriptor.PropertyDescriptor pd = findIdPropertyDescriptor(componentClass);
         if (pd != null) {
             return pd.getPropertyName();

@@ -2,13 +2,9 @@ package com.synaptix.mybatis.component.resultmap;
 
 import com.synaptix.component.IComponent;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class ResultMapNameHelper {
 

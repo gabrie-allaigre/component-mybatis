@@ -21,7 +21,6 @@ import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;
 import mapper.UserMapper;
 import model.IUser;
-import model.UserBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.mybatis.guice.MyBatisModule;
 import org.mybatis.guice.datasource.builtin.PooledDataSourceProvider;

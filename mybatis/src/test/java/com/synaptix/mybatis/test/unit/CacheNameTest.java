@@ -1,16 +1,9 @@
 package com.synaptix.mybatis.test.unit;
 
 import com.synaptix.mybatis.component.cache.CacheNameHelper;
-import com.synaptix.mybatis.component.statement.StatementNameHelper;
-import com.synaptix.mybatis.test.data.IGroup;
 import com.synaptix.mybatis.test.data.IUser;
-import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class CacheNameTest {
 

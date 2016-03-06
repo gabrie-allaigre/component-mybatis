@@ -50,8 +50,8 @@ public class ComponentProxyFactory implements org.apache.ibatis.executor.loader.
         Class<E> componentClass = ComponentFactory.getInstance().getComponentClass(component);
         ClassLoader classLoader = componentClass.getClassLoader();
         Class<?>[] interfaces = new Class[] { componentClass, WriteReplaceInterface.class, com.synaptix.component.factory.Proxy.class };
-        InvocationHandler proxy = new ComponentInvocationHandler<E>(componentClass, component, lazyLoader, configuration);
-        return (E) Proxy.newProxyInstance(classLoader, interfaces, proxy);
+        InvocationHandler proxy = new ComponentInvocationHandler<>(componentClass, component, lazyLoader, configuration);
+        return Proxy.newProxyInstance(classLoader, interfaces, proxy);
     }
 
     private class ComponentInvocationHandler<E extends IComponent> implements InvocationHandler {
@@ -76,6 +76,7 @@ public class ComponentProxyFactory implements org.apache.ibatis.executor.loader.
             this.aggressive = configuration.isAggressiveLazyLoading();
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             try {
@@ -148,10 +149,7 @@ public class ComponentProxyFactory implements org.apache.ibatis.executor.loader.
                 return false;
             }
             String name = method.getName();
-            if (name.equals(WRITE_REPLACE_METHOD)) {
-                return true;
-            }
-            return false;
+            return name.equals(WRITE_REPLACE_METHOD);
         }
 
         private boolean isFinalizeMethod(Method method) {
@@ -162,10 +160,7 @@ public class ComponentProxyFactory implements org.apache.ibatis.executor.loader.
                 return false;
             }
             String name = method.getName();
-            if (name.equals(FINALIZE_METHOD)) {
-                return true;
-            }
-            return false;
+            return name.equals(FINALIZE_METHOD);
         }
     }
 }

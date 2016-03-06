@@ -1,7 +1,6 @@
 package com.synaptix.mybatis.guice;
 
 import com.google.inject.Inject;
-import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.factory.ComponentProxyFactory;
 import com.synaptix.mybatis.session.SynaptixConfiguration;
 import com.synaptix.mybatis.session.registry.ICacheFactoryRegistry;

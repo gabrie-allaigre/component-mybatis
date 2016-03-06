@@ -57,8 +57,7 @@ public class UpdateSqlSource<E extends IComponent> implements SqlSource {
         if (StringUtils.isBlank(idPropertyName)) {
             throw new IllegalArgumentException("Not found annotation Id for Component=" + componentClass);
         }
-        ComponentDescriptor.PropertyDescriptor idPropertyDescriptor = null;
-        idPropertyDescriptor = cd.getPropertyDescriptor(idPropertyName);
+        ComponentDescriptor.PropertyDescriptor idPropertyDescriptor = cd.getPropertyDescriptor(idPropertyName);
         if (idPropertyDescriptor == null) {
             throw new IllegalArgumentException("Not found annotation Id for Component=" + componentClass);
         }

@@ -29,7 +29,7 @@ public class FindByIdIT extends AbstractIntegration {
     public void testAssociation() {
         IUser user = sqlSessionManager.<IUser>selectOne(StatementNameHelper.buildFindEntityByIdKey(IUser.class), IdFactory.IdString.from("1"));
 
-        IAddress address = user.getAddress();;
+        IAddress address = user.getAddress();
 
         Assertions.assertThat(address).isNotNull();
         SoftAssertions softAssertions = new SoftAssertions();

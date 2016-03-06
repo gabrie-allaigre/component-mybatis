@@ -47,7 +47,7 @@ public class InsertMappedStatementFactory extends AbstractMappedStatementFactory
         }
 
         ResultMap inlineResultMap = new ResultMap.Builder(configuration, key + "-Inline", Integer.class, new ArrayList<>(), null).build();
-        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new InsertSqlSource<E>(configuration, componentClass), SqlCommandType.INSERT);
+        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new InsertSqlSource<>(configuration, componentClass), SqlCommandType.INSERT);
         msBuilder.resultMaps(Collections.singletonList(inlineResultMap));
 
         ComponentDescriptor.PropertyDescriptor idPropertyDescriptor = EntityHelper.findIdPropertyDescriptor(componentClass);

@@ -19,7 +19,7 @@ public class IdTypeHandler extends BaseTypeHandler<Object> {
     public void setParameter(PreparedStatement ps, int i, Object parameter, JdbcType jdbcType) throws SQLException {
         if (parameter == null) {
             try {
-                ps.setNull(i, jdbcType.VARCHAR.TYPE_CODE);
+                ps.setNull(i, JdbcType.VARCHAR.TYPE_CODE);
             } catch (SQLException e) {
                 throw new TypeException("Error setting null for parameter #" + i + " with JdbcType " + jdbcType + " . "
                         + "Try setting a different JdbcType for this parameter or a different jdbcTypeForNull configuration property. " + "Cause: " + e, e);

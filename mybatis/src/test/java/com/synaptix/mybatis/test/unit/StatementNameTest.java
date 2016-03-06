@@ -1,6 +1,5 @@
 package com.synaptix.mybatis.test.unit;
 
-import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
 import com.synaptix.mybatis.test.data.IGroup;
 import com.synaptix.mybatis.test.data.IUser;

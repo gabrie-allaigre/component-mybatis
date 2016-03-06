@@ -45,7 +45,7 @@ public class UpdateMappedStatementFactory extends AbstractMappedStatementFactory
         ComponentDescriptor.PropertyDescriptor versionPropertyDescriptor = EntityHelper.findVersionPropertyDescriptor(componentClass);
 
         ResultMap inlineResultMap = new ResultMap.Builder(configuration, key + "-Inline", Integer.class, new ArrayList<>(), null).build();
-        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new UpdateSqlSource<E>(configuration, componentClass), SqlCommandType.UPDATE);
+        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new UpdateSqlSource<>(configuration, componentClass), SqlCommandType.UPDATE);
         msBuilder.resultMaps(Arrays.asList(inlineResultMap));
         if (versionPropertyDescriptor != null) {
             msBuilder.keyGenerator(new VersionKeyGenerator(versionPropertyDescriptor.getPropertyName(),

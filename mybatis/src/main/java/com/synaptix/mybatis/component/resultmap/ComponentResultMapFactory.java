@@ -63,7 +63,7 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
     private List<ResultMapping> createResultMappings(Configuration configuration, Class<? extends IComponent> componentClass) {
         ComponentDescriptor<?> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
 
-        List<ResultMapping> resultMappings = new ArrayList<ResultMapping>();
+        List<ResultMapping> resultMappings = new ArrayList<>();
 
         Set<String> propertyNames = componentDescriptor.getPropertyNames();
         for (String propertyName : propertyNames) {

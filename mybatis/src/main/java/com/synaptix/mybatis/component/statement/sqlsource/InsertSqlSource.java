@@ -63,14 +63,12 @@ public class InsertSqlSource<E extends IComponent> implements SqlSource {
 
         SQL sqlBuilder = new SQL();
         sqlBuilder.INSERT_INTO(entity.name());
-        for (ComponentDescriptor.PropertyDescriptor propertyDescriptor : cd.getPropertyDescriptors()) {
-            if (component.straightGetProperty(propertyDescriptor.getPropertyName()) != null) {
-                Column column = ComponentMyBatisHelper.getColumnAnnotation(cd, propertyDescriptor);
-                if (column != null) {
-                    sqlBuilder.VALUES(column.name(), ComponentMyBatisHelper.buildColumn(cd, propertyDescriptor, column));
-                }
+        cd.getPropertyDescriptors().stream().filter(propertyDescriptor -> component.straightGetProperty(propertyDescriptor.getPropertyName()) != null).forEach(propertyDescriptor -> {
+            Column column = ComponentMyBatisHelper.getColumnAnnotation(cd, propertyDescriptor);
+            if (column != null) {
+                sqlBuilder.VALUES(column.name(), ComponentMyBatisHelper.buildColumn(cd, propertyDescriptor, column));
             }
-        }
+        });
         String sql = sqlBuilder.toString();
         if (LOG.isDebugEnabled()) {
             LOG.debug(sql);

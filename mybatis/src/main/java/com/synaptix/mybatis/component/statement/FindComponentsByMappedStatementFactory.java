@@ -42,7 +42,7 @@ public class FindComponentsByMappedStatementFactory extends AbstractMappedStatem
 
         ResultMap inlineResultMap = configuration.getResultMap(ResultMapNameHelper.buildResultMapKey(componentClass));
 
-        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new FindComponentsByPropertyNameSqlSource<E>(configuration, componentClass, ignoreCancel, propertyNames),
+        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new FindComponentsByPropertyNameSqlSource<>(configuration, componentClass, ignoreCancel, propertyNames),
                 SqlCommandType.SELECT);
         msBuilder.resultMaps(Arrays.asList(inlineResultMap));
         Cache cache = configuration.getCache(CacheNameHelper.buildCacheKey(componentClass));

@@ -42,7 +42,7 @@ public class FindEntityByIdMappedStatementFactory extends AbstractMappedStatemen
 
         String idPropertyName = EntityHelper.findIdPropertyName(componentClass);
 
-        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new FindComponentsByPropertyNameSqlSource<E>(configuration, componentClass, false, idPropertyName),
+        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new FindComponentsByPropertyNameSqlSource<>(configuration, componentClass, false, idPropertyName),
                 SqlCommandType.SELECT);
         msBuilder.resultMaps(Arrays.asList(inlineResultMap));
         Cache cache = configuration.getCache(CacheNameHelper.buildCacheKey(componentClass));

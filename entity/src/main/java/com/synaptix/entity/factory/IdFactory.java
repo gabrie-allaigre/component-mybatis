@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class IdFactory {
 
-    public static IdFactory instance;
+    private static IdFactory instance;
 
     public IdFactory() {
         super();

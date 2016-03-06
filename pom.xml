@@ -57,16 +57,16 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://gitlab.talanlabs.com/synaptix/synaptix-mybatis-parent.git</connection>
-        <url>https://gitlab.talanlabs.com/synaptix/synaptix-mybatis-parent</url>
+        <connection>scm:git:https://gitlab.talanlabs.com/gabriel-allaigre/synaptix-mybatis-parent.git</connection>
+        <url>https://gitlab.talanlabs.com/gabriel-allaigre/synaptix-mybatis-parent</url>
     </scm>
     <ciManagement>
         <system>gitlab-ci</system>
-        <url>https://gitlab.talanlabs.com/synaptix/synaptix-mybatis-parent/builds</url>
+        <url>https://gitlab.talanlabs.com/gabriel-allaigre/synaptix-mybatis-parent/builds</url>
     </ciManagement>
     <issueManagement>
         <system>gitlab</system>
-        <url>https://gitlab.talanlabs.com/synaptix/synaptix-mybatis-parent/issues</url>
+        <url>https://gitlab.talanlabs.com/gabriel-allaigre/synaptix-mybatis-parent/issues</url>
     </issueManagement>
     <build>
         <plugins>
@@ -336,11 +336,11 @@
     </dependencies>
     <distributionManagement>
         <repository>
-            <id>synaptix-releases-repository</id>
+            <id>talanlabs-releases-repository</id>
             <url>http://nexus.talanlabs.com/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
-            <id>synaptix-snapshots-repository</id>
+            <id>talanlabs-snapshots-repository</id>
             <url>http://nexus.talanlabs.com/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>

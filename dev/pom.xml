@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>synaptix-mybatis-parent</artifactId>
+        <artifactId>component-mybatis-parent</artifactId>
         <groupId>com.synaptix</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
@@ -23,7 +23,7 @@
                         </goals>
                         <configuration>
                             <processors>
-                                <processor>com.synaptix.component.annotation.processor.SynaptixComponentProcessor</processor>
+                                <processor>com.synaptix.component.annotation.processor.ComponentBeanProcessor</processor>
                             </processors>
                         </configuration>
                     </execution>
@@ -31,8 +31,8 @@
                 <dependencies>
                     <dependency>
                         <groupId>com.synaptix</groupId>
-                        <artifactId>synaptix-component-apt</artifactId>
-                        <version>${synaptix-component.version}</version>
+                        <artifactId>component-bean-apt</artifactId>
+                        <version>${component-bean.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -48,12 +48,12 @@
     <dependencies>
         <dependency>
             <groupId>com.synaptix</groupId>
-            <artifactId>synaptix-mybatis</artifactId>
+            <artifactId>component-mybatis</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.synaptix</groupId>
-            <artifactId>synaptix-mybatis-guice</artifactId>
+            <artifactId>component-mybatis-guice</artifactId>
             <version>${project.version}</version>
         </dependency>
 

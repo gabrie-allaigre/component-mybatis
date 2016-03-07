@@ -1,6 +1,6 @@
 package com.synaptix.mybatis.test.data;
 
-import com.synaptix.component.annotation.SynaptixComponent;
+import com.synaptix.component.annotation.ComponentBean;
 import com.synaptix.entity.IEntity;
 import com.synaptix.entity.IId;
 import com.synaptix.entity.ITracable;
@@ -8,7 +8,7 @@ import com.synaptix.entity.annotation.*;
 
 import java.util.List;
 
-@SynaptixComponent
+@ComponentBean
 @Entity(name = "T_USER")
 public interface IUser extends IEntity, ITracable {
 

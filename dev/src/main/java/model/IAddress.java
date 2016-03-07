@@ -1,6 +1,6 @@
 package model;
 
-import com.synaptix.component.annotation.SynaptixComponent;
+import com.synaptix.component.annotation.ComponentBean;
 import com.synaptix.entity.IEntity;
 import com.synaptix.entity.IId;
 import com.synaptix.entity.ITracable;
@@ -8,7 +8,7 @@ import com.synaptix.entity.annotation.Association;
 import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
 
-@SynaptixComponent
+@ComponentBean
 @Entity(name = "T_ADDRESS")
 public interface IAddress extends IEntity, ITracable {
 

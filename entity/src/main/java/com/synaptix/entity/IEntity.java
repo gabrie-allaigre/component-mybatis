@@ -1,13 +1,13 @@
 package com.synaptix.entity;
 
 import com.synaptix.component.IComponent;
-import com.synaptix.component.annotation.SynaptixComponent;
+import com.synaptix.component.annotation.ComponentBean;
 import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Id;
 import com.synaptix.entity.annotation.Version;
 import com.synaptix.entity.helper.IdKeyGenerator;
 
-@SynaptixComponent
+@ComponentBean
 public interface IEntity extends IComponent {
 
     @EqualsKey

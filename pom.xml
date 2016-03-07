@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.synaptix</groupId>
-    <artifactId>synaptix-mybatis-parent</artifactId>
+    <artifactId>component-mybatis-parent</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
         <module>mybatis-guice</module>
     </modules>
     <packaging>pom</packaging>
-    <name>Synaptix - MyBatis - Parent</name>
+    <name>Component - MyBatis - Parent</name>
     <properties>
         <target.jdk>1.8</target.jdk>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -37,7 +37,7 @@
         <generated.sources.dir>${project.build.directory}/generated-sources/apt</generated.sources.dir>
         <generated.test.sources.dir>${project.build.directory}/generated-test-sources/apt</generated.test.sources.dir>
 
-        <synaptix-component.version>1.2.0-SNAPSHOT</synaptix-component.version>
+        <component-bean.version>1.2.0-SNAPSHOT</component-bean.version>
         <mybatis.version>3.3.1</mybatis.version>
         <mybatis-guice.version>3.8.0-SNAPSHOT</mybatis-guice.version>
         <guice.version>4.0</guice.version>
@@ -57,16 +57,16 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://gitlab.talanlabs.com/gabriel-allaigre/synaptix-mybatis-parent.git</connection>
-        <url>https://gitlab.talanlabs.com/gabriel-allaigre/synaptix-mybatis-parent</url>
+        <connection>scm:git:https://gitlab.talanlabs.com/gabriel-allaigre/component-mybatis-parent.git</connection>
+        <url>https://gitlab.talanlabs.com/gabriel-allaigre/component-mybatis-parent</url>
     </scm>
     <ciManagement>
         <system>gitlab-ci</system>
-        <url>https://gitlab.talanlabs.com/gabriel-allaigre/synaptix-mybatis-parent/builds</url>
+        <url>https://gitlab.talanlabs.com/gabriel-allaigre/component-mybatis-parent/builds</url>
     </ciManagement>
     <issueManagement>
         <system>gitlab</system>
-        <url>https://gitlab.talanlabs.com/gabriel-allaigre/synaptix-mybatis-parent/issues</url>
+        <url>https://gitlab.talanlabs.com/gabriel-allaigre/component-mybatis-parent/issues</url>
     </issueManagement>
     <build>
         <plugins>
@@ -324,13 +324,13 @@
 
         <dependency>
             <groupId>com.synaptix</groupId>
-            <artifactId>synaptix-component</artifactId>
-            <version>${synaptix-component.version}</version>
+            <artifactId>component-bean</artifactId>
+            <version>${component-bean.version}</version>
         </dependency>
         <dependency>
             <groupId>com.synaptix</groupId>
-            <artifactId>synaptix-component-apt</artifactId>
-            <version>${synaptix-component.version}</version>
+            <artifactId>component-bean-apt</artifactId>
+            <version>${component-bean.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

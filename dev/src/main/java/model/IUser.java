@@ -10,6 +10,7 @@ import java.util.List;
 
 @ComponentBean
 @Entity(name = "T_USER")
+@Cache
 public interface IUser extends IEntity, ITracable {
 
     @Column(name = "LOGIN")

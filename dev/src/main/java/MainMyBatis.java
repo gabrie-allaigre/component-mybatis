@@ -87,9 +87,9 @@ public class MainMyBatis {
         fooService.init();
 
         IUser user = fooService.findById(IUser.class, IdFactory.IdString.from("1"));
-        System.out.println(user);
-        System.out.println(fooService.update(IUser.class, user));
         IUser user2 = fooService.findById(IUser.class, IdFactory.IdString.from("1"));
+
+
         //System.out.println(user.getVersion());
 /*
         IUser user2 = UserBuilder.newBuilder().id(IdFactory.IdString.from("10")).login("test").build();

@@ -13,8 +13,12 @@ public class ComponentCacheFactory extends AbstractCacheFactory {
 
     private static final Logger LOG = LogManager.getLogger(ComponentCacheFactory.class);
 
+    private ComponentCacheManager componentCacheManager;
+
     public ComponentCacheFactory() {
         super();
+
+        this.componentCacheManager = new ComponentCacheManager();
     }
 
     @Override
@@ -29,12 +33,26 @@ public class ComponentCacheFactory extends AbstractCacheFactory {
         return null;
     }
 
-    private Cache createComponentCache(Configuration configuration, Class<? extends IComponent> componentClass, String key) {
+    private <E extends IComponent> Cache createComponentCache(Configuration configuration, Class<E> componentClass, String key) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create Cache for " + componentClass);
         }
 
-        CacheBuilder cacheBuilder = new CacheBuilder(key);
-        return cacheBuilder.build();
+        com.synaptix.entity.annotation.Cache cache = componentClass.getAnnotation(com.synaptix.entity.annotation.Cache.class);
+        if (cache == null) {
+            return new ComponentNoCache(key);
+        }
+
+        ComponentMyBatisHelper.findAllChildren(componentClass).forEach(subComponentClass -> {
+            componentCacheManager.putAdd(subComponentClass, componentClass);
+        });
+
+        if (cache.links() != null && cache.links().length > 0) {
+            for (Class<? extends IComponent> link : cache.links()) {
+                componentCacheManager.putAdd(link, componentClass);
+            }
+        }
+
+        return new CacheBuilder(key).build();//new ComponentCache<>(configuration, componentCacheManager, componentClass, key);
     }
 }

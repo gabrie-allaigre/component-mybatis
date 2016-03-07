@@ -43,8 +43,8 @@ public class AssociationResultMappingFactory extends AbstractResultMappingFactor
         }
         if (StringUtils.isNotBlank(assossiation.select())) {
             resultMappingBuilder.nestedQueryId(assossiation.select());
-        } else if (ComponentFactory.getInstance().isComponentType(propertyDescriptor.getPropertyType())) {
-            Class<? extends IComponent> subComponentClass = (Class<? extends IComponent>) propertyDescriptor.getPropertyClass();
+        } else if (ComponentFactory.getInstance().isComponentType(javaType)) {
+            Class<? extends IComponent> subComponentClass = (Class<? extends IComponent>) javaType;
             String[] propertyTarget = assossiation.propertyTarget();
             if (propertyTarget == null || propertyTarget.length == 0) {
                 propertyTarget = new String[] { EntityHelper.findIdPropertyName(subComponentClass) };

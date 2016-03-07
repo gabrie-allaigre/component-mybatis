@@ -1,6 +1,5 @@
 package com.synaptix.mybatis.component.resultmap.factory;
 
-import com.google.common.reflect.TypeToken;
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
@@ -9,15 +8,13 @@ import com.synaptix.entity.annotation.Collection;
 import com.synaptix.entity.annotation.FetchType;
 import com.synaptix.entity.annotation.JoinTable;
 import com.synaptix.entity.helper.EntityHelper;
+import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.ibatis.session.Configuration;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.WildcardType;
 import java.util.List;
 
 public class CollectionResultMappingFactory extends AbstractResultMappingFactory<Collection> {
@@ -56,14 +53,7 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
         if (StringUtils.isNotBlank(collection.select())) {
             resultMappingBuilder.nestedQueryId(collection.select());
         } else {
-            Class<?> ofType = collection.ofType();
-            if (ofType == null || ofType == void.class) {
-                Type type = getCollectionElementType(TypeToken.of(propertyDescriptor.getPropertyType()));
-                if (type == null) {
-                    throw new IllegalArgumentException("Not accept Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
-                }
-                ofType = TypeToken.of(type).getRawType();
-            }
+            Class<?> ofType = ComponentMyBatisHelper.getCollectionElementClass(componentDescriptor, propertyDescriptor, collection);
             if (!ComponentFactory.getInstance().isComponentType(ofType)) {
                 throw new IllegalArgumentException("Not accept Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
             }
@@ -92,18 +82,5 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
             }
         }
         return resultMappingBuilder.build();
-    }
-
-    @SuppressWarnings("unchecked")
-    private <T> Type getCollectionElementType(TypeToken<T> typeToken) {
-        Type collectionType = typeToken.getSupertype((Class<? super T>) java.util.Collection.class).getType();
-
-        if (collectionType instanceof WildcardType) {
-            collectionType = ((WildcardType) collectionType).getUpperBounds()[0];
-        }
-        if (collectionType instanceof ParameterizedType) {
-            return ((ParameterizedType) collectionType).getActualTypeArguments()[0];
-        }
-        return Object.class;
     }
 }

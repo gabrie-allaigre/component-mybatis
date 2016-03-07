@@ -8,10 +8,10 @@ import com.synaptix.entity.annotation.Version;
 
 public class EntityHelper {
 
-
     private EntityHelper() {
         super();
     }
+
     /**
      * Find propertyName with annotation Id
      *

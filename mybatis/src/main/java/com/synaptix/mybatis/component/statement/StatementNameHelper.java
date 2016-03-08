@@ -24,6 +24,8 @@ public class StatementNameHelper {
 
     private static final String DELETE_NAME = "delete";
 
+    private static final String NLS_NAME = "nls";
+
     private static final String PROPERTIES = "properties";
 
     private static final String SOURCE_PROPERTIES = "sourceProperties";
@@ -42,11 +44,11 @@ public class StatementNameHelper {
 
     private static final String COMPONENT_CLASS_PAT = "([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*";
 
-    private static final String PROPERTIE_PAT = "[a-zA-Z_$][a-zA-Z\\d_$]*";
+    private static final String PROPERTY_PAT = "[a-zA-Z_$][a-zA-Z\\d_$]*";
 
-    private static final String PROPERTIES_PAT = "(" + PROPERTIE_PAT + PROPERTIES_SEPARATOR + ")*" + PROPERTIE_PAT;
+    private static final String PROPERTIES_PAT = "(" + PROPERTY_PAT + PROPERTIES_SEPARATOR + ")*" + PROPERTY_PAT;
 
-    private static final String JOIN_PAT = PROPERTIE_PAT + ";" + PROPERTIES_PAT + ";" + PROPERTIES_PAT;
+    private static final String JOIN_PAT = PROPERTY_PAT + ";" + PROPERTIES_PAT + ";" + PROPERTIES_PAT;
 
     private static final String JOINS_PAT = "(" + JOIN_PAT + "#)*" + JOIN_PAT;
 
@@ -64,6 +66,8 @@ public class StatementNameHelper {
     private static final Pattern UPDATE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + UPDATE_NAME);
 
     private static final Pattern DELETE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + DELETE_NAME);
+
+    private static final Pattern NLS_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + NLS_NAME + "\\?");
 
     private StatementNameHelper() {
         super();

@@ -7,6 +7,7 @@ import com.synaptix.entity.ITracable;
 import com.synaptix.entity.annotation.Cache;
 import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
+import com.synaptix.entity.annotation.Nls;
 
 @Entity(name = "T_COUNTRY")
 @ComponentBean
@@ -19,6 +20,7 @@ public interface ICountry extends IEntity, ITracable, ICancellable {
     void setCode(String code);
 
     @Column(name = "NAME")
+    @Nls
     String getName();
 
     void setName(String name);

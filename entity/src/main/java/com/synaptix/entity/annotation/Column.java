@@ -16,7 +16,7 @@ public @interface Column {
     /**
      * Column name in database
      *
-     * @return
+     * @return name
      */
     String name();
 
@@ -30,14 +30,14 @@ public @interface Column {
     /**
      * Jdbc Type
      *
-     * @return
+     * @return type
      */
     JdbcType jdbcType() default JdbcType.UNDEFINED;
 
     /**
      * Type handler
      *
-     * @return
+     * @return handler
      */
     Class<? extends TypeHandler<?>> typeHandler() default UnknownTypeHandler.class;
 }

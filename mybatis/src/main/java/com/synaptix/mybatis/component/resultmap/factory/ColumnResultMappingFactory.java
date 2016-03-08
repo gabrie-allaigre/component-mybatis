@@ -10,7 +10,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 public class ColumnResultMappingFactory extends AbstractResultMappingFactory<Column> {
 
@@ -31,7 +31,7 @@ public class ColumnResultMappingFactory extends AbstractResultMappingFactory<Col
 
         ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(configuration, propertyDescriptor.getPropertyName(), columnName, javaType);
         if (propertyDescriptor.getMethod().isAnnotationPresent(Id.class)) {
-            resultMappingBuilder.flags(Arrays.asList(ResultFlag.ID));
+            resultMappingBuilder.flags(Collections.singletonList(ResultFlag.ID));
         }
         if (column.jdbcType() != null && !JdbcType.UNDEFINED.equals(column.jdbcType())) {
             resultMappingBuilder.jdbcType(column.jdbcType());

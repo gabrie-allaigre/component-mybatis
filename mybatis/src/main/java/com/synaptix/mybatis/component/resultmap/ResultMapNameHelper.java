@@ -13,7 +13,11 @@ public class ResultMapNameHelper {
     private static final String COMPONENT_CLASS_PAT = "([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*";
 
     private static final Pattern RESULT_MAP_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + RESULT_MAP_NAME);
-    
+
+    private ResultMapNameHelper() {
+        super();
+    }
+
     // ResultMap
 
     public static <E extends IComponent> String buildResultMapKey(Class<E> componentClass) {

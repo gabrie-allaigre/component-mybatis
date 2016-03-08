@@ -65,6 +65,10 @@ public class StatementNameHelper {
 
     private static final Pattern DELETE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + DELETE_NAME);
 
+    private StatementNameHelper() {
+        super();
+    }
+
     public static String buildParam(int i) {
         return PARAM + i;
     }

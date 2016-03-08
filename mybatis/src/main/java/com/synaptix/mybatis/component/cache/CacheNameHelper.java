@@ -14,6 +14,10 @@ public class CacheNameHelper {
 
     private static final Pattern CACHE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + CACHE_NAME);
 
+    private CacheNameHelper() {
+        super();
+    }
+
     // Cache
 
     public static <E extends IComponent> String buildCacheKey(Class<E> componentClass) {

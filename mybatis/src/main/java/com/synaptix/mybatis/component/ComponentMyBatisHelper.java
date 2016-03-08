@@ -180,18 +180,18 @@ public class ComponentMyBatisHelper {
      * @param componentClass component class
      * @return all children
      */
-    public static <E extends IComponent> Set<Class<? extends IComponent>> findAllChildren(Class<E> componentClass) {
+    public static <E extends IComponent> Set<Class<? extends IComponent>> findAllLinks(Class<E> componentClass) {
         Set<Class<? extends IComponent>> res = new HashSet<Class<? extends IComponent>>();
-        findAllChildren(res, componentClass);
+        findAllLinks(res, componentClass);
         return res;
     }
 
-    private static <E extends IComponent> void findAllChildren(Set<Class<? extends IComponent>> res, Class<E> componentClass) {
-        Set<Class<? extends IComponent>> childs = findChildren(componentClass);
+    private static <E extends IComponent> void findAllLinks(Set<Class<? extends IComponent>> res, Class<E> componentClass) {
+        Set<Class<? extends IComponent>> childs = findLinks(componentClass);
         if (childs != null && !childs.isEmpty()) {
             childs.stream().filter(child -> !res.contains(child)).forEach(child -> {
                 res.add(child);
-                findAllChildren(res, child);
+                findAllLinks(res, child);
             });
         }
     }
@@ -203,8 +203,16 @@ public class ComponentMyBatisHelper {
      * @return children
      */
     @SuppressWarnings("unchecked")
-    public static <E extends IComponent> Set<Class<? extends IComponent>> findChildren(Class<E> componentClass) {
+    private static <E extends IComponent> Set<Class<? extends IComponent>> findLinks(Class<E> componentClass) {
         Set<Class<? extends IComponent>> res = new HashSet<Class<? extends IComponent>>();
+
+        Cache cache = componentClass.getAnnotation(Cache.class);
+        if (cache != null && cache.links() != null && cache.links().length > 0) {
+            for (int i = 0; i < cache.links().length; i++) {
+                res.add(cache.links()[i]);
+            }
+        }
+
         ComponentDescriptor<E> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
         for (ComponentDescriptor.PropertyDescriptor propertyDescriptor : componentDescriptor.getPropertyDescriptors()) {
             if (propertyDescriptor.getMethod().isAnnotationPresent(Association.class)) {

@@ -15,7 +15,7 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class FindComponentsByJoinTableMappedStatementFactory extends AbstractMappedStatementFactory {
@@ -51,7 +51,7 @@ public class FindComponentsByJoinTableMappedStatementFactory extends AbstractMap
 
         MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key,
                 new FindComponentsByJoinTableSqlSource<E>(configuration, componentClass, sourceComponentClass, sourceProperties, targetProperties, joins, ignoreCancel), SqlCommandType.SELECT);
-        msBuilder.resultMaps(Arrays.asList(inlineResultMap));
+        msBuilder.resultMaps(Collections.singletonList(inlineResultMap));
         Cache cache = configuration.getCache(CacheNameHelper.buildCacheKey(componentClass));
         msBuilder.flushCacheRequired(false);
         msBuilder.cache(cache);

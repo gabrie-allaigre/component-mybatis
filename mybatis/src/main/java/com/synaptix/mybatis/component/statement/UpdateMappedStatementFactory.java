@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 public class UpdateMappedStatementFactory extends AbstractMappedStatementFactory {
 
@@ -46,7 +46,7 @@ public class UpdateMappedStatementFactory extends AbstractMappedStatementFactory
 
         ResultMap inlineResultMap = new ResultMap.Builder(configuration, key + "-Inline", Integer.class, new ArrayList<>(), null).build();
         MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new UpdateSqlSource<>(configuration, componentClass), SqlCommandType.UPDATE);
-        msBuilder.resultMaps(Arrays.asList(inlineResultMap));
+        msBuilder.resultMaps(Collections.singletonList(inlineResultMap));
         if (versionPropertyDescriptor != null) {
             msBuilder.keyGenerator(new VersionKeyGenerator(versionPropertyDescriptor.getPropertyName(),
                     Integer.class == versionPropertyDescriptor.getPropertyClass() || int.class == versionPropertyDescriptor.getPropertyClass()));

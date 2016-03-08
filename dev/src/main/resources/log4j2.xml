@@ -6,6 +6,8 @@
         </Console>
     </Appenders>
     <Loggers>
+        <Logger name="com.synaptix.mybatis.component.statement" level="error"/>
+        <Logger name="com.synaptix.mybatis.component.resultmap" level="error"/>
         <Root level="debug">
             <AppenderRef ref="Console"/>
         </Root>

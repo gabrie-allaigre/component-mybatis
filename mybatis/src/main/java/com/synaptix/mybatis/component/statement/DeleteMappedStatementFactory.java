@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 public class DeleteMappedStatementFactory extends AbstractMappedStatementFactory {
 
@@ -39,7 +39,7 @@ public class DeleteMappedStatementFactory extends AbstractMappedStatementFactory
 
         ResultMap inlineResultMap = new ResultMap.Builder(configuration, key + "-Inline", Integer.class, new ArrayList<>(), null).build();
         MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new DeleteSqlSource<>(configuration, componentClass), SqlCommandType.DELETE);
-        msBuilder.resultMaps(Arrays.asList(inlineResultMap));
+        msBuilder.resultMaps(Collections.singletonList(inlineResultMap));
         Cache cache = configuration.getCache(CacheNameHelper.buildCacheKey(componentClass));
         msBuilder.flushCacheRequired(true);
         msBuilder.cache(cache);

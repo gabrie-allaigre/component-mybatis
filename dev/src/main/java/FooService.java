@@ -21,10 +21,11 @@ public class FooService {
     private SqlSessionManager sqlSessionManager;
 
     @Transactional
-    public void init() {
+    public void init(String script) {
         ScriptRunner scriptRunner = new ScriptRunner(sqlSessionManager.getConnection());
+        scriptRunner.setLogWriter(null);
         try {
-            scriptRunner.runScript(Resources.getResourceAsReader("init-script.sql"));
+            scriptRunner.runScript(Resources.getResourceAsReader(script));
         } catch (IOException e) {
             e.printStackTrace();
         }

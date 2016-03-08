@@ -12,11 +12,11 @@ import java.lang.annotation.Target;
 public @interface Cache {
 
     /**
-     * If true, object is same instance for read else is new instance
+     * If false, object is same instance for read else is new instance
      *
      * @return default is false
      */
-    boolean readOnly() default false;
+    boolean readWrite() default false;
 
     /**
      * Cache size

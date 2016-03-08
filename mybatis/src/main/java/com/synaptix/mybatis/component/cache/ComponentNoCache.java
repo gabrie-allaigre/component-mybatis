@@ -11,20 +11,21 @@ public class ComponentNoCache<E extends IComponent> extends AbstractComponentCac
 
     @Override
     public void putObject(Object key, Object value) {
+        // Nothing
     }
 
     @Override
     public Object getObject(Object key) {
-        return null;
+        return null;// Nothing
     }
 
     @Override
     public Object removeObject(Object key) {
-        return null;
+        return null; // Nothing
     }
 
     @Override
     public int getSize() {
-        return 0;
+        return 0; // Nothing
     }
 }

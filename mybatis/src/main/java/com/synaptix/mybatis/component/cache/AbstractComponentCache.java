@@ -33,9 +33,7 @@ public abstract class AbstractComponentCache<E extends IComponent> implements Ca
         if (componentCacheManager.isDispatch()) {
             componentCacheManager.undispatch();
 
-            componentCacheManager.getCacheLinks(componentClass).forEach(cacheName -> {
-                configuration.getCache(cacheName).clear();
-            });
+            componentCacheManager.getCacheLinks(componentClass).forEach(cacheName -> configuration.getCache(cacheName).clear());
 
             componentCacheManager.dispatch();
 

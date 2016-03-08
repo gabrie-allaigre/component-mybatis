@@ -67,7 +67,7 @@ public class StatementNameHelper {
 
     private static final Pattern DELETE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + DELETE_NAME);
 
-    private static final Pattern NLS_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + NLS_NAME + "\\?");
+    private static final Pattern NLS_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + NLS_NAME);
 
     private StatementNameHelper() {
         super();
@@ -307,6 +307,32 @@ public class StatementNameHelper {
             return null;
         }
         Matcher m = DELETE_PATTERN.matcher(key);
+        m.find();
+        return m.group(1);
+    }
+
+    // Nls
+
+    public static <E extends IComponent> String buildNlsKey(Class<E> componentClass) {
+        if (componentClass == null) {
+            return null;
+        }
+        return componentClass.getCanonicalName() + "/" + NLS_NAME;
+    }
+
+    public static boolean isNlsKey(String key) {
+        if (StringUtils.isBlank(key)) {
+            return false;
+        }
+        Matcher m = NLS_PATTERN.matcher(key);
+        return m.matches();
+    }
+
+    public static String extractComponentNameInNlsKey(String key) {
+        if (!isNlsKey(key)) {
+            return null;
+        }
+        Matcher m = NLS_PATTERN.matcher(key);
         m.find();
         return m.group(1);
     }

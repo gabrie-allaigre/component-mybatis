@@ -345,4 +345,36 @@ public class StatementNameTest {
         softAssertions.assertThat(StatementNameHelper.extractComponentNameInDeleteKey("com.model.IUser/delete")).isEqualTo("com.model.IUser");
         softAssertions.assertAll();
     }
+
+    @Test
+    public void testBuildNlsKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.buildNlsKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.buildNlsKey(IUser.class)).isEqualTo("com.synaptix.mybatis.test.data.IUser/nls");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testIsNlsKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.isNlsKey(null)).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isNlsKey("com.model.IUser/nls")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isNlsKey("com.model.IUser1/nls")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isNlsKey("model.IUser/nls")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isNlsKey("IUser/nls")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isNlsKey("model.IUser")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isNlsKey("/nls")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isNlsKey("model-IUser/nls")).isFalse();
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractComponentNameInNlsKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInNlsKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInNlsKey("IUser/nls")).isEqualTo("IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInNlsKey("model.IUser/nls")).isEqualTo("model.IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentNameInNlsKey("com.model.IUser/nls")).isEqualTo("com.model.IUser");
+        softAssertions.assertAll();
+    }
 }

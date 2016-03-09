@@ -1,6 +1,7 @@
 package com.synaptix.mybatis.component.cache;
 
 import com.synaptix.component.IComponent;
+import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
@@ -20,6 +21,12 @@ public class CacheNameHelper {
 
     // Cache
 
+    /**
+     * Build cache key
+     *
+     * @param componentClass component class
+     * @return key
+     */
     public static <E extends IComponent> String buildCacheKey(Class<E> componentClass) {
         if (componentClass == null) {
             return null;
@@ -27,6 +34,12 @@ public class CacheNameHelper {
         return componentClass.getCanonicalName() + "/" + CACHE_NAME;
     }
 
+    /**
+     * Is a cache key
+     *
+     * @param key key
+     * @return true or false
+     */
     public static boolean isCacheKey(String key) {
         if (StringUtils.isBlank(key)) {
             return false;
@@ -35,12 +48,20 @@ public class CacheNameHelper {
         return m.matches();
     }
 
-    public static String extractComponentNameInCacheKey(String key) {
+    /**
+     * Extract component in the key
+     *
+     * @param key key
+     * @return component class
+     */
+    public static <E extends IComponent> Class<E> extractComponentClassInCacheKey(String key) {
         if (!isCacheKey(key)) {
             return null;
         }
         Matcher m = CACHE_PATTERN.matcher(key);
-        m.find();
-        return m.group(1);
+        if (!m.find()) {
+            return null;
+        }
+        return ComponentMyBatisHelper.loadComponentClass(m.group(1));
     }
 }

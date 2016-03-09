@@ -1,6 +1,7 @@
 package com.synaptix.mybatis.component.statement;
 
 import com.synaptix.component.IComponent;
+import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -73,12 +74,24 @@ public class StatementNameHelper {
         super();
     }
 
+    /**
+     * Get a param
+     *
+     * @param i number
+     * @return param + number
+     */
     public static String buildParam(int i) {
         return PARAM + i;
     }
 
     // FindEntityById
 
+    /**
+     * Build find entity by id key
+     *
+     * @param componentClass component class
+     * @return key
+     */
     public static <E extends IComponent> String buildFindEntityByIdKey(Class<E> componentClass) {
         if (componentClass == null) {
             return null;
@@ -86,6 +99,12 @@ public class StatementNameHelper {
         return componentClass.getCanonicalName() + "/" + FIND_ENTITY_BY_ID_NAME;
     }
 
+    /**
+     * Verify is find entity by id key
+     *
+     * @param key key
+     * @return true or false
+     */
     public static boolean isFindEntityByIdKey(String key) {
         if (StringUtils.isBlank(key)) {
             return false;
@@ -94,17 +113,33 @@ public class StatementNameHelper {
         return m.matches();
     }
 
-    public static String extractComponentNameInFindEntityByIdKey(String key) {
+    /**
+     * Extract component in the key
+     *
+     * @param key key
+     * @return component class
+     */
+    public static <E extends IComponent> Class<E> extractComponentClassInFindEntityByIdKey(String key) {
         if (!isFindEntityByIdKey(key)) {
             return null;
         }
         Matcher m = FIND_ENTITY_BY_ID_PATTERN.matcher(key);
-        m.find();
-        return m.group(1);
+        if (!m.find()) {
+            return null;
+        }
+        return ComponentMyBatisHelper.loadComponentClass(m.group(1));
     }
 
     // FindComponentsBy
 
+    /**
+     * Build find component by id key
+     *
+     * @param componentClass component class
+     * @param useCheckCancel use check cancel
+     * @param propertyNames  array of property
+     * @return key
+     */
     public static <E extends IComponent> String buildFindComponentsByKey(Class<E> componentClass, boolean useCheckCancel, String... propertyNames) {
         if (componentClass == null || propertyNames == null || propertyNames.length == 0) {
             return null;
@@ -114,6 +149,12 @@ public class StatementNameHelper {
                 "");
     }
 
+    /**
+     * Verify is find entity by id key
+     *
+     * @param key key
+     * @return true or false
+     */
     public static boolean isFindComponentsByKey(String key) {
         if (StringUtils.isBlank(key)) {
             return false;
@@ -122,35 +163,67 @@ public class StatementNameHelper {
         return m.matches();
     }
 
-    public static String extractComponentNameInFindComponentsByKey(String key) {
+    /**
+     * Extract component in the key
+     *
+     * @param key key
+     * @return component class
+     */
+    public static <E extends IComponent> Class<E> extractComponentClassInFindComponentsByKey(String key) {
         if (!isFindComponentsByKey(key)) {
             return null;
         }
         Matcher m = FIND_COMPONENTS_BY_PATTERN.matcher(key);
-        m.find();
-        return m.group(1);
+        if (!m.find()) {
+            return null;
+        }
+        return ComponentMyBatisHelper.loadComponentClass(m.group(1));
     }
 
+    /**
+     * Extract properties
+     *
+     * @param key key
+     * @return properties
+     */
     public static String[] extractPropertyNamesInFindComponentsByKey(String key) {
         if (!isFindComponentsByKey(key)) {
             return null;
         }
         Matcher m = FIND_COMPONENTS_BY_PATTERN.matcher(key);
-        m.find();
+        if (!m.find()) {
+            return null;
+        }
         return m.group(3).split(PROPERTIES_SEPARATOR);
     }
 
+    /**
+     * Extract ignore cancel
+     *
+     * @param key key
+     * @return true or false
+     */
     public static boolean isIgnoreCancelInFindComponentsByKey(String key) {
         if (!isFindComponentsByKey(key)) {
             return false;
         }
         Matcher m = FIND_COMPONENTS_BY_PATTERN.matcher(key);
-        m.find();
-        return IGNORE_CANCEL.equals(m.group(6));
+        return m.find() && IGNORE_CANCEL.equals(m.group(6));
     }
 
     // FindComponentsByJoinTable
 
+    /**
+     * Create a key for Find a components by join table
+     *
+     * @param sourceComponentClass source component class
+     * @param targetComponentClass target component class
+     * @param useCheckCancel       use check cancel
+     * @param joins                list of join
+     * @param sourceProperties     properties source
+     * @param targetProperties     properties target
+     * @return key
+     */
     public static <E extends IComponent, F extends IComponent> String buildFindComponentsByJoinTableKey(Class<E> sourceComponentClass, Class<F> targetComponentClass, boolean useCheckCancel,
             List<Pair<String, Pair<String[], String[]>>> joins, String[] sourceProperties, String[] targetProperties) {
         if (sourceComponentClass == null || targetComponentClass == null || sourceProperties == null || sourceProperties.length == 0 || joins == null || joins.size() == 0 || targetProperties == null
@@ -165,6 +238,12 @@ public class StatementNameHelper {
                 .join("#", js) + (useCheckCancel ? "&" + IGNORE_CANCEL : "");
     }
 
+    /**
+     * Verify is find components by join table key
+     *
+     * @param key key
+     * @return true or false
+     */
     public static boolean isFindComponentsByJoinTableKey(String key) {
         if (StringUtils.isBlank(key)) {
             return false;
@@ -173,48 +252,88 @@ public class StatementNameHelper {
         return m.matches();
     }
 
-    public static String extractComponentNameInFindComponentsByJoinTableKey(String key) {
+    /**
+     * Extract component in the key
+     *
+     * @param key key
+     * @return component class
+     */
+    public static <E extends IComponent> Class<E> extractComponentClassInFindComponentsByJoinTableKey(String key) {
         if (!isFindComponentsByJoinTableKey(key)) {
             return null;
         }
         Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
-        m.find();
-        return m.group(1);
+        if (!m.find()) {
+            return null;
+        }
+        return ComponentMyBatisHelper.loadComponentClass(m.group(1));
     }
 
-    public static String extractSourceComponentNameInFindComponentsByJoinTableKey(String key) {
+    /**
+     * Extract source component in the key
+     *
+     * @param key key
+     * @return component class
+     */
+    public static <E extends IComponent> Class<E> extractSourceComponentClassInFindComponentsByJoinTableKey(String key) {
         if (!isFindComponentsByJoinTableKey(key)) {
             return null;
         }
         Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
-        m.find();
-        return m.group(3);
+        if (!m.find()) {
+            return null;
+        }
+        return ComponentMyBatisHelper.loadComponentClass(m.group(3));
     }
 
+    /**
+     * Extract source properties
+     *
+     * @param key key
+     * @return properties
+     */
     public static String[] extractSourcePropertiesInFindComponentsByJoinTableKey(String key) {
         if (!isFindComponentsByJoinTableKey(key)) {
             return null;
         }
         Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
-        m.find();
+        if (!m.find()) {
+            return null;
+        }
         return m.group(5).split(PROPERTIES_SEPARATOR);
     }
 
+    /**
+     * Extract target properties
+     *
+     * @param key key
+     * @return properties
+     */
     public static String[] extractTargetPropertiesInFindComponentsByJoinTableKey(String key) {
         if (!isFindComponentsByJoinTableKey(key)) {
             return null;
         }
         Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
-        m.find();
+        if (!m.find()) {
+            return null;
+        }
         return m.group(7).split(PROPERTIES_SEPARATOR);
     }
 
+    /**
+     * Extract join table
+     *
+     * @param key key
+     * @return list of join
+     */
     public static List<Pair<String, Pair<String[], String[]>>> extractJoinInFindComponentsByJoinTableKey(String key) {
         if (!isFindComponentsByJoinTableKey(key)) {
             return null;
         }
         Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
-        m.find();
+        if (!m.find()) {
+            return null;
+        }
         String[] joins = m.group(9).split("#");
         List<Pair<String, Pair<String[], String[]>>> res = new ArrayList<>();
         for (String join : joins) {
@@ -224,17 +343,28 @@ public class StatementNameHelper {
         return res;
     }
 
+    /**
+     * Extract ignore cancel
+     *
+     * @param key key
+     * @return true or false
+     */
     public static boolean isIgnoreCancelInFindComponentsByJoinTableKey(String key) {
         if (!isFindComponentsByJoinTableKey(key)) {
             return false;
         }
         Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
-        m.find();
-        return IGNORE_CANCEL.equals(m.group(16));
+        return m.find() && IGNORE_CANCEL.equals(m.group(16));
     }
 
     // Insert
 
+    /**
+     * Build a insert key
+     *
+     * @param componentClass component class
+     * @return key
+     */
     public static <E extends IComponent> String buildInsertKey(Class<E> componentClass) {
         if (componentClass == null) {
             return null;
@@ -242,6 +372,12 @@ public class StatementNameHelper {
         return componentClass.getCanonicalName() + "/" + INSERT_NAME;
     }
 
+    /**
+     * Verify is insert key
+     *
+     * @param key key
+     * @return true or false
+     */
     public static boolean isInsertKey(String key) {
         if (StringUtils.isBlank(key)) {
             return false;
@@ -250,17 +386,31 @@ public class StatementNameHelper {
         return m.matches();
     }
 
-    public static String extractComponentNameInInsertKey(String key) {
+    /**
+     * Extract component in the key
+     *
+     * @param key key
+     * @return component class
+     */
+    public static <E extends IComponent> Class<E> extractComponentClassInInsertKey(String key) {
         if (!isInsertKey(key)) {
             return null;
         }
         Matcher m = INSERT_PATTERN.matcher(key);
-        m.find();
-        return m.group(1);
+        if (!m.find()) {
+            return null;
+        }
+        return ComponentMyBatisHelper.loadComponentClass(m.group(1));
     }
 
     // Update
 
+    /**
+     * Build update key
+     *
+     * @param componentClass component class
+     * @return key
+     */
     public static <E extends IComponent> String buildUpdateKey(Class<E> componentClass) {
         if (componentClass == null) {
             return null;
@@ -268,6 +418,12 @@ public class StatementNameHelper {
         return componentClass.getCanonicalName() + "/" + UPDATE_NAME;
     }
 
+    /**
+     * Verify is update key
+     *
+     * @param key key
+     * @return true or false
+     */
     public static boolean isUpdateKey(String key) {
         if (StringUtils.isBlank(key)) {
             return false;
@@ -276,17 +432,31 @@ public class StatementNameHelper {
         return m.matches();
     }
 
-    public static String extractComponentNameInUpdateKey(String key) {
+    /**
+     * Extract component in the key
+     *
+     * @param key key
+     * @return component class
+     */
+    public static <E extends IComponent> Class<E> extractComponentClassInUpdateKey(String key) {
         if (!isUpdateKey(key)) {
             return null;
         }
         Matcher m = UPDATE_PATTERN.matcher(key);
-        m.find();
-        return m.group(1);
+        if (!m.find()) {
+            return null;
+        }
+        return ComponentMyBatisHelper.loadComponentClass(m.group(1));
     }
 
     // Delete
 
+    /**
+     * Build delete key
+     *
+     * @param componentClass component class
+     * @return key
+     */
     public static <E extends IComponent> String buildDeleteKey(Class<E> componentClass) {
         if (componentClass == null) {
             return null;
@@ -294,6 +464,12 @@ public class StatementNameHelper {
         return componentClass.getCanonicalName() + "/" + DELETE_NAME;
     }
 
+    /**
+     * Verify is delete key
+     *
+     * @param key key
+     * @return true or false
+     */
     public static boolean isDeleteKey(String key) {
         if (StringUtils.isBlank(key)) {
             return false;
@@ -302,17 +478,31 @@ public class StatementNameHelper {
         return m.matches();
     }
 
-    public static String extractComponentNameInDeleteKey(String key) {
+    /**
+     * Extract component in the key
+     *
+     * @param key key
+     * @return component class
+     */
+    public static <E extends IComponent> Class<E> extractComponentClassInDeleteKey(String key) {
         if (!isDeleteKey(key)) {
             return null;
         }
         Matcher m = DELETE_PATTERN.matcher(key);
-        m.find();
-        return m.group(1);
+        if (!m.find()) {
+            return null;
+        }
+        return ComponentMyBatisHelper.loadComponentClass(m.group(1));
     }
 
     // Nls
 
+    /**
+     * Build nls key
+     *
+     * @param componentClass component class
+     * @return key
+     */
     public static <E extends IComponent> String buildNlsKey(Class<E> componentClass) {
         if (componentClass == null) {
             return null;
@@ -320,6 +510,12 @@ public class StatementNameHelper {
         return componentClass.getCanonicalName() + "/" + NLS_NAME;
     }
 
+    /**
+     * Verify is nls key
+     *
+     * @param key key
+     * @return true or false
+     */
     public static boolean isNlsKey(String key) {
         if (StringUtils.isBlank(key)) {
             return false;
@@ -328,12 +524,20 @@ public class StatementNameHelper {
         return m.matches();
     }
 
-    public static String extractComponentNameInNlsKey(String key) {
+    /**
+     * Extract component in the key
+     *
+     * @param key key
+     * @return component class
+     */
+    public static <E extends IComponent> Class<E> extractComponentClassInNlsKey(String key) {
         if (!isNlsKey(key)) {
             return null;
         }
         Matcher m = NLS_PATTERN.matcher(key);
-        m.find();
-        return m.group(1);
+        if (!m.find()) {
+            return null;
+        }
+        return ComponentMyBatisHelper.loadComponentClass(m.group(1));
     }
 }

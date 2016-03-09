@@ -1,7 +1,6 @@
 package com.synaptix.mybatis.component.statement;
 
 import com.synaptix.component.IComponent;
-import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.DeleteSqlSource;
 import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
@@ -23,8 +22,7 @@ public class DeleteMappedStatementFactory extends AbstractMappedStatementFactory
     @Override
     public MappedStatement createMappedStatement(Configuration configuration, String key) {
         if (StatementNameHelper.isDeleteKey(key)) {
-            String componentName = StatementNameHelper.extractComponentNameInDeleteKey(key);
-            Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(componentName);
+            Class<? extends IComponent> componentClass = StatementNameHelper.extractComponentClassInDeleteKey(key);
             if (componentClass != null) {
                 return createDeleteMappedStatement(configuration, key, componentClass);
             }

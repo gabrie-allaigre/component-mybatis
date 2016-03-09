@@ -38,10 +38,9 @@ public class StatementNameTest {
     @Test
     public void testExtractComponentNameInFindEntityByIdKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindEntityByIdKey(null)).isNull();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindEntityByIdKey("IUser/findEntityById")).isEqualTo("IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindEntityByIdKey("model.IUser/findEntityById")).isEqualTo("model.IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindEntityByIdKey("com.model.IUser/findEntityById")).isEqualTo("com.model.IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindEntityByIdKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindEntityByIdKey("com.synaptix.mybatis.test.data.IUser/findEntityById")).isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindEntityByIdKey("model.IUser/findEntityById")).isNull();
         softAssertions.assertAll();
     }
 
@@ -84,13 +83,13 @@ public class StatementNameTest {
     @Test
     public void testExtractComponentNameInFindComponentsByKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByKey(null)).isNull();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByKey("IUser/findComponentsBy?properties=login")).isEqualTo("IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByKey("model.IUser/findComponentsBy?properties=login")).isEqualTo("model.IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByKey("com.model.IUser/findComponentsBy?properties=login")).isEqualTo("com.model.IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByKey("com.model.IUser/findComponentsBy?properties=login,password")).isEqualTo("com.model.IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByKey("com.model.IUser/findComponentsBy?properties=login,password&ignoreCancel"))
-                .isEqualTo("com.model.IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindComponentsByKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindComponentsByKey("com.synaptix.mybatis.test.data.IUser/findComponentsBy?properties=login")).isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindComponentsByKey("model.IUser/findComponentsBy?properties=login")).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindComponentsByKey("com.synaptix.mybatis.test.data.IUser/findComponentsBy?properties=login,password"))
+                .isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindComponentsByKey("com.synaptix.mybatis.test.data.IUser/findComponentsBy?properties=login,password&ignoreCancel"))
+                .isEqualTo(IUser.class);
         softAssertions.assertAll();
     }
 
@@ -160,26 +159,26 @@ public class StatementNameTest {
     @Test
     public void testExtractComponentNameInFindComponentsByJoinTableKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByJoinTableKey(null)).isNull();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByJoinTableKey(
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindComponentsByJoinTableKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindComponentsByJoinTableKey(
                 "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=id&targetProperties=id&join=t_asso_group_user;group_id;user_id"))
-                .isEqualTo("com.synaptix.mybatis.test.data.IGroup");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInFindComponentsByJoinTableKey(
+                .isEqualTo(IGroup.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindComponentsByJoinTableKey(
                 "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=code,version&targetProperties=code&join=t_asso_group_toto;group_code,group_version;toto_id#t_asso_toto_user;toto_id;user_code"))
-                .isEqualTo("com.synaptix.mybatis.test.data.IGroup");
+                .isEqualTo(IGroup.class);
         softAssertions.assertAll();
     }
 
     @Test
     public void testExtractSourceComponentNameInFindComponentsByJoinTableKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(StatementNameHelper.extractSourceComponentNameInFindComponentsByJoinTableKey(null)).isNull();
-        softAssertions.assertThat(StatementNameHelper.extractSourceComponentNameInFindComponentsByJoinTableKey(
+        softAssertions.assertThat(StatementNameHelper.extractSourceComponentClassInFindComponentsByJoinTableKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractSourceComponentClassInFindComponentsByJoinTableKey(
                 "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=id&targetProperties=id&join=t_asso_group_user;group_id;user_id"))
-                .isEqualTo("com.synaptix.mybatis.test.data.IUser");
-        softAssertions.assertThat(StatementNameHelper.extractSourceComponentNameInFindComponentsByJoinTableKey(
+                .isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractSourceComponentClassInFindComponentsByJoinTableKey(
                 "com.synaptix.mybatis.test.data.IGroup/findComponentsByJoinTable?sourceComponent=com.synaptix.mybatis.test.data.IUser&sourceProperties=code,version&targetProperties=code&join=t_asso_group_toto;group_code,group_version;toto_id#t_asso_toto_user;toto_id;user_code"))
-                .isEqualTo("com.synaptix.mybatis.test.data.IUser");
+                .isEqualTo(IUser.class);
         softAssertions.assertAll();
     }
 
@@ -275,10 +274,9 @@ public class StatementNameTest {
     @Test
     public void testExtractComponentNameInInsertKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInInsertKey(null)).isNull();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInInsertKey("IUser/insert")).isEqualTo("IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInInsertKey("model.IUser/insert")).isEqualTo("model.IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInInsertKey("com.model.IUser/insert")).isEqualTo("com.model.IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInInsertKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInInsertKey("com.synaptix.mybatis.test.data.IUser/insert")).isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInInsertKey("model.IUser/insert")).isNull();
         softAssertions.assertAll();
     }
 
@@ -307,10 +305,9 @@ public class StatementNameTest {
     @Test
     public void testExtractComponentNameInUpdateKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInUpdateKey(null)).isNull();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInUpdateKey("IUser/update")).isEqualTo("IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInUpdateKey("model.IUser/update")).isEqualTo("model.IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInUpdateKey("com.model.IUser/update")).isEqualTo("com.model.IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInUpdateKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInUpdateKey("com.synaptix.mybatis.test.data.IUser/update")).isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInUpdateKey("model.IUser/update")).isNull();
         softAssertions.assertAll();
     }
 
@@ -339,10 +336,9 @@ public class StatementNameTest {
     @Test
     public void testExtractComponentNameInDeleteKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInDeleteKey(null)).isNull();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInDeleteKey("IUser/delete")).isEqualTo("IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInDeleteKey("model.IUser/delete")).isEqualTo("model.IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInDeleteKey("com.model.IUser/delete")).isEqualTo("com.model.IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInDeleteKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInDeleteKey("com.synaptix.mybatis.test.data.IUser/delete")).isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInDeleteKey("model.IUser/delete")).isNull();
         softAssertions.assertAll();
     }
 
@@ -371,10 +367,9 @@ public class StatementNameTest {
     @Test
     public void testExtractComponentNameInNlsKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInNlsKey(null)).isNull();
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInNlsKey("IUser/nls")).isEqualTo("IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInNlsKey("model.IUser/nls")).isEqualTo("model.IUser");
-        softAssertions.assertThat(StatementNameHelper.extractComponentNameInNlsKey("com.model.IUser/nls")).isEqualTo("com.model.IUser");
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInNlsKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInNlsKey("com.synaptix.mybatis.test.data.IUser/nls")).isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInNlsKey("model.IUser/nls")).isNull();
         softAssertions.assertAll();
     }
 }

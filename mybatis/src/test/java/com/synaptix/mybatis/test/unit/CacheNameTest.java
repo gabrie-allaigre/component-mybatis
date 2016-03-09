@@ -32,10 +32,9 @@ public class CacheNameTest {
     @Test
     public void testExtractComponentNameInCacheKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(CacheNameHelper.extractComponentNameInCacheKey(null)).isNull();
-        softAssertions.assertThat(CacheNameHelper.extractComponentNameInCacheKey("IUser/cache")).isEqualTo("IUser");
-        softAssertions.assertThat(CacheNameHelper.extractComponentNameInCacheKey("model.IUser/cache")).isEqualTo("model.IUser");
-        softAssertions.assertThat(CacheNameHelper.extractComponentNameInCacheKey("com.model.IUser/cache")).isEqualTo("com.model.IUser");
+        softAssertions.assertThat(CacheNameHelper.extractComponentClassInCacheKey(null)).isNull();
+        softAssertions.assertThat(CacheNameHelper.extractComponentClassInCacheKey("com.synaptix.mybatis.test.data.IUser/cache")).isEqualTo(IUser.class);
+        softAssertions.assertThat(CacheNameHelper.extractComponentClassInCacheKey("model.IUser/cache")).isNull();
         softAssertions.assertAll();
     }
 }

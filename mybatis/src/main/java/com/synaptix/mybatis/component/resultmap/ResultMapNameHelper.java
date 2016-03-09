@@ -1,6 +1,7 @@
 package com.synaptix.mybatis.component.resultmap;
 
 import com.synaptix.component.IComponent;
+import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
@@ -20,6 +21,12 @@ public class ResultMapNameHelper {
 
     // ResultMap
 
+    /**
+     * Build key for result map
+     *
+     * @param componentClass component class
+     * @return key
+     */
     public static <E extends IComponent> String buildResultMapKey(Class<E> componentClass) {
         if (componentClass == null) {
             return null;
@@ -27,6 +34,12 @@ public class ResultMapNameHelper {
         return componentClass.getCanonicalName() + "/" + RESULT_MAP_NAME;
     }
 
+    /**
+     * Is a result map key
+     *
+     * @param key key
+     * @return true or false
+     */
     public static boolean isResultMapKey(String key) {
         if (StringUtils.isBlank(key)) {
             return false;
@@ -35,12 +48,20 @@ public class ResultMapNameHelper {
         return m.matches();
     }
 
-    public static String extractComponentNameInResultMapKey(String key) {
+    /**
+     * Extract component in the key
+     *
+     * @param key key
+     * @return component class
+     */
+    public static <E extends IComponent> Class<E> extractComponentClassInResultMapKey(String key) {
         if (!isResultMapKey(key)) {
             return null;
         }
         Matcher m = RESULT_MAP_PATTERN.matcher(key);
-        m.find();
-        return m.group(1);
+        if (!m.find()) {
+            return null;
+        }
+        return ComponentMyBatisHelper.loadComponentClass(m.group(1));
     }
 }

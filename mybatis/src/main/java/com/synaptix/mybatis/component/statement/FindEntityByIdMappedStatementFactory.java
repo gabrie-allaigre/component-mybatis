@@ -2,7 +2,6 @@ package com.synaptix.mybatis.component.statement;
 
 import com.synaptix.component.IComponent;
 import com.synaptix.entity.helper.EntityHelper;
-import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.resultmap.ResultMapNameHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.FindComponentsByPropertyNameSqlSource;
@@ -24,8 +23,7 @@ public class FindEntityByIdMappedStatementFactory extends AbstractMappedStatemen
     @Override
     public MappedStatement createMappedStatement(Configuration configuration, String key) {
         if (StatementNameHelper.isFindEntityByIdKey(key)) {
-            String componentName = StatementNameHelper.extractComponentNameInFindEntityByIdKey(key);
-            Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(componentName);
+            Class<? extends IComponent> componentClass = StatementNameHelper.extractComponentClassInFindEntityByIdKey(key);
             if (componentClass != null) {
                 return createFindEntityByIdMappedStatement(configuration,key, componentClass);
             }

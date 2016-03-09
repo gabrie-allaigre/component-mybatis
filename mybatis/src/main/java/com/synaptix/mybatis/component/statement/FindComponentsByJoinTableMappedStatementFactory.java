@@ -1,7 +1,6 @@
 package com.synaptix.mybatis.component.statement;
 
 import com.synaptix.component.IComponent;
-import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.resultmap.ResultMapNameHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.FindComponentsByJoinTableSqlSource;
@@ -25,14 +24,12 @@ public class FindComponentsByJoinTableMappedStatementFactory extends AbstractMap
     @Override
     public MappedStatement createMappedStatement(Configuration configuration, String key) {
         if (StatementNameHelper.isFindComponentsByJoinTableKey(key)) {
-            String componentName = StatementNameHelper.extractComponentNameInFindComponentsByJoinTableKey(key);
-            String sourceComponentName = StatementNameHelper.extractSourceComponentNameInFindComponentsByJoinTableKey(key);
+            Class<? extends IComponent> componentClass = StatementNameHelper.extractComponentClassInFindComponentsByJoinTableKey(key);
+            Class<? extends IComponent> sourceComponentClass = StatementNameHelper.extractSourceComponentClassInFindComponentsByJoinTableKey(key);
             String[] sourceProperties = StatementNameHelper.extractSourcePropertiesInFindComponentsByJoinTableKey(key);
             String[] targetProperties = StatementNameHelper.extractTargetPropertiesInFindComponentsByJoinTableKey(key);
             List<Pair<String, Pair<String[], String[]>>> joins = StatementNameHelper.extractJoinInFindComponentsByJoinTableKey(key);
             boolean ignoreCancel = StatementNameHelper.isIgnoreCancelInFindComponentsByJoinTableKey(key);
-            Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(componentName);
-            Class<? extends IComponent> sourceComponentClass = ComponentMyBatisHelper.loadComponentClass(sourceComponentName);
             if (componentClass != null && sourceComponentClass != null && sourceProperties != null && sourceProperties.length > 0 && targetProperties != null && targetProperties.length > 0
                     && joins != null && !joins.isEmpty()) {
                 return createFindComponentsByJoinTableMappedStatement(configuration, key, componentClass, sourceComponentClass, sourceProperties, targetProperties, joins, ignoreCancel);

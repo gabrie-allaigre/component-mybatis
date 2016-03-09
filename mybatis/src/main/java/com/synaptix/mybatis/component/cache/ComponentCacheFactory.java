@@ -28,8 +28,7 @@ public class ComponentCacheFactory extends AbstractCacheFactory {
     @Override
     public Cache createCache(Configuration configuration, String key) {
         if (CacheNameHelper.isCacheKey(key)) {
-            String componentName = CacheNameHelper.extractComponentNameInCacheKey(key);
-            Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(componentName);
+            Class<? extends IComponent> componentClass =  CacheNameHelper.extractComponentClassInCacheKey(key);
             if (componentClass != null) {
                 return createComponentCache(configuration, componentClass, key);
             }

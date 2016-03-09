@@ -3,7 +3,6 @@ package com.synaptix.mybatis.component.resultmap;
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
-import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.resultmap.factory.AssociationResultMappingFactory;
 import com.synaptix.mybatis.component.resultmap.factory.CollectionResultMappingFactory;
 import com.synaptix.mybatis.component.resultmap.factory.ColumnResultMappingFactory;
@@ -41,8 +40,7 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
     @Override
     public ResultMap createResultMap(Configuration configuration, String key) {
         if (ResultMapNameHelper.isResultMapKey(key)) {
-            String componentName = ResultMapNameHelper.extractComponentNameInResultMapKey(key);
-            Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(componentName);
+            Class<? extends IComponent> componentClass = ResultMapNameHelper.extractComponentClassInResultMapKey(key);
             if (componentClass != null) {
                 return createComponentResultMap(configuration, componentClass, key);
             }

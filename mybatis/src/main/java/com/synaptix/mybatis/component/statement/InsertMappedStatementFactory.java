@@ -4,7 +4,6 @@ import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.entity.annotation.Id;
 import com.synaptix.entity.helper.EntityHelper;
-import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.InsertSqlSource;
 import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
@@ -32,8 +31,7 @@ public class InsertMappedStatementFactory extends AbstractMappedStatementFactory
     @Override
     public MappedStatement createMappedStatement(Configuration configuration, String key) {
         if (StatementNameHelper.isInsertKey(key)) {
-            String componentName = StatementNameHelper.extractComponentNameInInsertKey(key);
-            Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(componentName);
+            Class<? extends IComponent> componentClass = StatementNameHelper.extractComponentClassInInsertKey(key);
             if (componentClass != null) {
                 return createInsertMappedStatement(configuration, key, componentClass);
             }

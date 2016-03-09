@@ -3,7 +3,6 @@ package com.synaptix.mybatis.component.statement;
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.entity.helper.EntityHelper;
-import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.UpdateSqlSource;
 import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
@@ -28,8 +27,7 @@ public class UpdateMappedStatementFactory extends AbstractMappedStatementFactory
     @Override
     public MappedStatement createMappedStatement(Configuration configuration, String key) {
         if (StatementNameHelper.isUpdateKey(key)) {
-            String componentName = StatementNameHelper.extractComponentNameInUpdateKey(key);
-            Class<? extends IComponent> componentClass = ComponentMyBatisHelper.loadComponentClass(componentName);
+            Class<? extends IComponent> componentClass = StatementNameHelper.extractComponentClassInUpdateKey(key);
             if (componentClass != null) {
                 return createUpdateMappedStatement(configuration, key, componentClass);
             }

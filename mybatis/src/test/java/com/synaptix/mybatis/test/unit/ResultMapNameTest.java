@@ -32,10 +32,9 @@ public class ResultMapNameTest {
     @Test
     public void testExtractComponentNameInResultMapKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(ResultMapNameHelper.extractComponentNameInResultMapKey(null)).isNull();
-        softAssertions.assertThat(ResultMapNameHelper.extractComponentNameInResultMapKey("IUser/resultMap")).isEqualTo("IUser");
-        softAssertions.assertThat(ResultMapNameHelper.extractComponentNameInResultMapKey("model.IUser/resultMap")).isEqualTo("model.IUser");
-        softAssertions.assertThat(ResultMapNameHelper.extractComponentNameInResultMapKey("com.model.IUser/resultMap")).isEqualTo("com.model.IUser");
+        softAssertions.assertThat(ResultMapNameHelper.extractComponentClassInResultMapKey(null)).isNull();
+        softAssertions.assertThat(ResultMapNameHelper.extractComponentClassInResultMapKey("com.synaptix.mybatis.test.data.IUser/resultMap")).isEqualTo(IUser.class);
+        softAssertions.assertThat(ResultMapNameHelper.extractComponentClassInResultMapKey("com.model.IUser/resultMap")).isNull();
         softAssertions.assertAll();
     }
 }

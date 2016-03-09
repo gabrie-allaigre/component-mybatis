@@ -7,12 +7,12 @@ import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.session.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,11 +24,11 @@ public class InsertSqlSource<E extends IComponent> implements SqlSource {
 
     private final SqlSourceBuilder sqlSourceParser;
 
-    public InsertSqlSource(Configuration configuration, Class<E> componentClass) {
+    public InsertSqlSource(ComponentConfiguration componentConfiguration, Class<E> componentClass) {
         super();
 
         this.componentClass = componentClass;
-        this.sqlSourceParser = new SqlSourceBuilder(configuration);
+        this.sqlSourceParser = new SqlSourceBuilder(componentConfiguration);
     }
 
     @Override

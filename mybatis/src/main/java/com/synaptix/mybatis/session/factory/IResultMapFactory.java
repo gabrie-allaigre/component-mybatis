@@ -1,10 +1,10 @@
 package com.synaptix.mybatis.session.factory;
 
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import org.apache.ibatis.mapping.ResultMap;
-import org.apache.ibatis.session.Configuration;
 
 public interface IResultMapFactory {
 
-    ResultMap createResultMap(Configuration configuration, String key);
+    ResultMap createResultMap(ComponentConfiguration componentConfiguration, String key);
 
 }

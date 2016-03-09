@@ -5,7 +5,7 @@ import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.factory.ComponentProxyFactory;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
 import com.synaptix.mybatis.component.statement.*;
-import com.synaptix.mybatis.session.SynaptixConfiguration;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import com.synaptix.mybatis.session.registry.CacheFactoryRegistryBuilder;
 import com.synaptix.mybatis.session.registry.MappedStatementFactoryRegistryBuilder;
 import com.synaptix.mybatis.session.registry.ResultMapFactoryRegistryBuilder;
@@ -37,20 +37,20 @@ public abstract class AbstractIntegration {
         Environment environment = new Environment.Builder("test").dataSource(new PooledDataSource(null, "org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:mybatis-guice_TEST", "sa", ""))
                 .transactionFactory(new JdbcTransactionFactory()).build();
 
-        SynaptixConfiguration synaptixConfiguration = new SynaptixConfiguration(environment);
-        synaptixConfiguration.setMappedStatementFactoryRegistry(MappedStatementFactoryRegistryBuilder.newBuilder().addMappedStatementFactory(new FindEntityByIdMappedStatementFactory())
+        ComponentConfiguration componentConfiguration = new ComponentConfiguration(environment);
+        componentConfiguration.setMappedStatementFactoryRegistry(MappedStatementFactoryRegistryBuilder.newBuilder().addMappedStatementFactory(new FindEntityByIdMappedStatementFactory())
                 .addMappedStatementFactory(new FindComponentsByMappedStatementFactory()).addMappedStatementFactory(new FindComponentsByJoinTableMappedStatementFactory())
                 .addMappedStatementFactory(new InsertMappedStatementFactory()).addMappedStatementFactory(new UpdateMappedStatementFactory())
                 .addMappedStatementFactory(new DeleteMappedStatementFactory()).build());
-        synaptixConfiguration.setResultMapFactoryRegistry(ResultMapFactoryRegistryBuilder.newBuilder().addResultMapFactory(new ComponentResultMapFactory()).build());
-        synaptixConfiguration.setCacheFactoryRegistry(CacheFactoryRegistryBuilder.newBuilder().addCacheFactory(new ComponentCacheFactory()).build());
-        synaptixConfiguration.setObjectFactory(new ComponentObjectFactory());
-        synaptixConfiguration.setProxyFactory(new ComponentProxyFactory());
-        synaptixConfiguration.setLazyLoadingEnabled(true);
-        synaptixConfiguration.setAggressiveLazyLoading(false);
-        synaptixConfiguration.getTypeHandlerRegistry().register(IdTypeHandler.class);
+        componentConfiguration.setResultMapFactoryRegistry(ResultMapFactoryRegistryBuilder.newBuilder().addResultMapFactory(new ComponentResultMapFactory()).build());
+        componentConfiguration.setCacheFactoryRegistry(CacheFactoryRegistryBuilder.newBuilder().addCacheFactory(new ComponentCacheFactory()).build());
+        componentConfiguration.setObjectFactory(new ComponentObjectFactory());
+        componentConfiguration.setProxyFactory(new ComponentProxyFactory());
+        componentConfiguration.setLazyLoadingEnabled(true);
+        componentConfiguration.setAggressiveLazyLoading(false);
+        componentConfiguration.getTypeHandlerRegistry().register(IdTypeHandler.class);
 
-        configuration = synaptixConfiguration;
+        configuration = componentConfiguration;
 
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
         sqlSessionManager = SqlSessionManager.newInstance(sqlSessionFactory);

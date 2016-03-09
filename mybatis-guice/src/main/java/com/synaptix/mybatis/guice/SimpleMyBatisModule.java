@@ -11,7 +11,7 @@ import org.mybatis.guice.type.TypeHandlerProvider;
 
 import static com.google.inject.util.Providers.guicify;
 
-public class SimpleSynaptixMyBatisModule extends AbstractModule {
+public class SimpleMyBatisModule extends AbstractModule {
 
     @Override
     protected void configure() {

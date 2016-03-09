@@ -6,13 +6,13 @@ import com.synaptix.component.factory.ComponentFactory;
 import com.synaptix.entity.annotation.Entity;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.session.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,11 +24,11 @@ public class UpdateSqlSource<E extends IComponent> implements SqlSource {
 
     private final SqlSourceBuilder sqlSourceParser;
 
-    public UpdateSqlSource(Configuration configuration, Class<E> componentClass) {
+    public UpdateSqlSource(ComponentConfiguration componentConfiguration, Class<E> componentClass) {
         super();
 
         this.componentClass = componentClass;
-        this.sqlSourceParser = new SqlSourceBuilder(configuration);
+        this.sqlSourceParser = new SqlSourceBuilder(componentConfiguration);
     }
 
     @Override

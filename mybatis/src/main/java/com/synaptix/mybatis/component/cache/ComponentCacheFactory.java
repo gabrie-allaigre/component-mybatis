@@ -2,10 +2,11 @@ package com.synaptix.mybatis.component.cache;
 
 import com.synaptix.component.IComponent;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
+import com.synaptix.mybatis.session.ComponentConfiguration;
+import com.synaptix.mybatis.session.INlsColumnHandler;
 import com.synaptix.mybatis.session.factory.AbstractCacheFactory;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.decorators.*;
-import org.apache.ibatis.session.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,17 +27,17 @@ public class ComponentCacheFactory extends AbstractCacheFactory {
     }
 
     @Override
-    public Cache createCache(Configuration configuration, String key) {
+    public Cache createCache(ComponentConfiguration componentConfiguration, String key) {
         if (CacheNameHelper.isCacheKey(key)) {
-            Class<? extends IComponent> componentClass =  CacheNameHelper.extractComponentClassInCacheKey(key);
+            Class<? extends IComponent> componentClass = CacheNameHelper.extractComponentClassInCacheKey(key);
             if (componentClass != null) {
-                return createComponentCache(configuration, componentClass, key);
+                return createComponentCache(componentConfiguration, componentClass, key);
             }
         }
         return null;
     }
 
-    private <E extends IComponent> Cache createComponentCache(Configuration configuration, Class<E> componentClass, String key) {
+    private <E extends IComponent> Cache createComponentCache(ComponentConfiguration componentConfiguration, Class<E> componentClass, String key) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create Cache for " + componentClass);
         }
@@ -51,9 +52,9 @@ public class ComponentCacheFactory extends AbstractCacheFactory {
 
         Cache res;
         if (cache == null) {
-            res = new ComponentNoCache<E>(configuration, componentCacheManager, componentClass, key);
+            res = new ComponentNoCache<E>(componentConfiguration, componentCacheManager, componentClass, key);
         } else {
-            res = new ComponentCache<>(configuration, componentCacheManager, componentClass, key);
+            res = new ComponentCache<>(componentConfiguration, componentCacheManager, componentClass, key);
             res = new LruCache(res);
             ((LruCache) res).setSize(cache.size());
             res = new ScheduledCache(res);
@@ -64,6 +65,12 @@ public class ComponentCacheFactory extends AbstractCacheFactory {
             res = new LoggingCache(res);
             res = new SynchronizedCache(res);
         }
+
+        INlsColumnHandler nlsColumnHandler = componentConfiguration.getNlsColumnHandler();
+        if (nlsColumnHandler != null && ComponentMyBatisHelper.isUseNlsColumn(componentClass)) {
+            res = new NlsColumnCache(nlsColumnHandler, res);
+        }
+
         return res;
     }
 }

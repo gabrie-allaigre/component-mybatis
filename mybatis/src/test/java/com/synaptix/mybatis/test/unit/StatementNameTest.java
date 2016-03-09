@@ -345,31 +345,33 @@ public class StatementNameTest {
     @Test
     public void testBuildNlsKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(StatementNameHelper.buildNlsKey(null)).isNull();
-        softAssertions.assertThat(StatementNameHelper.buildNlsKey(IUser.class)).isEqualTo("com.synaptix.mybatis.test.data.IUser/nls");
+        softAssertions.assertThat(StatementNameHelper.buildFindNlsColumnKey(null, null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.buildFindNlsColumnKey(IUser.class, "name")).isEqualTo("com.synaptix.mybatis.test.data.IUser/findNls?property=name");
+        softAssertions.assertThat(StatementNameHelper.buildFindNlsColumnKey(IUser.class, "toto")).isEqualTo("com.synaptix.mybatis.test.data.IUser/findNls?property=toto");
         softAssertions.assertAll();
     }
 
     @Test
     public void testIsNlsKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(StatementNameHelper.isNlsKey(null)).isFalse();
-        softAssertions.assertThat(StatementNameHelper.isNlsKey("com.model.IUser/nls")).isTrue();
-        softAssertions.assertThat(StatementNameHelper.isNlsKey("com.model.IUser1/nls")).isTrue();
-        softAssertions.assertThat(StatementNameHelper.isNlsKey("model.IUser/nls")).isTrue();
-        softAssertions.assertThat(StatementNameHelper.isNlsKey("IUser/nls")).isTrue();
-        softAssertions.assertThat(StatementNameHelper.isNlsKey("model.IUser")).isFalse();
-        softAssertions.assertThat(StatementNameHelper.isNlsKey("/nls")).isFalse();
-        softAssertions.assertThat(StatementNameHelper.isNlsKey("model-IUser/nls")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isFindNlsColumnKey(null)).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isFindNlsColumnKey("com.model.IUser/findNls?property=name")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isFindNlsColumnKey("com.model.IUser1/findNls?property=name")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isFindNlsColumnKey("model.IUser/findNls?property=name")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isFindNlsColumnKey("IUser/findNls?property=name")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isFindNlsColumnKey("model.IUser")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isFindNlsColumnKey("/findNls")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isFindNlsColumnKey("model-IUser/findNls")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isFindNlsColumnKey("model.IUser/findNls")).isFalse();
         softAssertions.assertAll();
     }
 
     @Test
     public void testExtractComponentNameInNlsKey() {
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(StatementNameHelper.extractComponentClassInNlsKey(null)).isNull();
-        softAssertions.assertThat(StatementNameHelper.extractComponentClassInNlsKey("com.synaptix.mybatis.test.data.IUser/nls")).isEqualTo(IUser.class);
-        softAssertions.assertThat(StatementNameHelper.extractComponentClassInNlsKey("model.IUser/nls")).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindNlsColumnKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindNlsColumnKey("com.synaptix.mybatis.test.data.IUser/findNls?property=name")).isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindNlsColumnKey("model.IUser/findNls?property=name")).isNull();
         softAssertions.assertAll();
     }
 }

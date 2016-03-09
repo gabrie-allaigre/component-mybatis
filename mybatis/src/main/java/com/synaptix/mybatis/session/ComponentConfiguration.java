@@ -11,9 +11,9 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class SynaptixConfiguration extends Configuration {
+public class ComponentConfiguration extends Configuration {
 
-    private static final Logger LOG = LogManager.getLogger(SynaptixConfiguration.class);
+    private static final Logger LOG = LogManager.getLogger(ComponentConfiguration.class);
 
     protected IMappedStatementFactoryRegistry mappedStatementFactoryRegistry = null;
 
@@ -21,36 +21,70 @@ public class SynaptixConfiguration extends Configuration {
 
     protected ICacheFactoryRegistry cacheFactoryRegistry = null;
 
-    public SynaptixConfiguration() {
+    protected INlsColumnHandler nlsColumnHandler = null;
+
+    public ComponentConfiguration() {
         super();
     }
 
-    public SynaptixConfiguration(Environment environment) {
+    public ComponentConfiguration(Environment environment) {
         super(environment);
     }
 
+    /**
+     * @return get mapped statement factory registry, default null
+     */
     public IMappedStatementFactoryRegistry getMappedStatementFactoryRegistry() {
         return mappedStatementFactoryRegistry;
     }
 
+    /**
+     * Set mapped statement factory registry
+     */
     public void setMappedStatementFactoryRegistry(IMappedStatementFactoryRegistry mappedStatementFactoryRegistry) {
         this.mappedStatementFactoryRegistry = mappedStatementFactoryRegistry;
     }
 
+    /**
+     * @return get result map factory registry default null
+     */
     public IResultMapFactoryRegistry getResultMapFactoryRegistry() {
         return resultMapFactoryRegistry;
     }
 
+    /**
+     * @param resultMapFactoryRegistry result map factory registry
+     */
     public void setResultMapFactoryRegistry(IResultMapFactoryRegistry resultMapFactoryRegistry) {
         this.resultMapFactoryRegistry = resultMapFactoryRegistry;
     }
 
+    /**
+     * @return get cache factory registry
+     */
     public ICacheFactoryRegistry getCacheFactoryRegistry() {
         return cacheFactoryRegistry;
     }
 
+    /**
+     * @param cacheFactoryRegistry cache factory registry
+     */
     public void setCacheFactoryRegistry(ICacheFactoryRegistry cacheFactoryRegistry) {
         this.cacheFactoryRegistry = cacheFactoryRegistry;
+    }
+
+    /**
+     * @return get nls column handler
+     */
+    public INlsColumnHandler getNlsColumnHandler() {
+        return this.nlsColumnHandler;
+    }
+
+    /**
+     * @param nlsColumnHandler nls column handler
+     */
+    public void setNlsColumnHandler(INlsColumnHandler nlsColumnHandler) {
+        this.nlsColumnHandler = nlsColumnHandler;
     }
 
     @Override

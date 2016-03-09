@@ -6,12 +6,12 @@ import com.synaptix.component.factory.ComponentFactory;
 import com.synaptix.entity.annotation.Entity;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.session.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,10 +24,10 @@ public class DeleteSqlSource<E extends IComponent> implements SqlSource {
 
     private final SqlSource sqlSource;
 
-    public DeleteSqlSource(Configuration configuration, Class<E> componentClass) {
+    public DeleteSqlSource(ComponentConfiguration componentConfiguration, Class<E> componentClass) {
         super();
 
-        SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
+        SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(componentConfiguration);
         String sql = buildDelete(componentClass);
         sqlSource = sqlSourceParser.parse(sql, Map.class, new HashMap<>());
     }

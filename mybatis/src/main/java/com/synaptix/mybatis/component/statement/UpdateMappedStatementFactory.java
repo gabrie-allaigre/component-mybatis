@@ -5,6 +5,7 @@ import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.UpdateSqlSource;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.Executor;
@@ -12,7 +13,6 @@ import org.apache.ibatis.executor.keygen.KeyGenerator;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.session.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,32 +25,32 @@ public class UpdateMappedStatementFactory extends AbstractMappedStatementFactory
     private static final Logger LOG = LogManager.getLogger(UpdateMappedStatementFactory.class);
 
     @Override
-    public MappedStatement createMappedStatement(Configuration configuration, String key) {
+    public MappedStatement createMappedStatement(ComponentConfiguration componentConfiguration, String key) {
         if (StatementNameHelper.isUpdateKey(key)) {
             Class<? extends IComponent> componentClass = StatementNameHelper.extractComponentClassInUpdateKey(key);
             if (componentClass != null) {
-                return createUpdateMappedStatement(configuration, key, componentClass);
+                return createUpdateMappedStatement(componentConfiguration, key, componentClass);
             }
         }
         return null;
     }
 
-    private <E extends IComponent> MappedStatement createUpdateMappedStatement(Configuration configuration, String key, Class<E> componentClass) {
+    private <E extends IComponent> MappedStatement createUpdateMappedStatement(ComponentConfiguration componentConfiguration, String key, Class<E> componentClass) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create update for " + componentClass);
         }
 
         ComponentDescriptor.PropertyDescriptor versionPropertyDescriptor = EntityHelper.findVersionPropertyDescriptor(componentClass);
 
-        ResultMap inlineResultMap = new ResultMap.Builder(configuration, key + "-Inline", Integer.class, new ArrayList<>(), null).build();
-        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new UpdateSqlSource<>(configuration, componentClass), SqlCommandType.UPDATE);
+        ResultMap inlineResultMap = new ResultMap.Builder(componentConfiguration, key + "-Inline", Integer.class, new ArrayList<>(), null).build();
+        MappedStatement.Builder msBuilder = new MappedStatement.Builder(componentConfiguration, key, new UpdateSqlSource<>(componentConfiguration, componentClass), SqlCommandType.UPDATE);
         msBuilder.resultMaps(Collections.singletonList(inlineResultMap));
         if (versionPropertyDescriptor != null) {
             msBuilder.keyGenerator(new VersionKeyGenerator(versionPropertyDescriptor.getPropertyName(),
                     Integer.class == versionPropertyDescriptor.getPropertyClass() || int.class == versionPropertyDescriptor.getPropertyClass()));
         }
 
-        Cache cache = configuration.getCache(CacheNameHelper.buildCacheKey(componentClass));
+        Cache cache = componentConfiguration.getCache(CacheNameHelper.buildCacheKey(componentClass));
         msBuilder.flushCacheRequired(true);
         msBuilder.cache(cache);
         msBuilder.useCache(true);

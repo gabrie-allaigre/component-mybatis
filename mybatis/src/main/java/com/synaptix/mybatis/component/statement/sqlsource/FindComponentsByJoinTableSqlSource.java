@@ -8,12 +8,12 @@ import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.session.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,13 +30,13 @@ public class FindComponentsByJoinTableSqlSource<E extends IComponent> implements
 
     private final boolean ignoreCancel;
 
-    public FindComponentsByJoinTableSqlSource(Configuration configuration, Class<? extends IComponent> componentClass, Class<? extends IComponent> sourceComponentClass, String[] sourceProperties,
+    public FindComponentsByJoinTableSqlSource(ComponentConfiguration componentConfiguration, Class<? extends IComponent> componentClass, Class<? extends IComponent> sourceComponentClass, String[] sourceProperties,
             String[] targetProperties, List<Pair<String, Pair<String[], String[]>>> joins, boolean ignoreCancel) {
         super();
 
         this.ignoreCancel = ignoreCancel && ICancellable.class.isAssignableFrom(componentClass);
 
-        SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
+        SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(componentConfiguration);
 
         String sql = buildFindComponentsByJoinTable(componentClass, sourceComponentClass, sourceProperties, targetProperties, joins);
         sqlSource = sqlSourceParser.parse(sql, Map.class, new HashMap<>());

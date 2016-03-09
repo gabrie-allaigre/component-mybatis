@@ -8,11 +8,11 @@ import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.jdbc.SQL;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.SqlSource;
-import org.apache.ibatis.session.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,12 +27,12 @@ public class FindComponentsByPropertyNameSqlSource<E extends IComponent> impleme
 
     private final boolean ignoreCancel;
 
-    public FindComponentsByPropertyNameSqlSource(Configuration configuration, Class<E> componentClass, boolean ignoreCancel, String... propertyNames) {
+    public FindComponentsByPropertyNameSqlSource(ComponentConfiguration componentConfiguration, Class<E> componentClass, boolean ignoreCancel, String... propertyNames) {
         super();
 
         this.ignoreCancel = ignoreCancel && ICancellable.class.isAssignableFrom(componentClass);
 
-        SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(configuration);
+        SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(componentConfiguration);
 
         String sql = buildFindComponentsByPropertyName(componentClass, propertyNames);
         sqlSource = sqlSourceParser.parse(sql, Map.class, new HashMap<>());

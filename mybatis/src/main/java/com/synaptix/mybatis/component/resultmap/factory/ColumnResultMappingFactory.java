@@ -3,10 +3,10 @@ package com.synaptix.mybatis.component.resultmap.factory;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Id;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.mapping.ResultFlag;
 import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.UnknownTypeHandler;
 
@@ -19,7 +19,7 @@ public class ColumnResultMappingFactory extends AbstractResultMappingFactory<Col
     }
 
     @Override
-    public ResultMapping buildColumnResultMapping(Configuration configuration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
+    public ResultMapping buildColumnResultMapping(ComponentConfiguration componentConfiguration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         Column column = propertyDescriptor.getMethod().getAnnotation(Column.class);
 
         String columnName = column.name();
@@ -29,7 +29,7 @@ public class ColumnResultMappingFactory extends AbstractResultMappingFactory<Col
 
         Class<?> javaType = column.javaType() != null && column.javaType() != void.class ? column.javaType() : propertyDescriptor.getPropertyClass();
 
-        ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(configuration, propertyDescriptor.getPropertyName(), columnName, javaType);
+        ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(componentConfiguration, propertyDescriptor.getPropertyName(), columnName, javaType);
         if (propertyDescriptor.getMethod().isAnnotationPresent(Id.class)) {
             resultMappingBuilder.flags(Collections.singletonList(ResultFlag.ID));
         }
@@ -37,7 +37,7 @@ public class ColumnResultMappingFactory extends AbstractResultMappingFactory<Col
             resultMappingBuilder.jdbcType(column.jdbcType());
         }
         if (column.typeHandler() != null && !UnknownTypeHandler.class.equals(column.typeHandler())) {
-            resultMappingBuilder.typeHandler(configuration.getTypeHandlerRegistry().getTypeHandler(column.typeHandler()));
+            resultMappingBuilder.typeHandler(componentConfiguration.getTypeHandlerRegistry().getTypeHandler(column.typeHandler()));
         }
         return resultMappingBuilder.build();
     }

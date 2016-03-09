@@ -25,7 +25,9 @@ public class StatementNameHelper {
 
     private static final String DELETE_NAME = "delete";
 
-    private static final String NLS_NAME = "nls";
+    private static final String FIND_NLS_COLUMN_NAME = "findNlsColumn";
+
+    private static final String PROPERTY = "property";
 
     private static final String PROPERTIES = "properties";
 
@@ -68,7 +70,7 @@ public class StatementNameHelper {
 
     private static final Pattern DELETE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + DELETE_NAME);
 
-    private static final Pattern NLS_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + NLS_NAME);
+    private static final Pattern FIND_NLS_COLUMN_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + FIND_NLS_COLUMN_NAME + "\\?" + PROPERTY + "=(" + PROPERTY_PAT + ")");
 
     private StatementNameHelper() {
         super();
@@ -495,19 +497,20 @@ public class StatementNameHelper {
         return ComponentMyBatisHelper.loadComponentClass(m.group(1));
     }
 
-    // Nls
+    // NlsColumn
 
     /**
      * Build nls key
      *
      * @param componentClass component class
+     * @param property       property
      * @return key
      */
-    public static <E extends IComponent> String buildNlsKey(Class<E> componentClass) {
+    public static <E extends IComponent> String buildFindNlsColumnKey(Class<E> componentClass, String property) {
         if (componentClass == null) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + NLS_NAME;
+        return componentClass.getCanonicalName() + "/" + FIND_NLS_COLUMN_NAME + "?" + PROPERTY + "=" + property;
     }
 
     /**
@@ -516,11 +519,11 @@ public class StatementNameHelper {
      * @param key key
      * @return true or false
      */
-    public static boolean isNlsKey(String key) {
+    public static boolean isFindNlsColumnKey(String key) {
         if (StringUtils.isBlank(key)) {
             return false;
         }
-        Matcher m = NLS_PATTERN.matcher(key);
+        Matcher m = FIND_NLS_COLUMN_PATTERN.matcher(key);
         return m.matches();
     }
 
@@ -530,14 +533,31 @@ public class StatementNameHelper {
      * @param key key
      * @return component class
      */
-    public static <E extends IComponent> Class<E> extractComponentClassInNlsKey(String key) {
-        if (!isNlsKey(key)) {
+    public static <E extends IComponent> Class<E> extractComponentClassInFindNlsColumnKey(String key) {
+        if (!isFindNlsColumnKey(key)) {
             return null;
         }
-        Matcher m = NLS_PATTERN.matcher(key);
+        Matcher m = FIND_NLS_COLUMN_PATTERN.matcher(key);
         if (!m.find()) {
             return null;
         }
         return ComponentMyBatisHelper.loadComponentClass(m.group(1));
+    }
+
+    /**
+     * Extract property
+     *
+     * @param key key
+     * @return properties
+     */
+    public static String extractPropertyNameInFindNlsColumnByKey(String key) {
+        if (!isFindNlsColumnKey(key)) {
+            return null;
+        }
+        Matcher m = FIND_NLS_COLUMN_PATTERN.matcher(key);
+        if (!m.find()) {
+            return null;
+        }
+        return m.group(3);
     }
 }

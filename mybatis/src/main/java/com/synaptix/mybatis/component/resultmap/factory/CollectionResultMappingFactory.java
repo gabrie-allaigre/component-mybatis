@@ -10,10 +10,10 @@ import com.synaptix.entity.annotation.JoinTable;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
 
     @SuppressWarnings("unchecked")
     @Override
-    public ResultMapping buildColumnResultMapping(Configuration configuration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
+    public ResultMapping buildColumnResultMapping(ComponentConfiguration componentConfiguration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         Collection collection = propertyDescriptor.getMethod().getAnnotation(Collection.class);
 
         String[] propertySource = collection.propertySource();
@@ -45,10 +45,12 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
             column = sourceColumns.get(0).getRight();
         }
 
-        ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(configuration, propertyDescriptor.getPropertyName(), column, javaType);
-        ComponentResultMapHelper.fillComposite(configuration, sourceColumns, resultMappingBuilder);
+        ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(componentConfiguration, propertyDescriptor.getPropertyName(), column, javaType);
+        resultMappingBuilder.composites(ComponentResultMapHelper.buildComposites(componentConfiguration, sourceColumns));
         if (FetchType.LAZY.equals(collection.fetchType())) {
             resultMappingBuilder.lazy(true);
+        } else if (FetchType.EAGER.equals(collection.fetchType())) {
+            resultMappingBuilder.lazy(false);
         }
         if (StringUtils.isNotBlank(collection.select())) {
             resultMappingBuilder.nestedQueryId(collection.select());
@@ -63,7 +65,7 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
             if (propertyTarget == null || propertyTarget.length == 0) {
                 propertyTarget = new String[] { EntityHelper.findIdPropertyName(subComponentClass) };
             }
-            ComponentResultMapHelper.checkTraget(ComponentFactory.getInstance().getDescriptor(subComponentClass), propertyTarget);
+            ComponentResultMapHelper.checkTarget(ComponentFactory.getInstance().getDescriptor(subComponentClass), propertyTarget);
 
             boolean ignoreCancel = ICancellable.class.isAssignableFrom(subComponentClass);
 

@@ -6,6 +6,7 @@ import com.synaptix.entity.annotation.Id;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.InsertSqlSource;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
@@ -29,23 +30,23 @@ public class InsertMappedStatementFactory extends AbstractMappedStatementFactory
     private static final Logger LOG = LogManager.getLogger(InsertMappedStatementFactory.class);
 
     @Override
-    public MappedStatement createMappedStatement(Configuration configuration, String key) {
+    public MappedStatement createMappedStatement(ComponentConfiguration componentConfiguration, String key) {
         if (StatementNameHelper.isInsertKey(key)) {
             Class<? extends IComponent> componentClass = StatementNameHelper.extractComponentClassInInsertKey(key);
             if (componentClass != null) {
-                return createInsertMappedStatement(configuration, key, componentClass);
+                return createInsertMappedStatement(componentConfiguration, key, componentClass);
             }
         }
         return null;
     }
 
-    private <E extends IComponent> MappedStatement createInsertMappedStatement(Configuration configuration, String key, Class<E> componentClass) {
+    private <E extends IComponent> MappedStatement createInsertMappedStatement(ComponentConfiguration componentConfiguration, String key, Class<E> componentClass) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create insert for " + componentClass);
         }
 
-        ResultMap inlineResultMap = new ResultMap.Builder(configuration, key + "-Inline", Integer.class, new ArrayList<>(), null).build();
-        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key, new InsertSqlSource<>(configuration, componentClass), SqlCommandType.INSERT);
+        ResultMap inlineResultMap = new ResultMap.Builder(componentConfiguration, key + "-Inline", Integer.class, new ArrayList<>(), null).build();
+        MappedStatement.Builder msBuilder = new MappedStatement.Builder(componentConfiguration, key, new InsertSqlSource<>(componentConfiguration, componentClass), SqlCommandType.INSERT);
         msBuilder.resultMaps(Collections.singletonList(inlineResultMap));
 
         ComponentDescriptor.PropertyDescriptor idPropertyDescriptor = EntityHelper.findIdPropertyDescriptor(componentClass);
@@ -53,7 +54,7 @@ public class InsertMappedStatementFactory extends AbstractMappedStatementFactory
             Id id = idPropertyDescriptor.getMethod().getAnnotation(Id.class);
 
             if (StringUtils.isNotBlank(id.keyGeneratorId())) {
-                KeyGenerator keyGenerator = configuration.getKeyGenerator(id.keyGeneratorId());
+                KeyGenerator keyGenerator = componentConfiguration.getKeyGenerator(id.keyGeneratorId());
                 if (keyGenerator == null) {
                     throw new IllegalArgumentException("Not found key generator for Component=" + componentClass + " for Id=" + idPropertyDescriptor.getPropertyName());
                 }
@@ -61,14 +62,14 @@ public class InsertMappedStatementFactory extends AbstractMappedStatementFactory
             } else {
                 Class<? extends KeyGenerator> keyGeneratorClass = id.keyGeneratorClass();
                 if (keyGeneratorClass != null) {
-                    msBuilder.keyGenerator(buildKeyGenerator(configuration, key, componentClass, idPropertyDescriptor, id.keyGeneratorClass()));
+                    msBuilder.keyGenerator(buildKeyGenerator(componentConfiguration, key, componentClass, idPropertyDescriptor, id.keyGeneratorClass()));
                 } else {
                     msBuilder.keyGenerator(new NoKeyGenerator());
                 }
             }
         }
 
-        Cache cache = configuration.getCache(CacheNameHelper.buildCacheKey(componentClass));
+        Cache cache = componentConfiguration.getCache(CacheNameHelper.buildCacheKey(componentClass));
         msBuilder.flushCacheRequired(true);
         msBuilder.cache(cache);
         msBuilder.useCache(true);

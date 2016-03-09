@@ -3,14 +3,11 @@ package com.synaptix.mybatis.component.resultmap;
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
-import com.synaptix.mybatis.component.resultmap.factory.AssociationResultMappingFactory;
-import com.synaptix.mybatis.component.resultmap.factory.CollectionResultMappingFactory;
-import com.synaptix.mybatis.component.resultmap.factory.ColumnResultMappingFactory;
-import com.synaptix.mybatis.component.resultmap.factory.IResultMappingFactory;
+import com.synaptix.mybatis.component.resultmap.factory.*;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import com.synaptix.mybatis.session.factory.AbstractResultMapFactory;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.session.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,6 +28,7 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
         addResultMappingFactory(new ColumnResultMappingFactory());
         addResultMappingFactory(new AssociationResultMappingFactory());
         addResultMappingFactory(new CollectionResultMappingFactory());
+        addResultMappingFactory(new NlsColumnResultMappingFactory());
     }
 
     public void addResultMappingFactory(IResultMappingFactory<?> resultMappingFactory) {
@@ -38,27 +36,27 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
     }
 
     @Override
-    public ResultMap createResultMap(Configuration configuration, String key) {
+    public ResultMap createResultMap(ComponentConfiguration componentConfiguration, String key) {
         if (ResultMapNameHelper.isResultMapKey(key)) {
             Class<? extends IComponent> componentClass = ResultMapNameHelper.extractComponentClassInResultMapKey(key);
             if (componentClass != null) {
-                return createComponentResultMap(configuration, componentClass, key);
+                return createComponentResultMap(componentConfiguration, componentClass, key);
             }
         }
         return null;
     }
 
-    private ResultMap createComponentResultMap(Configuration configuration, Class<? extends IComponent> componentClass, String key) {
+    private ResultMap createComponentResultMap(ComponentConfiguration componentConfiguration, Class<? extends IComponent> componentClass, String key) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create ResultMap for " + componentClass);
         }
 
-        List<ResultMapping> resultMappings = createResultMappings(configuration, componentClass);
-        ResultMap.Builder inlineResultMapBuilder = new ResultMap.Builder(configuration, key, componentClass, resultMappings, null);
+        List<ResultMapping> resultMappings = createResultMappings(componentConfiguration, componentClass);
+        ResultMap.Builder inlineResultMapBuilder = new ResultMap.Builder(componentConfiguration, key, componentClass, resultMappings, null);
         return inlineResultMapBuilder.build();
     }
 
-    private List<ResultMapping> createResultMappings(Configuration configuration, Class<? extends IComponent> componentClass) {
+    private List<ResultMapping> createResultMappings(ComponentConfiguration componentConfiguration, Class<? extends IComponent> componentClass) {
         ComponentDescriptor<?> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
 
         List<ResultMapping> resultMappings = new ArrayList<>();
@@ -67,7 +65,7 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
         for (String propertyName : propertyNames) {
             ComponentDescriptor.PropertyDescriptor propertyDescriptor = componentDescriptor.getPropertyDescriptor(propertyName);
 
-            ResultMapping resultMapping = buildResultMapping(configuration, componentDescriptor, propertyDescriptor);
+            ResultMapping resultMapping = buildResultMapping(componentConfiguration, componentDescriptor, propertyDescriptor);
             if (resultMapping != null) {
                 resultMappings.add(resultMapping);
             } else {
@@ -80,11 +78,11 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
         return resultMappings;
     }
 
-    private ResultMapping buildResultMapping(Configuration configuration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
+    private ResultMapping buildResultMapping(ComponentConfiguration componentConfiguration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         Method method = propertyDescriptor.getMethod();
         for (IResultMappingFactory<?> resultMappingFactory : resultMappingFactories) {
             if (method.isAnnotationPresent(resultMappingFactory.getAnnotationClass())) {
-                return resultMappingFactory.buildColumnResultMapping(configuration, componentDescriptor, propertyDescriptor);
+                return resultMappingFactory.buildColumnResultMapping(componentConfiguration, componentDescriptor, propertyDescriptor);
             }
         }
         return null;

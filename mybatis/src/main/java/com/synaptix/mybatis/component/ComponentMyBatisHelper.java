@@ -73,6 +73,24 @@ public class ComponentMyBatisHelper {
         return column;
     }
 
+    /**
+     * Get NlsColumn annotation, verify else throw IllegalArgumentException
+     *
+     * @param componentDescriptor Component descriptor
+     * @param propertyDescriptor  Property descriptor
+     * @return NlsColumn
+     */
+    public static NlsColumn getNlsColumnAnnotation(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
+        if (!propertyDescriptor.getMethod().isAnnotationPresent(NlsColumn.class)) {
+            return null;
+        }
+        NlsColumn nlsColumn = propertyDescriptor.getMethod().getAnnotation(NlsColumn.class);
+        if (StringUtils.isBlank(nlsColumn.name())) {
+            throw new IllegalArgumentException("Not name in NlsColumn for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+        }
+        return nlsColumn;
+    }
+
     public static Id getIdAnnotation(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         if (!propertyDescriptor.getMethod().isAnnotationPresent(Id.class)) {
             return null;
@@ -273,5 +291,47 @@ public class ComponentMyBatisHelper {
             return ((ParameterizedType) collectionType).getActualTypeArguments()[0];
         }
         return Object.class;
+    }
+
+    /**
+     * * Verify if component class use NlsColumn annotation
+     *
+     * @param componentClass component class
+     * @return true if use NlsColumn annotation
+     */
+    @SuppressWarnings("unchecked")
+    public static <E extends IComponent> boolean isUseNlsColumn(Class<E> componentClass) {
+        ComponentDescriptor<E> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
+        for (ComponentDescriptor.PropertyDescriptor propertyDescriptor : componentDescriptor.getPropertyDescriptors()) {
+            if (propertyDescriptor.getMethod().isAnnotationPresent(NlsColumn.class)) {
+                return true;
+            } else if (propertyDescriptor.getMethod().isAnnotationPresent(Association.class)) {
+                Association association = propertyDescriptor.getMethod().getAnnotation(Association.class);
+
+                Class<?> javaType = association.javaType() != null && association.javaType() != void.class ? association.javaType() : propertyDescriptor.getPropertyClass();
+                if (ComponentFactory.getInstance().isComponentType(javaType)) {
+                    if (isUseNlsColumn((Class<? extends IComponent>) javaType)) {
+                        return true;
+                    }
+                }
+            } else if (propertyDescriptor.getMethod().isAnnotationPresent(Collection.class)) {
+                Collection collection = propertyDescriptor.getMethod().getAnnotation(Collection.class);
+
+                Class<?> javaType = collection.javaType() != null && collection.javaType() != void.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
+                if (!java.util.Collection.class.isAssignableFrom(javaType)) {
+                    throw new IllegalArgumentException(
+                            "Not accept javaType for Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName() + " javaType="
+                                    + javaType);
+                }
+
+                Class<?> clazz = getCollectionElementClass(componentDescriptor, propertyDescriptor, collection);
+                if (ComponentFactory.getInstance().isComponentType(clazz)) {
+                    if (isUseNlsColumn((Class<? extends IComponent>) clazz)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

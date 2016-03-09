@@ -8,10 +8,10 @@ import com.synaptix.entity.annotation.FetchType;
 import com.synaptix.entity.annotation.JoinTable;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.ibatis.mapping.ResultMapping;
-import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class AssociationResultMappingFactory extends AbstractResultMappingFactor
 
     @SuppressWarnings("unchecked")
     @Override
-    public ResultMapping buildColumnResultMapping(Configuration configuration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
+    public ResultMapping buildColumnResultMapping(ComponentConfiguration componentConfiguration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         Association assossiation = propertyDescriptor.getMethod().getAnnotation(Association.class);
 
         String[] propertySource = assossiation.propertySource();
@@ -35,11 +35,13 @@ public class AssociationResultMappingFactory extends AbstractResultMappingFactor
 
         Class<?> javaType = assossiation.javaType() != null && assossiation.javaType() != void.class ? assossiation.javaType() : propertyDescriptor.getPropertyClass();
 
-        ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(configuration, propertyDescriptor.getPropertyName(), column, javaType);
-        ComponentResultMapHelper.fillComposite(configuration, sourceColumns, resultMappingBuilder);
+        ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(componentConfiguration, propertyDescriptor.getPropertyName(), column, javaType);
+        resultMappingBuilder.composites(ComponentResultMapHelper.buildComposites(componentConfiguration, sourceColumns));
 
         if (FetchType.LAZY.equals(assossiation.fetchType())) {
             resultMappingBuilder.lazy(true);
+        } else if (FetchType.EAGER.equals(assossiation.fetchType())) {
+            resultMappingBuilder.lazy(false);
         }
         if (StringUtils.isNotBlank(assossiation.select())) {
             resultMappingBuilder.nestedQueryId(assossiation.select());
@@ -49,7 +51,7 @@ public class AssociationResultMappingFactory extends AbstractResultMappingFactor
             if (propertyTarget == null || propertyTarget.length == 0) {
                 propertyTarget = new String[] { EntityHelper.findIdPropertyName(subComponentClass) };
             }
-            ComponentResultMapHelper.checkTraget(ComponentFactory.getInstance().getDescriptor(subComponentClass), propertyTarget);
+            ComponentResultMapHelper.checkTarget(ComponentFactory.getInstance().getDescriptor(subComponentClass), propertyTarget);
 
             JoinTable[] joinTables = assossiation.joinTable();
             if (joinTables != null && joinTables.length > 0) {

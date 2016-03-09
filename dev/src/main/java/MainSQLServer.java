@@ -8,8 +8,8 @@ import com.synaptix.mybatis.component.cache.ComponentCacheFactory;
 import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
 import com.synaptix.mybatis.component.statement.*;
-import com.synaptix.mybatis.guice.SimpleSynaptixMyBatisModule;
-import com.synaptix.mybatis.guice.SynaptixConfigurationProvider;
+import com.synaptix.mybatis.guice.SimpleMyBatisModule;
+import com.synaptix.mybatis.guice.ComponentConfigurationProvider;
 import com.synaptix.mybatis.guice.registry.GuiceCacheFactoryRegistry;
 import com.synaptix.mybatis.guice.registry.GuiceMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.guice.registry.GuiceResultMapFactoryRegistry;
@@ -37,12 +37,12 @@ public class MainSQLServer {
             protected void initialize() {
                 install(JdbcHelper.SQL_Server_2005_MS_Driver);
 
-                install(new SimpleSynaptixMyBatisModule());
+                install(new SimpleMyBatisModule());
 
                 lazyLoadingEnabled(true);
                 aggressiveLazyLoading(false);
 
-                useConfigurationProvider(SynaptixConfigurationProvider.class);
+                useConfigurationProvider(ComponentConfigurationProvider.class);
                 bindDataSourceProviderType(PooledDataSourceProvider.class);
                 bindTransactionFactoryType(JdbcTransactionFactory.class);
                 bindObjectFactoryType(ComponentObjectFactory.class);

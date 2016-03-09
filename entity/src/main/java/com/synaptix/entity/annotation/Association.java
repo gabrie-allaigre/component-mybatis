@@ -12,7 +12,7 @@ public @interface Association {
     /**
      * Property source
      *
-     * @return one or multiple with comma
+     * @return one or multiple
      */
     String[] propertySource();
 

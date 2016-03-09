@@ -1,8 +1,8 @@
 package com.synaptix.mybatis.session.registry;
 
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import com.synaptix.mybatis.session.factory.IMappedStatementFactory;
 import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +41,9 @@ public class MappedStatementFactoryRegistryBuilder {
         }
 
         @Override
-        public MappedStatement createMappedStatement(Configuration configuration, String key) {
+        public MappedStatement createMappedStatement(ComponentConfiguration componentConfiguration, String key) {
             for (IMappedStatementFactory mappedStatementFactory : mappedStatementFactories) {
-                MappedStatement mappedStatement = mappedStatementFactory.createMappedStatement(configuration, key);
+                MappedStatement mappedStatement = mappedStatementFactory.createMappedStatement(componentConfiguration, key);
                 if (mappedStatement != null) {
                     return mappedStatement;
                 }

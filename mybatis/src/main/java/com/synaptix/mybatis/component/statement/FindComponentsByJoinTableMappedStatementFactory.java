@@ -4,13 +4,13 @@ import com.synaptix.component.IComponent;
 import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.resultmap.ResultMapNameHelper;
 import com.synaptix.mybatis.component.statement.sqlsource.FindComponentsByJoinTableSqlSource;
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.SqlCommandType;
-import org.apache.ibatis.session.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +22,7 @@ public class FindComponentsByJoinTableMappedStatementFactory extends AbstractMap
     private static final Logger LOG = LogManager.getLogger(FindComponentsByJoinTableMappedStatementFactory.class);
 
     @Override
-    public MappedStatement createMappedStatement(Configuration configuration, String key) {
+    public MappedStatement createMappedStatement(ComponentConfiguration componentConfiguration, String key) {
         if (StatementNameHelper.isFindComponentsByJoinTableKey(key)) {
             Class<? extends IComponent> componentClass = StatementNameHelper.extractComponentClassInFindComponentsByJoinTableKey(key);
             Class<? extends IComponent> sourceComponentClass = StatementNameHelper.extractSourceComponentClassInFindComponentsByJoinTableKey(key);
@@ -32,24 +32,24 @@ public class FindComponentsByJoinTableMappedStatementFactory extends AbstractMap
             boolean ignoreCancel = StatementNameHelper.isIgnoreCancelInFindComponentsByJoinTableKey(key);
             if (componentClass != null && sourceComponentClass != null && sourceProperties != null && sourceProperties.length > 0 && targetProperties != null && targetProperties.length > 0
                     && joins != null && !joins.isEmpty()) {
-                return createFindComponentsByJoinTableMappedStatement(configuration, key, componentClass, sourceComponentClass, sourceProperties, targetProperties, joins, ignoreCancel);
+                return createFindComponentsByJoinTableMappedStatement(componentConfiguration, key, componentClass, sourceComponentClass, sourceProperties, targetProperties, joins, ignoreCancel);
             }
         }
         return null;
     }
 
-    public <E extends IComponent> MappedStatement createFindComponentsByJoinTableMappedStatement(Configuration configuration, String key, Class<? extends IComponent> componentClass,
+    private <E extends IComponent> MappedStatement createFindComponentsByJoinTableMappedStatement(ComponentConfiguration componentConfiguration, String key, Class<? extends IComponent> componentClass,
             Class<? extends IComponent> sourceComponentClass, String[] sourceProperties, String[] targetProperties, List<Pair<String, Pair<String[], String[]>>> joins, boolean ignoreCancel) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create findComponentsByJoinTable for " + componentClass);
         }
 
-        ResultMap inlineResultMap = configuration.getResultMap(ResultMapNameHelper.buildResultMapKey(componentClass));
+        ResultMap inlineResultMap = componentConfiguration.getResultMap(ResultMapNameHelper.buildResultMapKey(componentClass));
 
-        MappedStatement.Builder msBuilder = new MappedStatement.Builder(configuration, key,
-                new FindComponentsByJoinTableSqlSource<E>(configuration, componentClass, sourceComponentClass, sourceProperties, targetProperties, joins, ignoreCancel), SqlCommandType.SELECT);
+        MappedStatement.Builder msBuilder = new MappedStatement.Builder(componentConfiguration, key,
+                new FindComponentsByJoinTableSqlSource<E>(componentConfiguration, componentClass, sourceComponentClass, sourceProperties, targetProperties, joins, ignoreCancel), SqlCommandType.SELECT);
         msBuilder.resultMaps(Collections.singletonList(inlineResultMap));
-        Cache cache = configuration.getCache(CacheNameHelper.buildCacheKey(componentClass));
+        Cache cache = componentConfiguration.getCache(CacheNameHelper.buildCacheKey(componentClass));
         msBuilder.flushCacheRequired(false);
         msBuilder.cache(cache);
         msBuilder.useCache(true);

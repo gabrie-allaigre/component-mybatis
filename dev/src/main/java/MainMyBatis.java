@@ -4,16 +4,16 @@ import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.synaptix.entity.factory.IdFactory;
-import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.cache.ComponentCacheFactory;
 import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
 import com.synaptix.mybatis.component.statement.*;
-import com.synaptix.mybatis.guice.SimpleSynaptixMyBatisModule;
-import com.synaptix.mybatis.guice.SynaptixConfigurationProvider;
+import com.synaptix.mybatis.guice.ComponentConfigurationProvider;
+import com.synaptix.mybatis.guice.SimpleMyBatisModule;
 import com.synaptix.mybatis.guice.registry.GuiceCacheFactoryRegistry;
 import com.synaptix.mybatis.guice.registry.GuiceMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.guice.registry.GuiceResultMapFactoryRegistry;
+import com.synaptix.mybatis.session.INlsColumnHandler;
 import com.synaptix.mybatis.session.factory.ICacheFactory;
 import com.synaptix.mybatis.session.factory.IMappedStatementFactory;
 import com.synaptix.mybatis.session.factory.IResultMapFactory;
@@ -22,8 +22,6 @@ import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;
 import mapper.UserMapper;
 import model.ICountry;
-import model.IUser;
-import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.mybatis.guice.MyBatisModule;
 import org.mybatis.guice.datasource.builtin.PooledDataSourceProvider;
@@ -39,12 +37,12 @@ public class MainMyBatis {
             protected void initialize() {
                 install(JdbcHelper.HSQLDB_IN_MEMORY_NAMED);
 
-                install(new SimpleSynaptixMyBatisModule());
+                install(new SimpleMyBatisModule());
 
                 lazyLoadingEnabled(true);
                 aggressiveLazyLoading(false);
 
-                useConfigurationProvider(SynaptixConfigurationProvider.class);
+                useConfigurationProvider(ComponentConfigurationProvider.class);
                 bindDataSourceProviderType(PooledDataSourceProvider.class);
                 bindTransactionFactoryType(JdbcTransactionFactory.class);
                 bindObjectFactoryType(ComponentObjectFactory.class);
@@ -59,6 +57,9 @@ public class MainMyBatis {
                 bind(IMappedStatementFactoryRegistry.class).to(GuiceMappedStatementFactoryRegistry.class).in(Singleton.class);
                 bind(ICacheFactoryRegistry.class).to(GuiceCacheFactoryRegistry.class).in(Singleton.class);
 
+                bind(DefaultNlsColumnHandler.class).in(Singleton.class);
+                bind(INlsColumnHandler.class).to(DefaultNlsColumnHandler.class).in(Singleton.class);
+
                 Multibinder<IResultMapFactory> resultMapFactoryMultibinder = Multibinder.newSetBinder(binder(), IResultMapFactory.class);
                 resultMapFactoryMultibinder.addBinding().to(ComponentResultMapFactory.class);
 
@@ -66,6 +67,7 @@ public class MainMyBatis {
                 mappedStatementFactoryMultibinder.addBinding().to(FindEntityByIdMappedStatementFactory.class);
                 mappedStatementFactoryMultibinder.addBinding().to(FindComponentsByMappedStatementFactory.class);
                 mappedStatementFactoryMultibinder.addBinding().to(FindComponentsByJoinTableMappedStatementFactory.class);
+                mappedStatementFactoryMultibinder.addBinding().to(FindNlsColumnMappedStatementFactory.class);
                 mappedStatementFactoryMultibinder.addBinding().to(InsertMappedStatementFactory.class);
                 mappedStatementFactoryMultibinder.addBinding().to(UpdateMappedStatementFactory.class);
                 mappedStatementFactoryMultibinder.addBinding().to(DeleteMappedStatementFactory.class);
@@ -88,12 +90,24 @@ public class MainMyBatis {
         FooService fooService = injector.getInstance(FooService.class);
         fooService.init("init-script.sql");
 
-        IUser user = fooService.findById(IUser.class, IdFactory.IdString.from("1"));
+        DefaultNlsColumnHandler defaultNlsColumnHandler = injector.getInstance(DefaultNlsColumnHandler.class);
+        defaultNlsColumnHandler.setLanguageCode("fra");
+
         ICountry country = fooService.findById(ICountry.class, IdFactory.IdString.from("1"));
+        System.out.println(country);
 
-        //      user.getCountry();
+        defaultNlsColumnHandler.setLanguageCode("eng");
 
-        injector.getInstance(Configuration.class).getCache(CacheNameHelper.buildCacheKey(ICountry.class)).clear();
+        country = fooService.findById(ICountry.class, IdFactory.IdString.from("1"));
+        System.out.println(country);
+
+        country = fooService.findById(ICountry.class, IdFactory.IdString.from("1"));
+        System.out.println(country);
+
+        defaultNlsColumnHandler.setLanguageCode("fra");
+
+        country = fooService.findById(ICountry.class, IdFactory.IdString.from("1"));
+        System.out.println(country);
 
         //System.out.println(user.getVersion());
 /*

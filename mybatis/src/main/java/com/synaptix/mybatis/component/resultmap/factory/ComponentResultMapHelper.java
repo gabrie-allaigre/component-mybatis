@@ -18,6 +18,16 @@ public class ComponentResultMapHelper {
         super();
     }
 
+    /**
+     * Join tables
+     *
+     * @param componentDescriptor
+     * @param propertyDescriptor
+     * @param joinTables
+     * @param propertySource
+     * @param propertyTarget
+     * @return
+     */
     public static List<Pair<String, Pair<String[], String[]>>> joinTables(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor, JoinTable[] joinTables,
             String[] propertySource, String[] propertyTarget) {
         List<Pair<String, Pair<String[], String[]>>> joins = new ArrayList<>();
@@ -64,54 +74,81 @@ public class ComponentResultMapHelper {
         return joins;
     }
 
-    public static void fillComposite(Configuration configuration, List<Pair<ComponentDescriptor.PropertyDescriptor, String>> sourceColumns, ResultMapping.Builder resultMappingBuilder) {
+    /**
+     * Build composites result
+     *
+     * @param configuration
+     * @param sourceColumns
+     * @return
+     */
+    public static List<ResultMapping> buildComposites(Configuration configuration, List<Pair<ComponentDescriptor.PropertyDescriptor, String>> sourceColumns) {
+        List<ResultMapping> composites = new ArrayList<>();
         if (sourceColumns.size() > 1) {
-            List<ResultMapping> composites = new ArrayList<>();
             int param = 1;
             for (Pair<ComponentDescriptor.PropertyDescriptor, String> sourceColumn : sourceColumns) {
                 ComponentDescriptor.PropertyDescriptor pd = sourceColumn.getLeft();
                 composites.add(new ResultMapping.Builder(configuration, StatementNameHelper.buildParam(param), sourceColumn.getRight(), pd.getPropertyClass()).build());
                 param++;
             }
-            resultMappingBuilder.composites(composites);
         }
+        return composites;
     }
 
-    public static void checkTraget(ComponentDescriptor<?> cd, String[] propertyTarget) {
+    /**
+     * Check target properties
+     *
+     * @param componentDescriptor
+     * @param propertyTarget
+     */
+    public static void checkTarget(ComponentDescriptor<?> componentDescriptor, String[] propertyTarget) {
         if (propertyTarget == null || propertyTarget.length == 0) {
             throw new IllegalArgumentException("propertyTarget is null or empty");
         }
 
         for (String propertyName : propertyTarget) {
-            ComponentDescriptor.PropertyDescriptor propertyDescriptor = cd.getPropertyDescriptor(propertyName);
-            checkColumn(cd, propertyDescriptor);
+            ComponentDescriptor.PropertyDescriptor propertyDescriptor = componentDescriptor.getPropertyDescriptor(propertyName);
+            checkColumn(componentDescriptor, propertyDescriptor);
         }
     }
 
-    public static List<Pair<ComponentDescriptor.PropertyDescriptor, String>> prepareSourceColumns(ComponentDescriptor<?> cd, String[] propertySource) throws IllegalArgumentException {
+    /**
+     * Prepare sources properties
+     *
+     * @param componentDescriptor
+     * @param propertySource
+     * @return
+     * @throws IllegalArgumentException
+     */
+    public static List<Pair<ComponentDescriptor.PropertyDescriptor, String>> prepareSourceColumns(ComponentDescriptor<?> componentDescriptor, String[] propertySource) throws IllegalArgumentException {
         if (propertySource == null || propertySource.length == 0) {
             throw new IllegalArgumentException("propertySource is null or empty");
         }
 
         List<Pair<ComponentDescriptor.PropertyDescriptor, String>> columnNames = new ArrayList<>();
         for (String propertyName : propertySource) {
-            ComponentDescriptor.PropertyDescriptor propertyDescriptor = cd.getPropertyDescriptor(propertyName);
-            checkColumn(cd, propertyDescriptor);
+            ComponentDescriptor.PropertyDescriptor propertyDescriptor = componentDescriptor.getPropertyDescriptor(propertyName);
+            checkColumn(componentDescriptor, propertyDescriptor);
 
             columnNames.add(Pair.of(propertyDescriptor, propertyDescriptor.getMethod().getAnnotation(Column.class).name()));
         }
         return columnNames;
     }
 
-    public static void checkColumn(ComponentDescriptor<?> cd, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
+    /**
+     * Check column
+     *
+     * @param componentDescriptor
+     * @param propertyDescriptor
+     */
+    public static void checkColumn(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         if (propertyDescriptor == null) {
-            throw new IllegalArgumentException("Not exists property for Component=" + cd.getComponentClass());
+            throw new IllegalArgumentException("Not exists property for Component=" + componentDescriptor.getComponentClass());
         }
         if (!propertyDescriptor.getMethod().isAnnotationPresent(Column.class)) {
-            throw new IllegalArgumentException("Not present annotation Column for Component=" + cd.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+            throw new IllegalArgumentException("Not present annotation Column for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
         }
         if (StringUtils.isBlank(propertyDescriptor.getMethod().getAnnotation(Column.class).name())) {
-            throw new IllegalArgumentException("Not name in Column for Component=" + cd.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+            throw new IllegalArgumentException("Not name in Column for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
         }
     }
 }

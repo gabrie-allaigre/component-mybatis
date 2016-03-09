@@ -1,17 +1,17 @@
 package com.synaptix.mybatis.session.registry;
 
+import com.synaptix.mybatis.session.ComponentConfiguration;
 import org.apache.ibatis.cache.Cache;
-import org.apache.ibatis.session.Configuration;
 
 public interface ICacheFactoryRegistry {
 
     /**
      * Create a cache statement
      *
-     * @param configuration configuration
+     * @param componentConfiguration configuration
      * @param key           name of mapped statement
      * @return cache or null if not found factory
      */
-    Cache createCache(Configuration configuration, String key);
+    Cache createCache(ComponentConfiguration componentConfiguration, String key);
 
 }

@@ -39,10 +39,10 @@ public class FindNlsColumnMappedStatementFactory extends AbstractMappedStatement
         ComponentDescriptor<E> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
         ComponentDescriptor.PropertyDescriptor propertyDescriptor = componentDescriptor.getPropertyDescriptor(propertyName);
 
-        ResultMap inlineResultMap = new ResultMap.Builder(componentConfiguration, key + "-Inline", propertyDescriptor.getPropertyClass(), new ArrayList<>(), null).build();
+        ResultMap.Builder inlineResultMapBuilder = new ResultMap.Builder(componentConfiguration, key + "-Inline", propertyDescriptor.getPropertyClass(), new ArrayList<>(), null);
 
         MappedStatement.Builder msBuilder = new MappedStatement.Builder(componentConfiguration, key, new FindNlsColumnSqlSource<>(componentConfiguration, componentClass, propertyName), SqlCommandType.SELECT);
-        msBuilder.resultMaps(Collections.singletonList(inlineResultMap));
+        msBuilder.resultMaps(Collections.singletonList(inlineResultMapBuilder.build()));
         msBuilder.flushCacheRequired(false);
         msBuilder.cache(null);
         msBuilder.useCache(false);

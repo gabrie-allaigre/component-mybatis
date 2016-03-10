@@ -1,4 +1,4 @@
-package com.synaptix.mybatis.session;
+package com.synaptix.mybatis.session.handler;
 
 import com.synaptix.component.IComponent;
 

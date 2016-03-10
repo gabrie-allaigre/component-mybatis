@@ -7,7 +7,7 @@ import com.synaptix.entity.annotation.Entity;
 import com.synaptix.entity.annotation.NlsColumn;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
 import com.synaptix.mybatis.session.ComponentConfiguration;
-import com.synaptix.mybatis.session.INlsColumnHandler;
+import com.synaptix.mybatis.session.handler.INlsColumnHandler;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.mapping.BoundSql;

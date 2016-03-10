@@ -1,5 +1,6 @@
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
@@ -9,10 +10,12 @@ import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
 import com.synaptix.mybatis.component.statement.*;
 import com.synaptix.mybatis.guice.SimpleMyBatisModule;
-import com.synaptix.mybatis.guice.ComponentConfigurationProvider;
+import com.synaptix.mybatis.guice.configuration.ComponentConfigurationProvider;
 import com.synaptix.mybatis.guice.registry.GuiceCacheFactoryRegistry;
 import com.synaptix.mybatis.guice.registry.GuiceMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.guice.registry.GuiceResultMapFactoryRegistry;
+import com.synaptix.mybatis.guice.session.ComponentSqlSessionManagerProvider;
+import com.synaptix.mybatis.session.ComponentSqlSessionManager;
 import com.synaptix.mybatis.session.factory.ICacheFactory;
 import com.synaptix.mybatis.session.factory.IMappedStatementFactory;
 import com.synaptix.mybatis.session.factory.IResultMapFactory;
@@ -70,6 +73,8 @@ public class MainSQLServer {
 
                 Multibinder<ICacheFactory> cacheFactoryMultibinder = Multibinder.newSetBinder(binder(), ICacheFactory.class);
                 cacheFactoryMultibinder.addBinding().to(ComponentCacheFactory.class);
+
+                bind(ComponentSqlSessionManager.class).toProvider(ComponentSqlSessionManagerProvider.class).in(Scopes.SINGLETON);
             }
 
             private Properties createTestProperties() {
@@ -95,7 +100,7 @@ public class MainSQLServer {
         //System.out.println(user.getVersion());
 
         IUser user2 = UserBuilder.newBuilder().id(IdFactory.IdString.from("10")).login("test").build();
-        System.out.println(fooService.insert(IUser.class, user2));
+        System.out.println(fooService.insert(user2));
         System.out.println(user2);
 /*
         user = fooService.findById(IUser.class, user2.getId());

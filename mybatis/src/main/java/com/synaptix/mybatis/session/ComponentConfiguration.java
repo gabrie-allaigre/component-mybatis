@@ -1,5 +1,7 @@
 package com.synaptix.mybatis.session;
 
+import com.synaptix.mybatis.session.handler.INlsColumnHandler;
+import com.synaptix.mybatis.session.handler.ITracableHandler;
 import com.synaptix.mybatis.session.registry.ICacheFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;
@@ -22,6 +24,8 @@ public class ComponentConfiguration extends Configuration {
     protected ICacheFactoryRegistry cacheFactoryRegistry = null;
 
     protected INlsColumnHandler nlsColumnHandler = null;
+
+    protected ITracableHandler tracableHandler = null;
 
     public ComponentConfiguration() {
         super();
@@ -85,6 +89,20 @@ public class ComponentConfiguration extends Configuration {
      */
     public void setNlsColumnHandler(INlsColumnHandler nlsColumnHandler) {
         this.nlsColumnHandler = nlsColumnHandler;
+    }
+
+    /**
+     * @return get tracable handler
+     */
+    public ITracableHandler getTracableHandler() {
+        return tracableHandler;
+    }
+
+    /**
+     * @param tracableHandler tracable handler
+     */
+    public void setTracableHandler(ITracableHandler tracableHandler) {
+        this.tracableHandler = tracableHandler;
     }
 
     @Override

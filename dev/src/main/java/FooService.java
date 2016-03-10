@@ -2,6 +2,7 @@ import com.google.inject.Inject;
 import com.synaptix.component.IComponent;
 import com.synaptix.entity.IId;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
+import com.synaptix.mybatis.session.ComponentSqlSessionManager;
 import mapper.UserMapper;
 import model.IUser;
 import org.apache.ibatis.io.Resources;
@@ -19,6 +20,9 @@ public class FooService {
 
     @Inject
     private SqlSessionManager sqlSessionManager;
+
+    @Inject
+    private ComponentSqlSessionManager componentSqlSessionManager;
 
     @Transactional
     public void init(String script) {
@@ -43,7 +47,7 @@ public class FooService {
 
     @Transactional
     public <E extends IComponent> E findById(Class<E> componentClass, IId id) {
-        return sqlSessionManager.<E>selectOne(StatementNameHelper.buildFindEntityByIdKey(componentClass), id);
+        return componentSqlSessionManager.findById(componentClass, id);
     }
 
     @Transactional
@@ -52,17 +56,17 @@ public class FooService {
     }
 
     @Transactional
-    public <E extends IComponent> int insert(Class<E> componentClass, E component) {
-        return sqlSessionManager.insert(StatementNameHelper.buildInsertKey(componentClass), component);
+    public <E extends IComponent> int insert(E component) {
+        return componentSqlSessionManager.insert(component);
     }
 
     @Transactional
-    public <E extends IComponent> int update(Class<E> componentClass, E component) {
-        return sqlSessionManager.update(StatementNameHelper.buildUpdateKey(componentClass), component);
+    public <E extends IComponent> int update(E component) {
+        return componentSqlSessionManager.update(component);
     }
 
     @Transactional
-    public <E extends IComponent> int delete(Class<E> componentClass, E component) {
-        return sqlSessionManager.update(StatementNameHelper.buildDeleteKey(componentClass), component);
+    public <E extends IComponent> int delete(E component) {
+        return componentSqlSessionManager.delete(component);
     }
 }

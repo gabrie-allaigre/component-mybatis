@@ -1,5 +1,5 @@
 import com.synaptix.component.IComponent;
-import com.synaptix.mybatis.session.INlsColumnHandler;
+import com.synaptix.mybatis.session.handler.INlsColumnHandler;
 
 import java.util.HashMap;
 import java.util.Map;

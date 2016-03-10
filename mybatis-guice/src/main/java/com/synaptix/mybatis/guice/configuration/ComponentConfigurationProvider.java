@@ -1,9 +1,9 @@
-package com.synaptix.mybatis.guice;
+package com.synaptix.mybatis.guice.configuration;
 
 import com.google.inject.Inject;
 import com.synaptix.mybatis.component.factory.ComponentProxyFactory;
 import com.synaptix.mybatis.session.ComponentConfiguration;
-import com.synaptix.mybatis.session.INlsColumnHandler;
+import com.synaptix.mybatis.session.handler.INlsColumnHandler;
 import com.synaptix.mybatis.session.registry.ICacheFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
 import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;

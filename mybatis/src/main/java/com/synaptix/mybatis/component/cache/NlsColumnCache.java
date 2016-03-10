@@ -1,8 +1,9 @@
 package com.synaptix.mybatis.component.cache;
 
-import com.synaptix.mybatis.session.INlsColumnHandler;
+import com.synaptix.mybatis.session.handler.INlsColumnHandler;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.ibatis.cache.Cache;
 
 import java.util.concurrent.locks.ReadWriteLock;
@@ -82,17 +83,27 @@ public class NlsColumnCache implements Cache {
         }
 
         @Override
-        public int hashCode() {
-            return new HashCodeBuilder().append(key).append(context).toHashCode();
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            MyKey myKey = (MyKey) o;
+            return new EqualsBuilder().append(key, myKey.key).append(context, myKey.context).isEquals();
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof MyKey) {
-                MyKey k = (MyKey) obj;
-                return new EqualsBuilder().append(key, k.key).append(context, k.context).isEquals();
-            }
-            return super.equals(obj);
+        public int hashCode() {
+            return new HashCodeBuilder(17, 37).append(key).append(context).toHashCode();
+        }
+
+        @Override
+        public String toString() {
+            return new ToStringBuilder(this).append("key", key).append("context", context).toString();
         }
     }
 }

@@ -32,6 +32,8 @@ public abstract class AbstractIntegration {
 
     protected static SqlSessionManager sqlSessionManager;
 
+    protected static DefaultNlsColumnHandler defaultNlsColumnHandler;
+
     @BeforeClass
     public static void beforeClass() {
         Environment environment = new Environment.Builder("test").dataSource(new PooledDataSource(null, "org.hsqldb.jdbcDriver", "jdbc:hsqldb:mem:mybatis-guice_TEST", "sa", ""))
@@ -40,14 +42,16 @@ public abstract class AbstractIntegration {
         ComponentConfiguration componentConfiguration = new ComponentConfiguration(environment);
         componentConfiguration.setMappedStatementFactoryRegistry(MappedStatementFactoryRegistryBuilder.newBuilder().addMappedStatementFactory(new FindEntityByIdMappedStatementFactory())
                 .addMappedStatementFactory(new FindComponentsByMappedStatementFactory()).addMappedStatementFactory(new FindComponentsByJoinTableMappedStatementFactory())
-                .addMappedStatementFactory(new InsertMappedStatementFactory()).addMappedStatementFactory(new UpdateMappedStatementFactory())
-                .addMappedStatementFactory(new DeleteMappedStatementFactory()).build());
+                .addMappedStatementFactory(new FindNlsColumnMappedStatementFactory()).addMappedStatementFactory(new InsertMappedStatementFactory())
+                .addMappedStatementFactory(new UpdateMappedStatementFactory()).addMappedStatementFactory(new DeleteMappedStatementFactory()).build());
         componentConfiguration.setResultMapFactoryRegistry(ResultMapFactoryRegistryBuilder.newBuilder().addResultMapFactory(new ComponentResultMapFactory()).build());
         componentConfiguration.setCacheFactoryRegistry(CacheFactoryRegistryBuilder.newBuilder().addCacheFactory(new ComponentCacheFactory()).build());
         componentConfiguration.setObjectFactory(new ComponentObjectFactory());
         componentConfiguration.setProxyFactory(new ComponentProxyFactory());
         componentConfiguration.setLazyLoadingEnabled(true);
         componentConfiguration.setAggressiveLazyLoading(false);
+        defaultNlsColumnHandler = new DefaultNlsColumnHandler();
+        componentConfiguration.setNlsColumnHandler(defaultNlsColumnHandler);
         componentConfiguration.getTypeHandlerRegistry().register(IdTypeHandler.class);
 
         configuration = componentConfiguration;

@@ -13,6 +13,7 @@ public class FindByIdIT extends AbstractIntegration {
 
     @Test
     public void testFindUserById() {
+        defaultNlsColumnHandler.setLanguageCode(null);
         IUser user = sqlSessionManager.<IUser>selectOne(StatementNameHelper.buildFindEntityByIdKey(IUser.class), IdFactory.IdString.from("1"));
 
         SoftAssertions softAssertions = new SoftAssertions();
@@ -27,6 +28,7 @@ public class FindByIdIT extends AbstractIntegration {
 
     @Test
     public void testAssociation() {
+        defaultNlsColumnHandler.setLanguageCode(null);
         IUser user = sqlSessionManager.<IUser>selectOne(StatementNameHelper.buildFindEntityByIdKey(IUser.class), IdFactory.IdString.from("1"));
 
         IAddress address = user.getAddress();
@@ -59,5 +61,19 @@ public class FindByIdIT extends AbstractIntegration {
 
         Assertions.assertThat(user.getAddresses()).isNotNull().hasSize(3);
 
+    }
+
+    @Test
+    public void testNlsColumn() {
+        defaultNlsColumnHandler.setLanguageCode("fra");
+        ICountry country = sqlSessionManager.<ICountry>selectOne(StatementNameHelper.buildFindEntityByIdKey(ICountry.class), IdFactory.IdString.from("1"));
+
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(country.getId()).isEqualTo(IdFactory.IdString.from("1"));
+        softAssertions.assertThat(country.getVersion()).isEqualTo(0);
+        softAssertions.assertThat(country.getCode()).isEqualTo("FRA");
+        softAssertions.assertThat(country.getName()).isEqualTo("Fromage");
+        softAssertions.assertThat(country.getCreatedBy()).isEqualTo("GABY");
+        softAssertions.assertAll();
     }
 }

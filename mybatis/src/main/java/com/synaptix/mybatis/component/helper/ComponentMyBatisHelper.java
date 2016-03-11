@@ -294,13 +294,13 @@ public class ComponentMyBatisHelper {
     }
 
     /**
-     * * Verify if component class use NlsColumn annotation
+     * Verify if component class use NlsColumn annotation and children
      *
      * @param componentClass component class
      * @return true if use NlsColumn annotation
      */
     @SuppressWarnings("unchecked")
-    public static <E extends IComponent> boolean isUseNlsColumn(Class<E> componentClass) {
+    public static <E extends IComponent> boolean isAllUseNlsColumn(Class<E> componentClass) {
         ComponentDescriptor<E> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
         for (ComponentDescriptor.PropertyDescriptor propertyDescriptor : componentDescriptor.getPropertyDescriptors()) {
             if (propertyDescriptor.getMethod().isAnnotationPresent(NlsColumn.class)) {
@@ -310,7 +310,7 @@ public class ComponentMyBatisHelper {
 
                 Class<?> javaType = association.javaType() != null && association.javaType() != void.class ? association.javaType() : propertyDescriptor.getPropertyClass();
                 if (ComponentFactory.getInstance().isComponentType(javaType)) {
-                    if (isUseNlsColumn((Class<? extends IComponent>) javaType)) {
+                    if (isAllUseNlsColumn((Class<? extends IComponent>) javaType)) {
                         return true;
                     }
                 }
@@ -326,7 +326,7 @@ public class ComponentMyBatisHelper {
 
                 Class<?> clazz = getCollectionElementClass(componentDescriptor, propertyDescriptor, collection);
                 if (ComponentFactory.getInstance().isComponentType(clazz)) {
-                    if (isUseNlsColumn((Class<? extends IComponent>) clazz)) {
+                    if (isAllUseNlsColumn((Class<? extends IComponent>) clazz)) {
                         return true;
                     }
                 }
@@ -334,4 +334,32 @@ public class ComponentMyBatisHelper {
         }
         return false;
     }
+
+    /**
+     * Verify if component class use NlsColumn
+     *
+     * @param componentClass component class
+     * @return component use nls column
+     */
+    public static <E extends IComponent> boolean isUseNlsColumn(Class<E> componentClass) {
+        ComponentDescriptor<E> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
+        for (ComponentDescriptor.PropertyDescriptor propertyDescriptor : componentDescriptor.getPropertyDescriptors()) {
+            if (propertyDescriptor.getMethod().isAnnotationPresent(NlsColumn.class)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static <E extends IComponent> Set<String> getNlsColumnForPropertyName(Class<E> componentClass) {
+        Set<String> res = new HashSet<>();
+        ComponentDescriptor<E> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
+        for (ComponentDescriptor.PropertyDescriptor propertyDescriptor : componentDescriptor.getPropertyDescriptors()) {
+            if (propertyDescriptor.getMethod().isAnnotationPresent(NlsColumn.class)) {
+                res.add(propertyDescriptor.getPropertyName());
+            }
+        }
+        return res;
+    }
+
 }

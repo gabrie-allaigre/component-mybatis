@@ -61,13 +61,13 @@ public class DefaultComponentSqlSession implements IComponentSqlSession {
 
     private <E extends IComponent> void triggerBefore(ITriggerObserver.Type type, E component) {
         if (sqlSession.getConfiguration() instanceof ComponentConfiguration && ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher() != null) {
-            ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher().triggerBefore(type, component);
+            ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher().triggerBefore(sqlSession, type, component);
         }
     }
 
     private <E extends IComponent> void triggerAfter(ITriggerObserver.Type type, E component) {
         if (sqlSession.getConfiguration() instanceof ComponentConfiguration && ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher() != null) {
-            ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher().triggerAfter(type, component);
+            ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher().triggerAfter(sqlSession, type, component);
         }
     }
 }

@@ -2,6 +2,7 @@ package com.synaptix.mybatis.component.session.dispatcher;
 
 import com.synaptix.component.IComponent;
 import com.synaptix.mybatis.component.session.observer.ITriggerObserver;
+import org.apache.ibatis.session.SqlSession;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,24 +32,26 @@ public class TriggerDispatcher {
     /**
      * Trigger call before insert, update or delete component
      *
+     * @param sqlSession current sqlSession
      * @param type      insert, update or delete
      * @param component component
      */
-    public <E extends IComponent> void triggerBefore(ITriggerObserver.Type type, E component) {
+    public <E extends IComponent> void triggerBefore(SqlSession sqlSession, ITriggerObserver.Type type, E component) {
         for (ITriggerObserver triggerObserver : triggerObservers) {
-            triggerObserver.triggerBefore(type, component);
+            triggerObserver.triggerBefore(sqlSession, type, component);
         }
     }
 
     /**
      * Trigger call after insert, update or delete component
      *
+     * @param sqlSession
      * @param type      insert, update or delete
      * @param component component
      */
-    public <E extends IComponent> void triggerAfter(ITriggerObserver.Type type, E component) {
+    public <E extends IComponent> void triggerAfter(SqlSession sqlSession, ITriggerObserver.Type type, E component) {
         for (ITriggerObserver triggerObserver : triggerObservers) {
-            triggerObserver.triggerAfter(type, component);
+            triggerObserver.triggerAfter(sqlSession, type, component);
         }
     }
 }

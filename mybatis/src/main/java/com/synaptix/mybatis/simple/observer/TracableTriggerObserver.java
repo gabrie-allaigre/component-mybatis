@@ -4,6 +4,7 @@ import com.synaptix.component.IComponent;
 import com.synaptix.entity.ICancelable;
 import com.synaptix.entity.ITracable;
 import com.synaptix.mybatis.component.session.observer.AbstractTriggerObserver;
+import org.apache.ibatis.session.SqlSession;
 
 import java.util.Date;
 
@@ -18,7 +19,7 @@ public class TracableTriggerObserver extends AbstractTriggerObserver {
     }
 
     @Override
-    public <E extends IComponent> void triggerBefore(Type type, E component) {
+    public <E extends IComponent> void triggerBefore(SqlSession sqlSession, Type type, E component) {
         if (userByHandler != null) {
             if (component instanceof ITracable) {
                 ITracable tracable = (ITracable) component;

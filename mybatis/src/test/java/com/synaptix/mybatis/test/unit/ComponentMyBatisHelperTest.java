@@ -111,8 +111,8 @@ public class ComponentMyBatisHelperTest {
 
     @Test
     public void testIsUseNlsColumn() {
-        Assertions.assertThat(ComponentMyBatisHelper.isUseNlsColumn(IGroup.class)).isFalse();
-        Assertions.assertThat(ComponentMyBatisHelper.isUseNlsColumn(ICountry.class)).isTrue();
-        Assertions.assertThat(ComponentMyBatisHelper.isUseNlsColumn(IUser.class)).isTrue();
+        Assertions.assertThat(ComponentMyBatisHelper.isAllUseNlsColumn(IGroup.class)).isFalse();
+        Assertions.assertThat(ComponentMyBatisHelper.isAllUseNlsColumn(ICountry.class)).isTrue();
+        Assertions.assertThat(ComponentMyBatisHelper.isAllUseNlsColumn(IUser.class)).isTrue();
     }
 }

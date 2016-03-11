@@ -81,7 +81,7 @@ public class ComponentCacheFactory extends AbstractCacheFactory {
         }
 
         INlsColumnHandler nlsColumnHandler = componentConfiguration.getNlsColumnHandler();
-        if (nlsColumnHandler != null && ComponentMyBatisHelper.isUseNlsColumn(componentClass)) {
+        if (nlsColumnHandler != null && ComponentMyBatisHelper.isAllUseNlsColumn(componentClass)) {
             res = new NlsColumnCache(nlsColumnHandler, res);
         }
 

@@ -20,4 +20,17 @@ public class UpdateIT extends AbstractIntegration {
         user = sqlSessionManager.<IUser>selectOne(StatementNameHelper.buildFindEntityByIdKey(IUser.class), IdFactory.IdString.from("1"));
         Assertions.assertThat(user.getLogin()).isEqualTo("Toto");
     }
+
+    @Test
+    public void testUpdateComponent() {
+        IUser user = componentSqlSessionManager.findById(IUser.class, IdFactory.IdString.from("1"));
+        user.setLogin("Toto");
+        int i = componentSqlSessionManager.update(user);
+
+        Assertions.assertThat(i).isEqualTo(1);
+        Assertions.assertThat(user.getVersion()).isEqualTo(1);
+
+        user = componentSqlSessionManager.findById(IUser.class, IdFactory.IdString.from("1"));
+        Assertions.assertThat(user.getLogin()).isEqualTo("Toto");
+    }
 }

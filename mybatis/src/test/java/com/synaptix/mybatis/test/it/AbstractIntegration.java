@@ -6,6 +6,7 @@ import com.synaptix.mybatis.component.factory.ComponentProxyFactory;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
 import com.synaptix.mybatis.component.statement.*;
 import com.synaptix.mybatis.session.ComponentConfiguration;
+import com.synaptix.mybatis.session.ComponentSqlSessionManager;
 import com.synaptix.mybatis.session.registry.CacheFactoryRegistryBuilder;
 import com.synaptix.mybatis.session.registry.MappedStatementFactoryRegistryBuilder;
 import com.synaptix.mybatis.session.registry.ResultMapFactoryRegistryBuilder;
@@ -31,6 +32,8 @@ public abstract class AbstractIntegration {
     protected static Configuration configuration;
 
     protected static SqlSessionManager sqlSessionManager;
+
+    protected static ComponentSqlSessionManager componentSqlSessionManager;
 
     protected static DefaultNlsColumnHandler defaultNlsColumnHandler;
 
@@ -58,6 +61,8 @@ public abstract class AbstractIntegration {
 
         SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(configuration);
         sqlSessionManager = SqlSessionManager.newInstance(sqlSessionFactory);
+
+        componentSqlSessionManager = ComponentSqlSessionManager.newInstance(sqlSessionManager);
     }
 
     @AfterClass

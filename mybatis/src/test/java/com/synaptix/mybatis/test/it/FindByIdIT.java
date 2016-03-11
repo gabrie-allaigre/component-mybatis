@@ -76,4 +76,19 @@ public class FindByIdIT extends AbstractIntegration {
         softAssertions.assertThat(country.getCreatedBy()).isEqualTo("GABY");
         softAssertions.assertAll();
     }
+
+    @Test
+    public void testFindUserComponentById() {
+        defaultNlsColumnHandler.setLanguageCode(null);
+        IUser user = componentSqlSessionManager.findById(IUser.class, IdFactory.IdString.from("1"));
+
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(user.getId()).isEqualTo(IdFactory.IdString.from("1"));
+        softAssertions.assertThat(user.getVersion()).isEqualTo(0);
+        softAssertions.assertThat(user.getCountryCode()).isEqualTo("FRA");
+        softAssertions.assertThat(user.getCountryId()).isEqualTo(IdFactory.IdString.from("1"));
+        softAssertions.assertThat(user.getAddressId()).isEqualTo(IdFactory.IdString.from("2"));
+        softAssertions.assertThat(user.getCreatedBy()).isEqualTo("GABY");
+        softAssertions.assertAll();
+    }
 }

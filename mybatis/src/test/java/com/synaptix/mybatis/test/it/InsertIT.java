@@ -17,4 +17,14 @@ public class InsertIT extends AbstractIntegration {
         Assertions.assertThat(user.getId()).isNotNull();
         Assertions.assertThat(user.getVersion()).isEqualTo(0);
     }
+
+    @Test
+    public void testInsertComponent() {
+        IUser user = UserBuilder.newBuilder().login("Gabriel").build();
+        int i = componentSqlSessionManager.insert(user);
+
+        Assertions.assertThat(i).isEqualTo(1);
+        Assertions.assertThat(user.getId()).isNotNull();
+        Assertions.assertThat(user.getVersion()).isEqualTo(0);
+    }
 }

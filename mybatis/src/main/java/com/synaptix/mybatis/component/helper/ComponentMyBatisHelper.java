@@ -1,4 +1,4 @@
-package com.synaptix.mybatis.component;
+package com.synaptix.mybatis.component.helper;
 
 import com.google.common.reflect.TypeToken;
 import com.synaptix.component.IComponent;

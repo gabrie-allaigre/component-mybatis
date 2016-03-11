@@ -1,7 +1,7 @@
 package com.synaptix.mybatis.test.unit;
 
 import com.synaptix.component.factory.ComponentFactory;
-import com.synaptix.mybatis.component.ComponentMyBatisHelper;
+import com.synaptix.mybatis.component.helper.ComponentMyBatisHelper;
 import com.synaptix.mybatis.test.data.*;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;

@@ -3,12 +3,12 @@ package com.synaptix.mybatis.component.resultmap.factory;
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
-import com.synaptix.entity.ICancellable;
+import com.synaptix.entity.ICancelable;
 import com.synaptix.entity.annotation.Collection;
 import com.synaptix.entity.annotation.FetchType;
 import com.synaptix.entity.annotation.JoinTable;
 import com.synaptix.entity.helper.EntityHelper;
-import com.synaptix.mybatis.component.ComponentMyBatisHelper;
+import com.synaptix.mybatis.component.helper.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.session.ComponentConfiguration;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -67,7 +67,7 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
             }
             ComponentResultMapHelper.checkTarget(ComponentFactory.getInstance().getDescriptor(subComponentClass), propertyTarget);
 
-            boolean ignoreCancel = ICancellable.class.isAssignableFrom(subComponentClass);
+            boolean ignoreCancel = ICancelable.class.isAssignableFrom(subComponentClass);
 
             JoinTable[] joinTables = collection.joinTable();
             if (joinTables != null && joinTables.length > 0) {

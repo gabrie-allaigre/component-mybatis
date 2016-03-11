@@ -26,9 +26,9 @@ CREATE TABLE t_group (
   created_by   VARCHAR(240),
   updated_date DATETIME,
   updated_by   VARCHAR(240),
-  check_cancel BOOLEAN DEFAULT FALSE,
-  cancel_date  DATETIME,
-  cancel_by    VARCHAR(240)
+  canceled BOOLEAN DEFAULT FALSE,
+  canceled_date  DATETIME,
+  canceled_by    VARCHAR(240)
 );
 
 DROP TABLE t_address
@@ -44,9 +44,9 @@ CREATE TABLE t_address (
   created_by   VARCHAR(240),
   updated_date DATETIME,
   updated_by   VARCHAR(240),
-  check_cancel BOOLEAN DEFAULT FALSE,
-  cancel_date  DATETIME,
-  cancel_by    VARCHAR(240)
+  canceled BOOLEAN DEFAULT FALSE,
+  canceled_date  DATETIME,
+  canceled_by    VARCHAR(240)
 );
 
 DROP TABLE t_country
@@ -61,9 +61,9 @@ CREATE TABLE t_country (
   created_by   VARCHAR(240),
   updated_date DATETIME,
   updated_by   VARCHAR(240),
-  check_cancel BOOLEAN DEFAULT FALSE,
-  cancel_date  DATETIME,
-  cancel_by    VARCHAR(240)
+  canceled BOOLEAN DEFAULT FALSE,
+  canceled_date  DATETIME,
+  canceled_by    VARCHAR(240)
 );
 
 DROP TABLE t_asso_user_address
@@ -109,5 +109,5 @@ INSERT INTO t_asso_user_address (user_id, address_id) VALUES ('2', '4');
 INSERT INTO t_group (id, version, user_id, name, created_date, created_by) VALUES ('1', 0, '1', 'admin', SYSDATE, 'GABY');
 INSERT INTO t_group (id, version, user_id, name, created_date, created_by) VALUES ('2', 0, '1', 'system', SYSDATE, 'GABY');
 INSERT INTO t_group (id, version, user_id, name, created_date, created_by) VALUES ('3', 0, '2', 'user', SYSDATE, 'GABY');
-INSERT INTO t_group (id, version, user_id, name, created_date, created_by, check_cancel, cancel_date, cancel_by) VALUES ('4', 0, '1', 'simple', SYSDATE, 'GABY', TRUE, SYSDATE, 'GABY');
+INSERT INTO t_group (id, version, user_id, name, created_date, created_by, canceled, canceled_date, canceled_by) VALUES ('4', 0, '1', 'simple', SYSDATE, 'GABY', TRUE, SYSDATE, 'GABY');
 

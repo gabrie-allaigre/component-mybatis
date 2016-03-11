@@ -13,13 +13,16 @@ import com.synaptix.mybatis.component.session.factory.ICacheFactory;
 import com.synaptix.mybatis.component.session.factory.IMappedStatementFactory;
 import com.synaptix.mybatis.component.session.factory.IResultMapFactory;
 import com.synaptix.mybatis.component.session.handler.INlsColumnHandler;
+import com.synaptix.mybatis.component.session.observer.ITriggerObserver;
 import com.synaptix.mybatis.component.statement.*;
 import com.synaptix.mybatis.guice.SimpleMyBatisModule;
 import com.synaptix.mybatis.guice.configuration.ComponentConfigurationProvider;
 import com.synaptix.mybatis.guice.session.ComponentSqlSessionManagerProvider;
+import com.synaptix.mybatis.simple.observer.TracableTriggerObserver;
 import mapper.UserMapper;
 import model.IUser;
 import model.UserBuilder;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.mybatis.guice.MyBatisModule;
 import org.mybatis.guice.datasource.builtin.PooledDataSourceProvider;
@@ -69,6 +72,12 @@ public class MainMyBatis {
                 Multibinder<ICacheFactory> cacheFactoryMultibinder = Multibinder.newSetBinder(binder(), ICacheFactory.class);
                 cacheFactoryMultibinder.addBinding().to(ComponentCacheFactory.class);
 
+                bind(DefaultUserByHandler.class).in(Singleton.class);
+                bind(TracableTriggerObserver.IUserByHandler.class).to(DefaultUserByHandler.class).in(Singleton.class);
+
+                Multibinder<ITriggerObserver> triggerObserverMultibinder = Multibinder.newSetBinder(binder(), ITriggerObserver.class);
+                triggerObserverMultibinder.addBinding().toConstructor(ConstructorUtils.getAccessibleConstructor(TracableTriggerObserver.class, TracableTriggerObserver.IUserByHandler.class));
+
                 bind(ComponentSqlSessionManager.class).toProvider(ComponentSqlSessionManagerProvider.class).in(Scopes.SINGLETON);
             }
 
@@ -83,12 +92,16 @@ public class MainMyBatis {
             }
         });
 
+        DefaultUserByHandler defaultUserByHandler = injector.getInstance(DefaultUserByHandler.class);
+        defaultUserByHandler.setUserBy("GABY");
+
         FooService fooService = injector.getInstance(FooService.class);
         fooService.init("init-script.sql");
 
         IUser user2 = UserBuilder.newBuilder().id(IdFactory.IdString.from("10")).login("test").build();
         System.out.println(fooService.insert(user2));
         System.out.println(user2);
+
 /*
         user = fooService.findById(IUser.class, user2.getId());
         System.out.println(user);

@@ -1,7 +1,7 @@
 package model;
 
 import com.synaptix.component.annotation.ComponentBean;
-import com.synaptix.entity.ICancellable;
+import com.synaptix.entity.ICancelable;
 import com.synaptix.entity.IEntity;
 import com.synaptix.entity.ITracable;
 import com.synaptix.entity.annotation.Cache;
@@ -12,7 +12,7 @@ import com.synaptix.entity.annotation.NlsColumn;
 @Entity(name = "T_COUNTRY")
 @ComponentBean
 @Cache
-public interface ICountry extends IEntity, ITracable, ICancellable {
+public interface ICountry extends IEntity, ITracable, ICancelable {
 
     @Column(name = "CODE")
     String getCode();

@@ -3,10 +3,10 @@ package com.synaptix.mybatis.component.statement.sqlsource;
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
-import com.synaptix.entity.ICancellable;
+import com.synaptix.entity.ICancelable;
 import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
-import com.synaptix.mybatis.component.ComponentMyBatisHelper;
+import com.synaptix.mybatis.component.helper.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.session.ComponentConfiguration;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
 import org.apache.ibatis.builder.SqlSourceBuilder;
@@ -30,7 +30,7 @@ public class FindComponentsByPropertyNameSqlSource<E extends IComponent> impleme
     public FindComponentsByPropertyNameSqlSource(ComponentConfiguration componentConfiguration, Class<E> componentClass, boolean ignoreCancel, String... propertyNames) {
         super();
 
-        this.ignoreCancel = ignoreCancel && ICancellable.class.isAssignableFrom(componentClass);
+        this.ignoreCancel = ignoreCancel && ICancelable.class.isAssignableFrom(componentClass);
 
         SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(componentConfiguration);
 
@@ -42,7 +42,7 @@ public class FindComponentsByPropertyNameSqlSource<E extends IComponent> impleme
     public BoundSql getBoundSql(Object parameterObject) {
         BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
         if (ignoreCancel) {
-            boundSql.setAdditionalParameter("checkCancel", false);
+            boundSql.setAdditionalParameter("canceled", false);
         }
         return boundSql;
     }
@@ -71,7 +71,7 @@ public class FindComponentsByPropertyNameSqlSource<E extends IComponent> impleme
             param++;
         }
         if (ignoreCancel) {
-            sqlBuilder.WHERE("t.check_cancel = #{checkCancel,javaType=java.lang.Boolean}");
+            sqlBuilder.WHERE("t.canceled = #{canceled,javaType=java.lang.Boolean}");
         }
         String sql = sqlBuilder.toString();
         if (LOG.isDebugEnabled()) {

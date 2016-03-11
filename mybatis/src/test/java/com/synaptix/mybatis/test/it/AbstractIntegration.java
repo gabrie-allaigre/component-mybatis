@@ -8,6 +8,7 @@ import com.synaptix.mybatis.component.session.ComponentConfiguration;
 import com.synaptix.mybatis.component.session.ComponentSqlSessionManager;
 import com.synaptix.mybatis.component.statement.*;
 import com.synaptix.mybatis.simple.handler.IdTypeHandler;
+import com.synaptix.mybatis.simple.observer.TracableTriggerObserver;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
@@ -58,6 +59,8 @@ public abstract class AbstractIntegration {
         componentConfiguration.getResultMapFactoryRegistry().registry(new ComponentResultMapFactory());
 
         componentConfiguration.getCacheFactoryRegistry().registry(new ComponentCacheFactory());
+
+        componentConfiguration.getTriggerDispatcher().addTriggerObserver(new TracableTriggerObserver(new DefaultUserByHandler()));
 
         componentConfiguration.getTypeHandlerRegistry().register(IdTypeHandler.class);
 

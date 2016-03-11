@@ -1,7 +1,7 @@
 package com.synaptix.mybatis.component.cache;
 
 import com.synaptix.component.IComponent;
-import com.synaptix.mybatis.component.ComponentMyBatisHelper;
+import com.synaptix.mybatis.component.helper.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.session.ComponentConfiguration;
 import com.synaptix.mybatis.component.session.factory.AbstractCacheFactory;
 import com.synaptix.mybatis.component.session.handler.INlsColumnHandler;

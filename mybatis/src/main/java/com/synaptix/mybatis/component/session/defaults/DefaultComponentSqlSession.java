@@ -2,9 +2,10 @@ package com.synaptix.mybatis.component.session.defaults;
 
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentFactory;
-import com.synaptix.entity.ITracable;
-import com.synaptix.mybatis.component.statement.StatementNameHelper;
+import com.synaptix.mybatis.component.session.ComponentConfiguration;
 import com.synaptix.mybatis.component.session.IComponentSqlSession;
+import com.synaptix.mybatis.component.session.observer.ITriggerObserver;
+import com.synaptix.mybatis.component.statement.StatementNameHelper;
 import org.apache.ibatis.session.SqlSession;
 
 public class DefaultComponentSqlSession implements IComponentSqlSession {
@@ -28,12 +29,10 @@ public class DefaultComponentSqlSession implements IComponentSqlSession {
             return 0;
         }
 
-        /*if (sqlSession.getConfiguration() instanceof ComponentConfiguration && component instanceof ITracable
-                && ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher() != null) {
-            ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher().fillInsertTracable((ITracable) component);
-        }*/
-
-        return sqlSession.insert(StatementNameHelper.buildInsertKey(ComponentFactory.getInstance().getComponentClass(component)), component);
+        triggerBefore(ITriggerObserver.Type.Insert, component);
+        int res = sqlSession.insert(StatementNameHelper.buildInsertKey(ComponentFactory.getInstance().getComponentClass(component)), component);
+        triggerAfter(ITriggerObserver.Type.Insert, component);
+        return res;
     }
 
     @Override
@@ -42,11 +41,10 @@ public class DefaultComponentSqlSession implements IComponentSqlSession {
             return 0;
         }
 
-        if (component instanceof ITracable) {
-
-        }
-
-        return sqlSession.update(StatementNameHelper.buildUpdateKey(ComponentFactory.getInstance().getComponentClass(component)), component);
+        triggerBefore(ITriggerObserver.Type.Update, component);
+        int res = sqlSession.update(StatementNameHelper.buildUpdateKey(ComponentFactory.getInstance().getComponentClass(component)), component);
+        triggerAfter(ITriggerObserver.Type.Update, component);
+        return res;
     }
 
     @Override
@@ -55,6 +53,21 @@ public class DefaultComponentSqlSession implements IComponentSqlSession {
             return 0;
         }
 
-        return sqlSession.delete(StatementNameHelper.buildDeleteKey(ComponentFactory.getInstance().getComponentClass(component)), component);
+        triggerBefore(ITriggerObserver.Type.Delete, component);
+        int res = sqlSession.delete(StatementNameHelper.buildDeleteKey(ComponentFactory.getInstance().getComponentClass(component)), component);
+        triggerAfter(ITriggerObserver.Type.Delete, component);
+        return res;
+    }
+
+    private <E extends IComponent> void triggerBefore(ITriggerObserver.Type type, E component) {
+        if (sqlSession.getConfiguration() instanceof ComponentConfiguration && ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher() != null) {
+            ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher().triggerBefore(type, component);
+        }
+    }
+
+    private <E extends IComponent> void triggerAfter(ITriggerObserver.Type type, E component) {
+        if (sqlSession.getConfiguration() instanceof ComponentConfiguration && ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher() != null) {
+            ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher().triggerAfter(type, component);
+        }
     }
 }

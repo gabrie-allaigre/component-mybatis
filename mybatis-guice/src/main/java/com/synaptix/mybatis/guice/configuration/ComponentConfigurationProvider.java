@@ -7,6 +7,7 @@ import com.synaptix.mybatis.component.session.factory.ICacheFactory;
 import com.synaptix.mybatis.component.session.factory.IMappedStatementFactory;
 import com.synaptix.mybatis.component.session.factory.IResultMapFactory;
 import com.synaptix.mybatis.component.session.handler.INlsColumnHandler;
+import com.synaptix.mybatis.component.session.observer.ITriggerObserver;
 import org.apache.ibatis.executor.loader.ProxyFactory;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -24,6 +25,9 @@ public class ComponentConfigurationProvider extends ConfigurationProvider {
 
     @Inject(optional = true)
     private Set<ICacheFactory> cacheFactories;
+
+    @Inject(optional = true)
+    private Set<ITriggerObserver> triggerObservers;
 
     @Inject(optional = true)
     private INlsColumnHandler nlsColumnHandler;
@@ -57,6 +61,12 @@ public class ComponentConfigurationProvider extends ConfigurationProvider {
         if (cacheFactories != null && !cacheFactories.isEmpty()) {
             for (ICacheFactory cacheFactory : cacheFactories) {
                 componentConfiguration.getCacheFactoryRegistry().registry(cacheFactory);
+            }
+        }
+
+        if (triggerObservers != null && !triggerObservers.isEmpty()) {
+            for (ITriggerObserver triggerObserver : triggerObservers) {
+                componentConfiguration.getTriggerDispatcher().addTriggerObserver(triggerObserver);
             }
         }
 

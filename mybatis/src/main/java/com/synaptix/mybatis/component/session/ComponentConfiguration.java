@@ -13,12 +13,8 @@ import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.session.Configuration;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class ComponentConfiguration extends Configuration {
-
-    private static final Logger LOG = LogManager.getLogger(ComponentConfiguration.class);
 
     protected MappedStatementFactoryRegistry mappedStatementFactoryRegistry = new MappedStatementFactoryRegistry();
 

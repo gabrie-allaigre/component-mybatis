@@ -1,7 +1,7 @@
 package com.synaptix.mybatis.component.resultmap;
 
 import com.synaptix.component.IComponent;
-import com.synaptix.mybatis.component.ComponentMyBatisHelper;
+import com.synaptix.mybatis.component.helper.ComponentMyBatisHelper;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;

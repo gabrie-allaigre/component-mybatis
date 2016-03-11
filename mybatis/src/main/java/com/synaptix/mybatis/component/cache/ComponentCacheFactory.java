@@ -2,9 +2,9 @@ package com.synaptix.mybatis.component.cache;
 
 import com.synaptix.component.IComponent;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
-import com.synaptix.mybatis.session.ComponentConfiguration;
-import com.synaptix.mybatis.session.factory.AbstractCacheFactory;
-import com.synaptix.mybatis.session.handler.INlsColumnHandler;
+import com.synaptix.mybatis.component.session.ComponentConfiguration;
+import com.synaptix.mybatis.component.session.factory.AbstractCacheFactory;
+import com.synaptix.mybatis.component.session.handler.INlsColumnHandler;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.decorators.*;
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +24,20 @@ public class ComponentCacheFactory extends AbstractCacheFactory {
         super();
 
         this.componentCacheManager = componentCacheManager;
+    }
+
+    /**
+     * Component cache manager
+     *
+     * @return
+     */
+    public ComponentCacheManager getComponentCacheManager() {
+        return componentCacheManager;
+    }
+
+    @Override
+    public boolean acceptKey(String key) {
+        return CacheNameHelper.isCacheKey(key);
     }
 
     @Override

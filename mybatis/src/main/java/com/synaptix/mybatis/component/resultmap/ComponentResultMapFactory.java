@@ -4,8 +4,8 @@ import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
 import com.synaptix.mybatis.component.resultmap.factory.*;
-import com.synaptix.mybatis.session.ComponentConfiguration;
-import com.synaptix.mybatis.session.factory.AbstractResultMapFactory;
+import com.synaptix.mybatis.component.session.ComponentConfiguration;
+import com.synaptix.mybatis.component.session.factory.AbstractResultMapFactory;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.apache.logging.log4j.LogManager;
@@ -31,8 +31,18 @@ public class ComponentResultMapFactory extends AbstractResultMapFactory {
         addResultMappingFactory(new NlsColumnResultMappingFactory());
     }
 
+    /**
+     * Add result mapping factory
+     *
+     * @param resultMappingFactory
+     */
     public void addResultMappingFactory(IResultMappingFactory<?> resultMappingFactory) {
         resultMappingFactories.add(resultMappingFactory);
+    }
+
+    @Override
+    public boolean acceptKey(String key) {
+        return ResultMapNameHelper.isResultMapKey(key);
     }
 
     @Override

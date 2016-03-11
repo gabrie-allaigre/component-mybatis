@@ -1,12 +1,10 @@
-import org.assertj.core.api.*;
+import org.apache.commons.lang3.reflect.MethodUtils;
+import org.assertj.core.api.AbstractAssert;
+import org.assertj.core.api.BooleanAssert;
 import org.assertj.core.internal.cglib.proxy.*;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,6 +16,8 @@ public class MainAssert {
         SoftProxies proxies = new SoftProxies();
         proxies.create(BooleanAssert.class, Boolean.class, true).as("Test de sandra").isTrue();
         proxies.create(BooleanAssert.class, Boolean.class, false).as("Test de gabriel").isTrue();
+        proxies.create(BooleanAssert.class, Boolean.class, true).as("Test de sandra").isTrue();
+        proxies.create(BooleanAssert.class, Boolean.class, false).as("Test de gabriel2").isTrue();
         proxies.collector.errors().forEach(System.out::println);
     }
 
@@ -25,12 +25,27 @@ public class MainAssert {
 
         private final List<Throwable> errors = new ArrayList<>();
 
+        Method descMethod;
+
+        public ErrorCollector() {
+            super();
+
+            descMethod = MethodUtils.getAccessibleMethod(AbstractAssert.class, "describedAs", String.class, Object[].class);
+        }
+
         @Override
         public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
             try {
-                System.out.println(Arrays.toString(args));
-                proxy.invokeSuper(obj, args);
+                if (method.equals(descMethod)) {
+                    proxy.invokeSuper(obj, args);
+
+
+                } else {
+                    proxy.invokeSuper(obj, args);
+                }
+
             } catch (AssertionError e) {
+                //throw e;
                 errors.add(e);
             }
             return obj;
@@ -40,7 +55,6 @@ public class MainAssert {
             return Collections.unmodifiableList(errors);
         }
     }
-
 
     static class SoftProxies {
 

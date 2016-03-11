@@ -3,9 +3,9 @@ package com.synaptix.mybatis.component.statement;
 import com.synaptix.component.IComponent;
 import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.resultmap.ResultMapNameHelper;
+import com.synaptix.mybatis.component.session.ComponentConfiguration;
+import com.synaptix.mybatis.component.session.factory.AbstractMappedStatementFactory;
 import com.synaptix.mybatis.component.statement.sqlsource.FindComponentsByJoinTableSqlSource;
-import com.synaptix.mybatis.session.ComponentConfiguration;
-import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -20,6 +20,11 @@ import java.util.List;
 public class FindComponentsByJoinTableMappedStatementFactory extends AbstractMappedStatementFactory {
 
     private static final Logger LOG = LogManager.getLogger(FindComponentsByJoinTableMappedStatementFactory.class);
+
+    @Override
+    public boolean acceptKey(String key) {
+        return StatementNameHelper.isFindComponentsByJoinTableKey(key);
+    }
 
     @Override
     public MappedStatement createMappedStatement(ComponentConfiguration componentConfiguration, String key) {

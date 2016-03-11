@@ -3,9 +3,9 @@ package com.synaptix.mybatis.component.statement;
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
+import com.synaptix.mybatis.component.session.ComponentConfiguration;
+import com.synaptix.mybatis.component.session.factory.AbstractMappedStatementFactory;
 import com.synaptix.mybatis.component.statement.sqlsource.FindNlsColumnSqlSource;
-import com.synaptix.mybatis.session.ComponentConfiguration;
-import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -18,6 +18,11 @@ import java.util.Collections;
 public class FindNlsColumnMappedStatementFactory extends AbstractMappedStatementFactory {
 
     private static final Logger LOG = LogManager.getLogger(FindNlsColumnMappedStatementFactory.class);
+
+    @Override
+    public boolean acceptKey(String key) {
+        return StatementNameHelper.isFindNlsColumnKey(key);
+    }
 
     @Override
     public MappedStatement createMappedStatement(ComponentConfiguration componentConfiguration, String key) {
@@ -41,7 +46,8 @@ public class FindNlsColumnMappedStatementFactory extends AbstractMappedStatement
 
         ResultMap.Builder inlineResultMapBuilder = new ResultMap.Builder(componentConfiguration, key + "-Inline", propertyDescriptor.getPropertyClass(), new ArrayList<>(), null);
 
-        MappedStatement.Builder msBuilder = new MappedStatement.Builder(componentConfiguration, key, new FindNlsColumnSqlSource<>(componentConfiguration, componentClass, propertyName), SqlCommandType.SELECT);
+        MappedStatement.Builder msBuilder = new MappedStatement.Builder(componentConfiguration, key, new FindNlsColumnSqlSource<>(componentConfiguration, componentClass, propertyName),
+                SqlCommandType.SELECT);
         msBuilder.resultMaps(Collections.singletonList(inlineResultMapBuilder.build()));
         msBuilder.flushCacheRequired(false);
         msBuilder.cache(null);

@@ -1,6 +1,6 @@
 package com.synaptix.mybatis.guice.session;
 
-import com.synaptix.mybatis.session.ComponentSqlSessionManager;
+import com.synaptix.mybatis.component.session.ComponentSqlSessionManager;
 import org.apache.ibatis.session.SqlSessionManager;
 
 import javax.inject.Inject;

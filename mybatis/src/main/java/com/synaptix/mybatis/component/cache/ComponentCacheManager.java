@@ -73,18 +73,18 @@ public class ComponentCacheManager {
     }
 
     /**
-     * Add cache listener
+     * Add cache observer
      *
-     * @param cacheListener cache listener
+     * @param cacheListener cache observer
      */
     public synchronized void addCacheListener(ICacheListener cacheListener) {
         cacheListeners.add(cacheListener);
     }
 
     /**
-     * Remove cache listener
+     * Remove cache observer
      *
-     * @param cacheListener cache listener
+     * @param cacheListener cache observer
      */
     public synchronized void removeCacheListener(ICacheListener cacheListener) {
         cacheListeners.remove(cacheListener);

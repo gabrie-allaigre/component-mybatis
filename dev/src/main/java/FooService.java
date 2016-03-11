@@ -1,8 +1,8 @@
 import com.google.inject.Inject;
 import com.synaptix.component.IComponent;
 import com.synaptix.entity.IId;
+import com.synaptix.mybatis.component.session.ComponentSqlSessionManager;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
-import com.synaptix.mybatis.session.ComponentSqlSessionManager;
 import mapper.UserMapper;
 import model.IUser;
 import org.apache.ibatis.io.Resources;

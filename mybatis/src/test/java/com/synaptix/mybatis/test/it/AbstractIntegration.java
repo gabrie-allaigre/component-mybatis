@@ -4,12 +4,9 @@ import com.synaptix.mybatis.component.cache.ComponentCacheFactory;
 import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.factory.ComponentProxyFactory;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
+import com.synaptix.mybatis.component.session.ComponentConfiguration;
+import com.synaptix.mybatis.component.session.ComponentSqlSessionManager;
 import com.synaptix.mybatis.component.statement.*;
-import com.synaptix.mybatis.session.ComponentConfiguration;
-import com.synaptix.mybatis.session.ComponentSqlSessionManager;
-import com.synaptix.mybatis.session.registry.CacheFactoryRegistryBuilder;
-import com.synaptix.mybatis.session.registry.MappedStatementFactoryRegistryBuilder;
-import com.synaptix.mybatis.session.registry.ResultMapFactoryRegistryBuilder;
 import com.synaptix.mybatis.simple.handler.IdTypeHandler;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.io.Resources;
@@ -43,18 +40,25 @@ public abstract class AbstractIntegration {
                 .transactionFactory(new JdbcTransactionFactory()).build();
 
         ComponentConfiguration componentConfiguration = new ComponentConfiguration(environment);
-        componentConfiguration.setMappedStatementFactoryRegistry(MappedStatementFactoryRegistryBuilder.newBuilder().addMappedStatementFactory(new FindEntityByIdMappedStatementFactory())
-                .addMappedStatementFactory(new FindComponentsByMappedStatementFactory()).addMappedStatementFactory(new FindComponentsByJoinTableMappedStatementFactory())
-                .addMappedStatementFactory(new FindNlsColumnMappedStatementFactory()).addMappedStatementFactory(new InsertMappedStatementFactory())
-                .addMappedStatementFactory(new UpdateMappedStatementFactory()).addMappedStatementFactory(new DeleteMappedStatementFactory()).build());
-        componentConfiguration.setResultMapFactoryRegistry(ResultMapFactoryRegistryBuilder.newBuilder().addResultMapFactory(new ComponentResultMapFactory()).build());
-        componentConfiguration.setCacheFactoryRegistry(CacheFactoryRegistryBuilder.newBuilder().addCacheFactory(new ComponentCacheFactory()).build());
         componentConfiguration.setObjectFactory(new ComponentObjectFactory());
         componentConfiguration.setProxyFactory(new ComponentProxyFactory());
         componentConfiguration.setLazyLoadingEnabled(true);
         componentConfiguration.setAggressiveLazyLoading(false);
         defaultNlsColumnHandler = new DefaultNlsColumnHandler();
         componentConfiguration.setNlsColumnHandler(defaultNlsColumnHandler);
+
+        componentConfiguration.getMappedStatementFactoryRegistry().registry(new FindEntityByIdMappedStatementFactory());
+        componentConfiguration.getMappedStatementFactoryRegistry().registry(new FindComponentsByMappedStatementFactory());
+        componentConfiguration.getMappedStatementFactoryRegistry().registry(new FindComponentsByJoinTableMappedStatementFactory());
+        componentConfiguration.getMappedStatementFactoryRegistry().registry(new FindNlsColumnMappedStatementFactory());
+        componentConfiguration.getMappedStatementFactoryRegistry().registry(new InsertMappedStatementFactory());
+        componentConfiguration.getMappedStatementFactoryRegistry().registry(new UpdateMappedStatementFactory());
+        componentConfiguration.getMappedStatementFactoryRegistry().registry(new DeleteMappedStatementFactory());
+
+        componentConfiguration.getResultMapFactoryRegistry().registry(new ComponentResultMapFactory());
+
+        componentConfiguration.getCacheFactoryRegistry().registry(new ComponentCacheFactory());
+
         componentConfiguration.getTypeHandlerRegistry().register(IdTypeHandler.class);
 
         configuration = componentConfiguration;

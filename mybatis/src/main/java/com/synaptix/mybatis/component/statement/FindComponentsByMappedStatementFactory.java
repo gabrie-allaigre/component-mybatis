@@ -3,9 +3,9 @@ package com.synaptix.mybatis.component.statement;
 import com.synaptix.component.IComponent;
 import com.synaptix.mybatis.component.cache.CacheNameHelper;
 import com.synaptix.mybatis.component.resultmap.ResultMapNameHelper;
+import com.synaptix.mybatis.component.session.ComponentConfiguration;
+import com.synaptix.mybatis.component.session.factory.AbstractMappedStatementFactory;
 import com.synaptix.mybatis.component.statement.sqlsource.FindComponentsByPropertyNameSqlSource;
-import com.synaptix.mybatis.session.ComponentConfiguration;
-import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
@@ -18,6 +18,11 @@ import java.util.Collections;
 public class FindComponentsByMappedStatementFactory extends AbstractMappedStatementFactory {
 
     private static final Logger LOG = LogManager.getLogger(FindComponentsByMappedStatementFactory.class);
+
+    @Override
+    public boolean acceptKey(String key) {
+        return StatementNameHelper.isFindComponentsByKey(key);
+    }
 
     @Override
     public MappedStatement createMappedStatement(ComponentConfiguration componentConfiguration, String key) {

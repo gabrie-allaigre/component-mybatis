@@ -1,7 +1,7 @@
-package com.synaptix.mybatis.session;
+package com.synaptix.mybatis.component.session;
 
 import com.synaptix.component.IComponent;
-import com.synaptix.mybatis.session.defaults.DefaultComponentSqlSession;
+import com.synaptix.mybatis.component.session.defaults.DefaultComponentSqlSession;
 import org.apache.ibatis.session.SqlSessionManager;
 
 public class ComponentSqlSessionManager implements IComponentSqlSession {

@@ -1,6 +1,6 @@
 package com.synaptix.mybatis.component.cache;
 
-import com.synaptix.mybatis.session.handler.INlsColumnHandler;
+import com.synaptix.mybatis.component.session.handler.INlsColumnHandler;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;

@@ -1,9 +1,17 @@
-package com.synaptix.mybatis.session.factory;
+package com.synaptix.mybatis.component.session.factory;
 
-import com.synaptix.mybatis.session.ComponentConfiguration;
+import com.synaptix.mybatis.component.session.ComponentConfiguration;
 import org.apache.ibatis.cache.Cache;
 
 public interface ICacheFactory {
+
+    /**
+     * Accept key
+     *
+     * @param key key at verify
+     * @return true or false
+     */
+    boolean acceptKey(String key);
 
     /**
      * Create cache if key is valid

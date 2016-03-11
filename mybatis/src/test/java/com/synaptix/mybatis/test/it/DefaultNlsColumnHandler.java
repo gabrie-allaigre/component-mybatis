@@ -1,7 +1,7 @@
 package com.synaptix.mybatis.test.it;
 
 import com.synaptix.component.IComponent;
-import com.synaptix.mybatis.session.handler.INlsColumnHandler;
+import com.synaptix.mybatis.component.session.handler.INlsColumnHandler;
 
 import java.util.HashMap;
 import java.util.Map;

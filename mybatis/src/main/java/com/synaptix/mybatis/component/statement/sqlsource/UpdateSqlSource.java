@@ -6,7 +6,7 @@ import com.synaptix.component.factory.ComponentFactory;
 import com.synaptix.entity.annotation.Entity;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.ComponentMyBatisHelper;
-import com.synaptix.mybatis.session.ComponentConfiguration;
+import com.synaptix.mybatis.component.session.ComponentConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.SqlSourceBuilder;

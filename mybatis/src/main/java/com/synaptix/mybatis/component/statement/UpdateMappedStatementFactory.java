@@ -4,9 +4,9 @@ import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.cache.CacheNameHelper;
+import com.synaptix.mybatis.component.session.ComponentConfiguration;
+import com.synaptix.mybatis.component.session.factory.AbstractMappedStatementFactory;
 import com.synaptix.mybatis.component.statement.sqlsource.UpdateSqlSource;
-import com.synaptix.mybatis.session.ComponentConfiguration;
-import com.synaptix.mybatis.session.factory.AbstractMappedStatementFactory;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.keygen.KeyGenerator;
@@ -23,6 +23,11 @@ import java.util.Collections;
 public class UpdateMappedStatementFactory extends AbstractMappedStatementFactory {
 
     private static final Logger LOG = LogManager.getLogger(UpdateMappedStatementFactory.class);
+
+    @Override
+    public boolean acceptKey(String key) {
+        return StatementNameHelper.isUpdateKey(key);
+    }
 
     @Override
     public MappedStatement createMappedStatement(ComponentConfiguration componentConfiguration, String key) {

@@ -8,20 +8,14 @@ import com.synaptix.entity.factory.IdFactory;
 import com.synaptix.mybatis.component.cache.ComponentCacheFactory;
 import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
+import com.synaptix.mybatis.component.session.ComponentSqlSessionManager;
+import com.synaptix.mybatis.component.session.factory.ICacheFactory;
+import com.synaptix.mybatis.component.session.factory.IMappedStatementFactory;
+import com.synaptix.mybatis.component.session.factory.IResultMapFactory;
 import com.synaptix.mybatis.component.statement.*;
 import com.synaptix.mybatis.guice.SimpleMyBatisModule;
 import com.synaptix.mybatis.guice.configuration.ComponentConfigurationProvider;
-import com.synaptix.mybatis.guice.registry.GuiceCacheFactoryRegistry;
-import com.synaptix.mybatis.guice.registry.GuiceMappedStatementFactoryRegistry;
-import com.synaptix.mybatis.guice.registry.GuiceResultMapFactoryRegistry;
 import com.synaptix.mybatis.guice.session.ComponentSqlSessionManagerProvider;
-import com.synaptix.mybatis.session.ComponentSqlSessionManager;
-import com.synaptix.mybatis.session.factory.ICacheFactory;
-import com.synaptix.mybatis.session.factory.IMappedStatementFactory;
-import com.synaptix.mybatis.session.factory.IResultMapFactory;
-import com.synaptix.mybatis.session.registry.ICacheFactoryRegistry;
-import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
-import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;
 import mapper.UserMapper;
 import model.IUser;
 import model.UserBuilder;
@@ -55,10 +49,6 @@ public class MainSQLServer {
 
                 Names.bindProperties(binder(), createTestProperties());
                 bind(FooService.class).in(Singleton.class);
-
-                bind(IResultMapFactoryRegistry.class).to(GuiceResultMapFactoryRegistry.class).in(Singleton.class);
-                bind(IMappedStatementFactoryRegistry.class).to(GuiceMappedStatementFactoryRegistry.class).in(Singleton.class);
-                bind(ICacheFactoryRegistry.class).to(GuiceCacheFactoryRegistry.class).in(Singleton.class);
 
                 Multibinder<IResultMapFactory> resultMapFactoryMultibinder = Multibinder.newSetBinder(binder(), IResultMapFactory.class);
                 resultMapFactoryMultibinder.addBinding().to(ComponentResultMapFactory.class);

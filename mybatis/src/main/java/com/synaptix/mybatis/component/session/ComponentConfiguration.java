@@ -1,10 +1,13 @@
-package com.synaptix.mybatis.session;
+package com.synaptix.mybatis.component.session;
 
-import com.synaptix.mybatis.session.handler.INlsColumnHandler;
-import com.synaptix.mybatis.session.handler.ITracableHandler;
-import com.synaptix.mybatis.session.registry.ICacheFactoryRegistry;
-import com.synaptix.mybatis.session.registry.IMappedStatementFactoryRegistry;
-import com.synaptix.mybatis.session.registry.IResultMapFactoryRegistry;
+import com.synaptix.mybatis.component.session.dispatcher.TriggerDispatcher;
+import com.synaptix.mybatis.component.session.factory.ICacheFactory;
+import com.synaptix.mybatis.component.session.factory.IMappedStatementFactory;
+import com.synaptix.mybatis.component.session.factory.IResultMapFactory;
+import com.synaptix.mybatis.component.session.handler.INlsColumnHandler;
+import com.synaptix.mybatis.component.session.registry.CacheFactoryRegistry;
+import com.synaptix.mybatis.component.session.registry.MappedStatementFactoryRegistry;
+import com.synaptix.mybatis.component.session.registry.ResultMapFactoryRegistry;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
@@ -17,15 +20,15 @@ public class ComponentConfiguration extends Configuration {
 
     private static final Logger LOG = LogManager.getLogger(ComponentConfiguration.class);
 
-    protected IMappedStatementFactoryRegistry mappedStatementFactoryRegistry = null;
+    protected MappedStatementFactoryRegistry mappedStatementFactoryRegistry = new MappedStatementFactoryRegistry();
 
-    protected IResultMapFactoryRegistry resultMapFactoryRegistry = null;
+    protected ResultMapFactoryRegistry resultMapFactoryRegistry = new ResultMapFactoryRegistry();
 
-    protected ICacheFactoryRegistry cacheFactoryRegistry = null;
+    protected CacheFactoryRegistry cacheFactoryRegistry = new CacheFactoryRegistry();
 
     protected INlsColumnHandler nlsColumnHandler = null;
 
-    protected ITracableHandler tracableHandler = null;
+    protected TriggerDispatcher triggerDispatcher = new TriggerDispatcher();
 
     public ComponentConfiguration() {
         super();
@@ -38,42 +41,42 @@ public class ComponentConfiguration extends Configuration {
     /**
      * @return get mapped statement factory registry, default null
      */
-    public IMappedStatementFactoryRegistry getMappedStatementFactoryRegistry() {
+    public MappedStatementFactoryRegistry getMappedStatementFactoryRegistry() {
         return mappedStatementFactoryRegistry;
     }
 
     /**
      * Set mapped statement factory registry
      */
-    public void setMappedStatementFactoryRegistry(IMappedStatementFactoryRegistry mappedStatementFactoryRegistry) {
+    public void setMappedStatementFactoryRegistry(MappedStatementFactoryRegistry mappedStatementFactoryRegistry) {
         this.mappedStatementFactoryRegistry = mappedStatementFactoryRegistry;
     }
 
     /**
      * @return get result map factory registry default null
      */
-    public IResultMapFactoryRegistry getResultMapFactoryRegistry() {
+    public ResultMapFactoryRegistry getResultMapFactoryRegistry() {
         return resultMapFactoryRegistry;
     }
 
     /**
      * @param resultMapFactoryRegistry result map factory registry
      */
-    public void setResultMapFactoryRegistry(IResultMapFactoryRegistry resultMapFactoryRegistry) {
+    public void setResultMapFactoryRegistry(ResultMapFactoryRegistry resultMapFactoryRegistry) {
         this.resultMapFactoryRegistry = resultMapFactoryRegistry;
     }
 
     /**
      * @return get cache factory registry
      */
-    public ICacheFactoryRegistry getCacheFactoryRegistry() {
+    public CacheFactoryRegistry getCacheFactoryRegistry() {
         return cacheFactoryRegistry;
     }
 
     /**
      * @param cacheFactoryRegistry cache factory registry
      */
-    public void setCacheFactoryRegistry(ICacheFactoryRegistry cacheFactoryRegistry) {
+    public void setCacheFactoryRegistry(CacheFactoryRegistry cacheFactoryRegistry) {
         this.cacheFactoryRegistry = cacheFactoryRegistry;
     }
 
@@ -92,17 +95,17 @@ public class ComponentConfiguration extends Configuration {
     }
 
     /**
-     * @return get tracable handler
+     * @return get trigger dispatcher
      */
-    public ITracableHandler getTracableHandler() {
-        return tracableHandler;
+    public TriggerDispatcher getTriggerDispatcher() {
+        return triggerDispatcher;
     }
 
     /**
-     * @param tracableHandler tracable handler
+     * @param triggerDispatcher trigger dispatcher
      */
-    public void setTracableHandler(ITracableHandler tracableHandler) {
-        this.tracableHandler = tracableHandler;
+    public void setTriggerDispatcher(TriggerDispatcher triggerDispatcher) {
+        this.triggerDispatcher = triggerDispatcher;
     }
 
     @Override
@@ -124,10 +127,13 @@ public class ComponentConfiguration extends Configuration {
 
     private synchronized boolean verifyAndCreateCache(String id) {
         if (cacheFactoryRegistry != null) {
-            Cache cache = cacheFactoryRegistry.createCache(this, id);
-            if (cache != null) {
-                addCache(cache);
-                return true;
+            ICacheFactory cacheFactory = cacheFactoryRegistry.getCacheFactory(id);
+            if (cacheFactory != null) {
+                Cache cache = cacheFactory.createCache(this, id);
+                if (cache != null) {
+                    addCache(cache);
+                    return true;
+                }
             }
         }
         return false;
@@ -152,10 +158,13 @@ public class ComponentConfiguration extends Configuration {
 
     private synchronized boolean verifyAndCreateResultMap(String id) {
         if (resultMapFactoryRegistry != null) {
-            ResultMap resultMap = resultMapFactoryRegistry.createResultMap(this, id);
-            if (resultMap != null) {
-                addResultMap(resultMap);
-                return true;
+            IResultMapFactory resultMapFactory = resultMapFactoryRegistry.getResultMapFactory(id);
+            if (resultMapFactory != null) {
+                ResultMap resultMap = resultMapFactory.createResultMap(this, id);
+                if (resultMap != null) {
+                    addResultMap(resultMap);
+                    return true;
+                }
             }
         }
         return false;
@@ -180,10 +189,13 @@ public class ComponentConfiguration extends Configuration {
 
     private synchronized boolean verifyAndCreateMappedStatement(String id) {
         if (mappedStatementFactoryRegistry != null) {
-            MappedStatement mappedStatement = mappedStatementFactoryRegistry.createMappedStatement(this, id);
-            if (mappedStatement != null) {
-                addMappedStatement(mappedStatement);
-                return true;
+            IMappedStatementFactory mappedStatementFactory = mappedStatementFactoryRegistry.getMappedStatementFactory(id);
+            if (mappedStatementFactory != null) {
+                MappedStatement mappedStatement = mappedStatementFactory.createMappedStatement(this, id);
+                if (mappedStatement != null) {
+                    addMappedStatement(mappedStatement);
+                    return true;
+                }
             }
         }
         return false;

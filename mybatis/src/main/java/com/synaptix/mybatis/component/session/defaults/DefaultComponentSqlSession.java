@@ -1,11 +1,10 @@
-package com.synaptix.mybatis.session.defaults;
+package com.synaptix.mybatis.component.session.defaults;
 
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentFactory;
 import com.synaptix.entity.ITracable;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
-import com.synaptix.mybatis.session.ComponentConfiguration;
-import com.synaptix.mybatis.session.IComponentSqlSession;
+import com.synaptix.mybatis.component.session.IComponentSqlSession;
 import org.apache.ibatis.session.SqlSession;
 
 public class DefaultComponentSqlSession implements IComponentSqlSession {
@@ -29,10 +28,10 @@ public class DefaultComponentSqlSession implements IComponentSqlSession {
             return 0;
         }
 
-        if (sqlSession.getConfiguration() instanceof ComponentConfiguration && component instanceof ITracable
-                && ((ComponentConfiguration) sqlSession.getConfiguration()).getTracableHandler() != null) {
-            ((ComponentConfiguration) sqlSession.getConfiguration()).getTracableHandler().fillInsertTracable((ITracable) component);
-        }
+        /*if (sqlSession.getConfiguration() instanceof ComponentConfiguration && component instanceof ITracable
+                && ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher() != null) {
+            ((ComponentConfiguration) sqlSession.getConfiguration()).getTriggerDispatcher().fillInsertTracable((ITracable) component);
+        }*/
 
         return sqlSession.insert(StatementNameHelper.buildInsertKey(ComponentFactory.getInstance().getComponentClass(component)), component);
     }

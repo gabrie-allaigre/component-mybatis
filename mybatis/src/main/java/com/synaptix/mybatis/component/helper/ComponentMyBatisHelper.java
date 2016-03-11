@@ -351,7 +351,7 @@ public class ComponentMyBatisHelper {
         return false;
     }
 
-    public static <E extends IComponent> Set<String> getNlsColumnForPropertyName(Class<E> componentClass) {
+    public static <E extends IComponent> Set<String> getPropertyNamesWithNlsColumn(Class<E> componentClass) {
         Set<String> res = new HashSet<>();
         ComponentDescriptor<E> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
         for (ComponentDescriptor.PropertyDescriptor propertyDescriptor : componentDescriptor.getPropertyDescriptors()) {

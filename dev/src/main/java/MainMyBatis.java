@@ -12,6 +12,7 @@ import com.synaptix.mybatis.guice.DefaultComponentMyBatisModule;
 import com.synaptix.mybatis.guice.configuration.ComponentConfigurationProvider;
 import com.synaptix.mybatis.guice.session.ComponentSqlSessionManagerProvider;
 import com.synaptix.mybatis.simple.observer.TracableTriggerObserver;
+import mapper.NlsMapper;
 import mapper.UserMapper;
 import model.CountryBuilder;
 import model.ICountry;
@@ -43,6 +44,7 @@ public class MainMyBatis {
                 addInterceptorClass(ExamplePlugin.class);
 
                 addMapperClass(UserMapper.class);
+                addMapperClass(NlsMapper.class);
 
                 Names.bindProperties(binder(), createTestProperties());
                 bind(FooService.class).in(Singleton.class);
@@ -82,6 +84,7 @@ public class MainMyBatis {
         ICountry country = CountryBuilder.newBuilder().code("FRA").name("France").build();
         System.out.println(fooService.insert(country));
         System.out.println(country);
+        System.out.println(fooService.findById(ICountry.class,country.getId()));
     }
 }
 

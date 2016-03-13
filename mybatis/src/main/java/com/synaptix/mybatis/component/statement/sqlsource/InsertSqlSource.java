@@ -5,6 +5,7 @@ import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
 import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
+import com.synaptix.entity.annotation.NlsColumn;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.helper.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.session.ComponentConfiguration;
@@ -67,6 +68,11 @@ public class InsertSqlSource<E extends IComponent> implements SqlSource {
             Column column = ComponentMyBatisHelper.getColumnAnnotation(cd, propertyDescriptor);
             if (column != null) {
                 sqlBuilder.VALUES(column.name(), ComponentMyBatisHelper.buildColumn(cd, propertyDescriptor, column));
+            } else {
+                NlsColumn nlsColumn = ComponentMyBatisHelper.getNlsColumnAnnotation(cd, propertyDescriptor);
+                if (nlsColumn != null) {
+                    sqlBuilder.VALUES(nlsColumn.name(), ComponentMyBatisHelper.buildNlsColumn(cd, propertyDescriptor, nlsColumn));
+                }
             }
         });
         String sql = sqlBuilder.toString();

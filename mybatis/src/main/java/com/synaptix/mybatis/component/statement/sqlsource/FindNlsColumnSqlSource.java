@@ -8,9 +8,9 @@ import com.synaptix.entity.annotation.NlsColumn;
 import com.synaptix.mybatis.component.helper.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.session.ComponentConfiguration;
 import com.synaptix.mybatis.component.session.handler.INlsColumnHandler;
-import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,15 +20,11 @@ import java.util.Map;
 
 public class FindNlsColumnSqlSource<E extends IComponent> implements SqlSource {
 
-    private static final Logger LOG = LogManager.getLogger(FindNlsColumnSqlSource.class);
-
     private final ComponentConfiguration componentConfiguration;
 
     private final Class<E> componentClass;
 
     private final String propertyName;
-
-    private final SqlSourceBuilder sqlSourceParser;
 
     private final Entity entity;
 
@@ -40,7 +36,6 @@ public class FindNlsColumnSqlSource<E extends IComponent> implements SqlSource {
         this.componentConfiguration = componentConfiguration;
         this.componentClass = componentClass;
         this.propertyName = propertyName;
-        this.sqlSourceParser = new SqlSourceBuilder(componentConfiguration);
 
         ComponentDescriptor<E> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
         entity = ComponentMyBatisHelper.getEntityAnnotation(componentDescriptor);
@@ -51,8 +46,8 @@ public class FindNlsColumnSqlSource<E extends IComponent> implements SqlSource {
     @Override
     public BoundSql getBoundSql(Object parameterObject) {
         Map<String, Object> additionalParameters = new HashMap<>();
-        additionalParameters.put("TABLE_NAME", entity.name());
-        additionalParameters.put("COLUMN_NAME", nlsColumn.name());
+        additionalParameters.put("tableName", entity.name());
+        additionalParameters.put("columnName", nlsColumn.name());
 
         INlsColumnHandler nlsColumnHandler = componentConfiguration.getNlsColumnHandler();
         if (nlsColumnHandler == null) {
@@ -64,31 +59,13 @@ public class FindNlsColumnSqlSource<E extends IComponent> implements SqlSource {
             additionalParameters.putAll(aps);
         }
 
-        SqlSource sqlSource = createSqlSource((Map<String, Object>) parameterObject, additionalParameters);
-        BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
+        String selectId = nlsColumnHandler.getSelectNlsColumnId(componentClass, propertyName);
+        MappedStatement mappedStatement = componentConfiguration.getMappedStatement(selectId);
+
+        BoundSql boundSql = mappedStatement.getBoundSql(parameterObject);
         for (Map.Entry<String, Object> entry : additionalParameters.entrySet()) {
             boundSql.setAdditionalParameter(entry.getKey(), entry.getValue());
         }
         return boundSql;
-    }
-
-    @SuppressWarnings("unchecked")
-    private SqlSource createSqlSource(Map<String, Object> parameterMap, Map<String, Object> additionalParameters) {
-        try {
-            String sql = buildFindNlsColumn(parameterMap, additionalParameters);
-            Class<?> parameterType = Map.class;
-            return sqlSourceParser.parse(sql, parameterType, additionalParameters);
-        } catch (Exception e) {
-            throw new BuilderException("Error invoking Count method for Select Cause: " + e, e);
-        }
-    }
-
-    private String buildFindNlsColumn(Map<String, Object> parameterMap, Map<String, Object> additionalParameters) {
-        INlsColumnHandler nlsColumnHandler = componentConfiguration.getNlsColumnHandler();
-        if (nlsColumnHandler == null) {
-            throw new IllegalArgumentException("NlsColumnHandler is null in ComponentConfiguration");
-        }
-
-        return nlsColumnHandler.buildFindNlsColumn(componentClass, propertyName, parameterMap, additionalParameters);
     }
 }

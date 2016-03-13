@@ -48,7 +48,7 @@ public class NlsColumnResultMappingFactory extends AbstractResultMappingFactory<
             ComponentDescriptor.PropertyDescriptor propertyDescriptor, NlsColumn nlsColumn, Class<?> javaType, String columnName) {
         ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(componentConfiguration, propertyDescriptor.getPropertyName(), null, javaType);
         List<ResultMapping> composites = new ArrayList<>();
-        composites.add(new ResultMapping.Builder(componentConfiguration, "DEFAULT_VALUE", columnName, javaType).build());
+        composites.add(new ResultMapping.Builder(componentConfiguration, "defaultValue", columnName, javaType).build());
 
         String[] propertySources = nlsColumn.propertySource();
         if (propertySources == null || propertySources.length == 0) {
@@ -57,7 +57,7 @@ public class NlsColumnResultMappingFactory extends AbstractResultMappingFactory<
         List<Pair<ComponentDescriptor.PropertyDescriptor, String>> sourceColumns = ComponentResultMapHelper.prepareSourceColumns(componentDescriptor, propertySources);
         for (Pair<ComponentDescriptor.PropertyDescriptor, String> sourceColumn : sourceColumns) {
             ComponentDescriptor.PropertyDescriptor pd = sourceColumn.getLeft();
-            composites.add(new ResultMapping.Builder(componentConfiguration, sourceColumn.getRight(), sourceColumn.getRight(), pd.getPropertyClass()).build());
+            composites.add(new ResultMapping.Builder(componentConfiguration, sourceColumn.getLeft().getPropertyName(), sourceColumn.getRight(), pd.getPropertyClass()).build());
         }
         resultMappingBuilder.composites(composites);
 

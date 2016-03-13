@@ -193,6 +193,37 @@ public class ComponentMyBatisHelper {
     }
 
     /**
+     * Build column
+     *
+     * @param componentDescriptor Component descriptor
+     * @param propertyDescriptor  Property descriptor
+     * @param nlsColumn              nlsColumn
+     * @return #{...}
+     */
+    public static String buildNlsColumn(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor, NlsColumn nlsColumn) {
+        return buildNlsColumn(componentDescriptor, propertyDescriptor, nlsColumn, propertyDescriptor.getPropertyName());
+    }
+
+    /**
+     * Build column
+     *
+     * @param componentDescriptor Component descriptor
+     * @param propertyDescriptor  Property descriptor
+     * @param nlsColumn              nlsColumn
+     * @param param               name of param
+     * @return #{...}
+     */
+    public static String buildNlsColumn(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor, NlsColumn nlsColumn, String param) {
+        Class<?> javaType = nlsColumn.javaType() != null && nlsColumn.javaType() != void.class ? nlsColumn.javaType() : propertyDescriptor.getPropertyClass();
+        JdbcType jdbcType = nlsColumn.jdbcType() != null && !JdbcType.UNDEFINED.equals(nlsColumn.jdbcType()) ? nlsColumn.jdbcType() : null;
+        Class<? extends TypeHandler<?>> typeHandlerClass = nlsColumn.typeHandler() != null && !UnknownTypeHandler.class.equals(nlsColumn.typeHandler()) ? nlsColumn.typeHandler() : null;
+
+        return "#{" + param + ",javaType=" + javaType.getCanonicalName() + (jdbcType != null ? ",jdbcType=" + jdbcType.name() : "") + (typeHandlerClass != null ?
+                ",typeHandler=" + typeHandlerClass.getCanonicalName() :
+                "") + "}";
+    }
+
+    /**
      * Find children for component class, all level
      *
      * @param componentClass component class

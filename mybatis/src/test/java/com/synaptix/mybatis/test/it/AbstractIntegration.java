@@ -10,6 +10,7 @@ import com.synaptix.mybatis.component.session.ComponentSqlSessionManager;
 import com.synaptix.mybatis.component.statement.*;
 import com.synaptix.mybatis.simple.handler.IdTypeHandler;
 import com.synaptix.mybatis.simple.observer.TracableTriggerObserver;
+import com.synaptix.mybatis.test.it.mapper.NlsMapper;
 import org.apache.ibatis.datasource.pooled.PooledDataSource;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
@@ -28,7 +29,7 @@ import java.io.IOException;
 
 public abstract class AbstractIntegration {
 
-    protected static Configuration configuration;
+    protected static ComponentConfiguration configuration;
 
     protected static SqlSessionManager sqlSessionManager;
 
@@ -65,6 +66,8 @@ public abstract class AbstractIntegration {
         componentConfiguration.getTriggerDispatcher().addTriggerObserver(new NlsColumnTriggerObserver());
 
         componentConfiguration.getTypeHandlerRegistry().register(IdTypeHandler.class);
+
+        componentConfiguration.addMapper(NlsMapper.class);
 
         configuration = componentConfiguration;
 

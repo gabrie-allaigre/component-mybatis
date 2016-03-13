@@ -7,7 +7,7 @@ import java.util.Map;
 public interface INlsColumnHandler {
 
     /**
-     * Get a current context
+     * Get a current context, used for cache
      *
      * @return context
      */
@@ -23,14 +23,38 @@ public interface INlsColumnHandler {
     Map<String, Object> getAdditionalParameter(Class<? extends IComponent> componentClass, String propertyName);
 
     /**
-     * Build request sql
+     * Select id for nls column, default parameter
      *
-     * @param componentClass       component class
-     * @param propertyName         property name
-     * @param parameterMap         parameter map
-     * @param additionalParameters additional parameters
-     * @return request sql
+     * @param componentClass component class
+     * @param propertyName   property name
+     * @return select id
      */
-    String buildFindNlsColumn(Class<? extends IComponent> componentClass, String propertyName, Map<String, Object> parameterMap, Map<String, Object> additionalParameters);
+    String getSelectNlsColumnId(Class<? extends IComponent> componentClass, String propertyName);
 
+    /**
+     * Merge id for nls column
+     *
+     * @param componentClass component class
+     * @param propertyName   property name
+     * @return select id
+     */
+    String getMergeNlsColumnId(Class<? extends IComponent> componentClass, String propertyName);
+
+    /**
+     * Delete id for nls column
+     *
+     * @param componentClass component class
+     * @param propertyName   property name
+     * @return select id
+     */
+    String getDeleteNlsColumnId(Class<? extends IComponent> componentClass, String propertyName);
+
+    /**
+     * Update original nls column
+     *
+     * @param componentClass component class
+     * @param propertyName   property name
+     * @return
+     */
+    boolean isUpdateDefaultNlsColumn(Class<? extends IComponent> componentClass, String propertyName);
 }

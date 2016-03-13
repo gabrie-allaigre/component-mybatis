@@ -2,6 +2,7 @@ package com.synaptix.mybatis.component.session.defaults;
 
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentFactory;
+import com.synaptix.mybatis.component.helper.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.session.ComponentConfiguration;
 import com.synaptix.mybatis.component.session.IComponentSqlSession;
 import com.synaptix.mybatis.component.session.observer.ITriggerObserver;

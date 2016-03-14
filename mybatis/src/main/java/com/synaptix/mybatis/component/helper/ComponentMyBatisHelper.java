@@ -133,6 +133,21 @@ public class ComponentMyBatisHelper {
     }
 
     /**
+     * Build Set nls column, used for update
+     *
+     * @param componentDescriptor Component descriptor
+     * @param propertyDescriptor  Property descriptor
+     * @return
+     */
+    public static String buildSetNlsColumn(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
+        NlsColumn nlsColumn = getNlsColumnAnnotation(componentDescriptor, propertyDescriptor);
+        if (nlsColumn == null) {
+            return null;
+        }
+        return nlsColumn.name() + " = " + buildNlsColumn(componentDescriptor, propertyDescriptor, nlsColumn);
+    }
+
+    /**
      * Build Set id column, used for update
      *
      * @param componentDescriptor Component descriptor
@@ -197,7 +212,7 @@ public class ComponentMyBatisHelper {
      *
      * @param componentDescriptor Component descriptor
      * @param propertyDescriptor  Property descriptor
-     * @param nlsColumn              nlsColumn
+     * @param nlsColumn           nlsColumn
      * @return #{...}
      */
     public static String buildNlsColumn(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor, NlsColumn nlsColumn) {
@@ -209,7 +224,7 @@ public class ComponentMyBatisHelper {
      *
      * @param componentDescriptor Component descriptor
      * @param propertyDescriptor  Property descriptor
-     * @param nlsColumn              nlsColumn
+     * @param nlsColumn           nlsColumn
      * @param param               name of param
      * @return #{...}
      */

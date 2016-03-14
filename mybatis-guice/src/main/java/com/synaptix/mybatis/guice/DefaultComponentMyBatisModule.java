@@ -1,7 +1,6 @@
 package com.synaptix.mybatis.guice;
 
 import com.synaptix.mybatis.component.cache.ComponentCacheFactory;
-import com.synaptix.mybatis.component.observer.NlsColumnTriggerObserver;
 import com.synaptix.mybatis.component.resultmap.ComponentResultMapFactory;
 import com.synaptix.mybatis.component.statement.*;
 import com.synaptix.mybatis.simple.handler.IdTypeHandler;
@@ -23,7 +22,5 @@ public final class DefaultComponentMyBatisModule extends AbstractComponentMyBati
         addMappedStatementFactoryClass(DeleteMappedStatementFactory.class);
 
         addCacheFactoryClass(ComponentCacheFactory.class);
-
-        addTriggerObserverClass(NlsColumnTriggerObserver.class);
     }
 }

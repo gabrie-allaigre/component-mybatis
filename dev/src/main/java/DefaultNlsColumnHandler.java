@@ -40,18 +40,19 @@ public class DefaultNlsColumnHandler implements INlsColumnHandler {
     }
 
     @Override
+    public boolean isUpdateDefaultNlsColumn(Class<? extends IComponent> componentClass, String propertyName) {
+        return "eng".equals(languageCode);
+    }
+
+    @Override
     public String getMergeNlsColumnId(Class<? extends IComponent> componentClass, String propertyName) {
         return "mapper.NlsMapper.mergeNlsColumn";
     }
 
     @Override
-    public String getDeleteNlsColumnId(Class<? extends IComponent> componentClass, String propertyName) {
-        return null;
+    public String getDeleteNlsColumnsId(Class<? extends IComponent> componentClass) {
+        return "mapper.NlsMapper.deleteNlsColumns";
     }
 
-    @Override
-    public boolean isUpdateDefaultNlsColumn(Class<? extends IComponent> componentClass, String propertyName) {
-        return false;
-    }
 
 }

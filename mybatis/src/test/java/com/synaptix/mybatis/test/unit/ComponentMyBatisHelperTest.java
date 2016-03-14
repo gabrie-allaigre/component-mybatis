@@ -83,6 +83,16 @@ public class ComponentMyBatisHelperTest {
     }
 
     @Test
+    public void testBuildSetNlsColumn() {
+        Assertions.assertThat(ComponentMyBatisHelper
+                .buildSetNlsColumn(ComponentFactory.getInstance().getDescriptor(ICountry.class), ComponentFactory.getInstance().getDescriptor(ICountry.class).getPropertyDescriptor(CountryFields.name)))
+                .isEqualTo("NAME = #{name,javaType=java.lang.String}");
+        Assertions.assertThat(ComponentMyBatisHelper
+                .buildSetNlsColumn(ComponentFactory.getInstance().getDescriptor(IFake.class), ComponentFactory.getInstance().getDescriptor(IFake.class).getPropertyDescriptor(FakeFields.name))).isNull();
+    }
+
+
+    @Test
     public void testBuildSetIdColumn() {
         Assertions.assertThat(ComponentMyBatisHelper
                 .buildSetIdColumn(ComponentFactory.getInstance().getDescriptor(ICountry.class), ComponentFactory.getInstance().getDescriptor(ICountry.class).getPropertyDescriptor(CountryFields.id)))

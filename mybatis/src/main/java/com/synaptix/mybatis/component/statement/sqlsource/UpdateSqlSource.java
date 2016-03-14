@@ -3,7 +3,9 @@ package com.synaptix.mybatis.component.statement.sqlsource;
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
+import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
+import com.synaptix.entity.annotation.NlsColumn;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.helper.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.session.ComponentConfiguration;
@@ -16,6 +18,10 @@ import org.apache.ibatis.mapping.SqlSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 public class UpdateSqlSource<E extends IComponent> implements SqlSource {
 
     private static final Logger LOG = LogManager.getLogger(UpdateSqlSource.class);
@@ -24,10 +30,13 @@ public class UpdateSqlSource<E extends IComponent> implements SqlSource {
 
     private final SqlSourceBuilder sqlSourceParser;
 
-    public UpdateSqlSource(ComponentConfiguration componentConfiguration, Class<E> componentClass) {
+    private final Set<String> nlsProperties;
+
+    public UpdateSqlSource(ComponentConfiguration componentConfiguration, Class<E> componentClass, String[] nlsProperties) {
         super();
 
         this.componentClass = componentClass;
+        this.nlsProperties = new HashSet<>(Arrays.asList(nlsProperties));
         this.sqlSourceParser = new SqlSourceBuilder(componentConfiguration);
     }
 
@@ -75,9 +84,14 @@ public class UpdateSqlSource<E extends IComponent> implements SqlSource {
         sqlBuilder.UPDATE(entity.name());
         for (ComponentDescriptor.PropertyDescriptor propertyDescriptor : cd.getPropertyDescriptors()) {
             if (propertyDescriptor != idPropertyDescriptor && propertyDescriptor != versionPropertyDescriptor) {
-                String c = ComponentMyBatisHelper.buildSetColumn(cd, propertyDescriptor);
-                if (c != null) {
-                    sqlBuilder.SET(c);
+                Column column = ComponentMyBatisHelper.getColumnAnnotation(cd, propertyDescriptor);
+                if (column != null) {
+                    sqlBuilder.SET(ComponentMyBatisHelper.buildSetColumn(cd, propertyDescriptor));
+                } else {
+                    NlsColumn nlsColumn = ComponentMyBatisHelper.getNlsColumnAnnotation(cd, propertyDescriptor);
+                    if (nlsColumn != null && nlsProperties.contains(propertyDescriptor.getPropertyName())) {
+                        sqlBuilder.SET(ComponentMyBatisHelper.buildSetNlsColumn(cd, propertyDescriptor));
+                    }
                 }
             }
         }

@@ -84,7 +84,24 @@ public class MainMyBatis {
         ICountry country = CountryBuilder.newBuilder().code("FRA").name("France").build();
         System.out.println(fooService.insert(country));
         System.out.println(country);
-        System.out.println(fooService.findById(ICountry.class,country.getId()));
+        System.out.println(fooService.findById(ICountry.class, country.getId()));
+
+        defaultNlsColumnHandler.setLanguageCode("eng");
+        ICountry country1 = fooService.findById(ICountry.class, country.getId());
+        System.out.println(country1);
+        country1.setName("French");
+        fooService.update(country1);
+
+        System.out.println(fooService.findById(ICountry.class, country.getId()));
+
+        defaultNlsColumnHandler.setLanguageCode("fra");
+        ICountry country2 = fooService.findById(ICountry.class, country.getId());
+        System.out.println(country2);
+        country2.setName("Frommage");
+        fooService.update(country2);
+
+        defaultNlsColumnHandler.setLanguageCode("eng");
+        System.out.println(fooService.findById(ICountry.class, country.getId()));
     }
 }
 

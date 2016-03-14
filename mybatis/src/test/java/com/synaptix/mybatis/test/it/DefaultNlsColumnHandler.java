@@ -42,18 +42,18 @@ public class DefaultNlsColumnHandler implements INlsColumnHandler {
     }
 
     @Override
-    public String getMergeNlsColumnId(Class<? extends IComponent> componentClass, String propertyName) {
-        return null;
-    }
-
-    @Override
-    public String getDeleteNlsColumnId(Class<? extends IComponent> componentClass, String propertyName) {
-        return null;
-    }
-
-    @Override
     public boolean isUpdateDefaultNlsColumn(Class<? extends IComponent> componentClass, String propertyName) {
-        return false;
+        return "eng".equals(languageCode);
+    }
+
+    @Override
+    public String getMergeNlsColumnId(Class<? extends IComponent> componentClass, String propertyName) {
+        return "com.synaptix.mybatis.test.it.mapper.NlsMapper.mergeNlsColumn";
+    }
+
+    @Override
+    public String getDeleteNlsColumnsId(Class<? extends IComponent> componentClass) {
+        return "com.synaptix.mybatis.test.it.mapper.NlsMapper.deleteNlsColumns";
     }
 
 }

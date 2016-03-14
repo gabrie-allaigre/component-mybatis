@@ -37,6 +37,8 @@ public class StatementNameHelper {
 
     private static final String SOURCE_COMPONENT = "sourceComponent";
 
+    private static final String NLS_PROPERTIES = "nlsProperties";
+
     private static final String JOIN = "join";
 
     private static final String IGNORE_CANCEL = "ignoreCancel";
@@ -66,7 +68,7 @@ public class StatementNameHelper {
 
     private static final Pattern INSERT_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + INSERT_NAME);
 
-    private static final Pattern UPDATE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + UPDATE_NAME);
+    private static final Pattern UPDATE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + UPDATE_NAME + "(\\?" + NLS_PROPERTIES + "=(" + PROPERTIES_PAT + ")?)?");
 
     private static final Pattern DELETE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + DELETE_NAME);
 
@@ -413,11 +415,11 @@ public class StatementNameHelper {
      * @param componentClass component class
      * @return key
      */
-    public static <E extends IComponent> String buildUpdateKey(Class<E> componentClass) {
+    public static <E extends IComponent> String buildUpdateKey(Class<E> componentClass, String... nlsPropertyNames) {
         if (componentClass == null) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + UPDATE_NAME;
+        return componentClass.getCanonicalName() + "/" + UPDATE_NAME + "?" + NLS_PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, nlsPropertyNames);
     }
 
     /**
@@ -449,6 +451,24 @@ public class StatementNameHelper {
             return null;
         }
         return ComponentMyBatisHelper.loadComponentClass(m.group(1));
+    }
+
+    /**
+     * Extract source properties
+     *
+     * @param key key
+     * @return properties
+     */
+    public static String[] extractNlsPropertiesInUpdateKey(String key) {
+        if (!isUpdateKey(key)) {
+            return null;
+        }
+        Matcher m = UPDATE_PATTERN.matcher(key);
+        if (!m.find()) {
+            return null;
+        }
+        String properties = m.group(4);
+        return properties != null ? properties.split(PROPERTIES_SEPARATOR) : new String[0];
     }
 
     // Delete

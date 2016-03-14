@@ -284,7 +284,8 @@ public class StatementNameTest {
     public void testBuildUpdateKey() {
         SoftAssertions softAssertions = new SoftAssertions();
         softAssertions.assertThat(StatementNameHelper.buildUpdateKey(null)).isNull();
-        softAssertions.assertThat(StatementNameHelper.buildUpdateKey(IUser.class)).isEqualTo("com.synaptix.mybatis.test.data.IUser/update");
+        softAssertions.assertThat(StatementNameHelper.buildUpdateKey(IUser.class)).isEqualTo("com.synaptix.mybatis.test.data.IUser/update?nlsProperties=");
+        softAssertions.assertThat(StatementNameHelper.buildUpdateKey(IUser.class, "name")).isEqualTo("com.synaptix.mybatis.test.data.IUser/update?nlsProperties=name");
         softAssertions.assertAll();
     }
 
@@ -293,11 +294,12 @@ public class StatementNameTest {
         SoftAssertions softAssertions = new SoftAssertions();
         softAssertions.assertThat(StatementNameHelper.isUpdateKey(null)).isFalse();
         softAssertions.assertThat(StatementNameHelper.isUpdateKey("com.model.IUser/update")).isTrue();
-        softAssertions.assertThat(StatementNameHelper.isUpdateKey("com.model.IUser1/update")).isTrue();
-        softAssertions.assertThat(StatementNameHelper.isUpdateKey("model.IUser/update")).isTrue();
-        softAssertions.assertThat(StatementNameHelper.isUpdateKey("IUser/update")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey("com.model.IUser/update?nlsProperties=")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey("com.model.IUser1/update?nlsProperties=toto")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey("model.IUser/update?nlsProperties=titi,toto")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey("IUser/update?nlsProperties=")).isTrue();
         softAssertions.assertThat(StatementNameHelper.isUpdateKey("model.IUser")).isFalse();
-        softAssertions.assertThat(StatementNameHelper.isUpdateKey("/update")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isUpdateKey("/update?nlsProperties=")).isFalse();
         softAssertions.assertThat(StatementNameHelper.isUpdateKey("model-IUser/update")).isFalse();
         softAssertions.assertAll();
     }
@@ -307,7 +309,20 @@ public class StatementNameTest {
         SoftAssertions softAssertions = new SoftAssertions();
         softAssertions.assertThat(StatementNameHelper.extractComponentClassInUpdateKey(null)).isNull();
         softAssertions.assertThat(StatementNameHelper.extractComponentClassInUpdateKey("com.synaptix.mybatis.test.data.IUser/update")).isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInUpdateKey("com.synaptix.mybatis.test.data.IUser/update?nlsProperties=")).isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInUpdateKey("com.synaptix.mybatis.test.data.IUser/update?nlsProperties=rien")).isEqualTo(IUser.class);
         softAssertions.assertThat(StatementNameHelper.extractComponentClassInUpdateKey("model.IUser/update")).isNull();
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractNlsPropertyNamesInUpdateKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractNlsPropertiesInUpdateKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractNlsPropertiesInUpdateKey("com.synaptix.mybatis.test.data.IUser/update")).isEmpty();
+        softAssertions.assertThat(StatementNameHelper.extractNlsPropertiesInUpdateKey("com.synaptix.mybatis.test.data.IUser/update?nlsProperties=")).isEmpty();
+        softAssertions.assertThat(StatementNameHelper.extractNlsPropertiesInUpdateKey("com.synaptix.mybatis.test.data.IUser/update?nlsProperties=name")).containsExactly("name");
+        softAssertions.assertThat(StatementNameHelper.extractNlsPropertiesInUpdateKey("com.synaptix.mybatis.test.data.IUser/update?nlsProperties=code,name")).containsExactly("code","name");
         softAssertions.assertAll();
     }
 

@@ -33,14 +33,15 @@ public class UpdateMappedStatementFactory extends AbstractMappedStatementFactory
     public MappedStatement createMappedStatement(ComponentConfiguration componentConfiguration, String key) {
         if (StatementNameHelper.isUpdateKey(key)) {
             Class<? extends IComponent> componentClass = StatementNameHelper.extractComponentClassInUpdateKey(key);
-            if (componentClass != null) {
-                return createUpdateMappedStatement(componentConfiguration, key, componentClass);
+            String[] nlsProperties = StatementNameHelper.extractNlsPropertiesInUpdateKey(key);
+            if (componentClass != null && nlsProperties != null) {
+                return createUpdateMappedStatement(componentConfiguration, key, componentClass, nlsProperties);
             }
         }
         return null;
     }
 
-    private <E extends IComponent> MappedStatement createUpdateMappedStatement(ComponentConfiguration componentConfiguration, String key, Class<E> componentClass) {
+    private <E extends IComponent> MappedStatement createUpdateMappedStatement(ComponentConfiguration componentConfiguration, String key, Class<E> componentClass, String[] nlsProperties) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create update for " + componentClass);
         }
@@ -48,7 +49,7 @@ public class UpdateMappedStatementFactory extends AbstractMappedStatementFactory
         ComponentDescriptor.PropertyDescriptor versionPropertyDescriptor = EntityHelper.findVersionPropertyDescriptor(componentClass);
 
         ResultMap inlineResultMap = new ResultMap.Builder(componentConfiguration, key + "-Inline", Integer.class, new ArrayList<>(), null).build();
-        MappedStatement.Builder msBuilder = new MappedStatement.Builder(componentConfiguration, key, new UpdateSqlSource<>(componentConfiguration, componentClass), SqlCommandType.UPDATE);
+        MappedStatement.Builder msBuilder = new MappedStatement.Builder(componentConfiguration, key, new UpdateSqlSource<>(componentConfiguration, componentClass,nlsProperties), SqlCommandType.UPDATE);
         msBuilder.resultMaps(Collections.singletonList(inlineResultMap));
         if (versionPropertyDescriptor != null) {
             msBuilder.keyGenerator(new VersionKeyGenerator(versionPropertyDescriptor.getPropertyName(),

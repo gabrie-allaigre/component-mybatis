@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class ComponentCache<E extends IComponent> extends AbstractComponentCache<E> {
 
-    private final Map<Object, Object> cache = new HashMap<Object, Object>();
+    private final Map<Object, Object> cache = new HashMap<>();
 
     public ComponentCache(Configuration configuration, ComponentCacheManager componentCacheManager, Class<E> componentClass, String id) {
         super(configuration, componentCacheManager, componentClass, id);

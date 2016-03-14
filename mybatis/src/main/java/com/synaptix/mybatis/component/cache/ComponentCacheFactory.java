@@ -66,7 +66,7 @@ public class ComponentCacheFactory extends AbstractCacheFactory {
 
         Cache res;
         if (cache == null) {
-            res = new ComponentNoCache<E>(componentConfiguration, componentCacheManager, componentClass, key);
+            res = new ComponentNoCache<>(componentConfiguration, componentCacheManager, componentClass, key);
         } else {
             res = new ComponentCache<>(componentConfiguration, componentCacheManager, componentClass, key);
             res = new LruCache(res);

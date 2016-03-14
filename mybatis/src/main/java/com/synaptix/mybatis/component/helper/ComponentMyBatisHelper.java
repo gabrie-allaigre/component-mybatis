@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ComponentMyBatisHelper {
 
@@ -245,7 +246,7 @@ public class ComponentMyBatisHelper {
      * @return all children
      */
     public static <E extends IComponent> Set<Class<? extends IComponent>> findAllLinks(Class<E> componentClass) {
-        Set<Class<? extends IComponent>> res = new HashSet<Class<? extends IComponent>>();
+        Set<Class<? extends IComponent>> res = new HashSet<>();
         findAllLinks(res, componentClass);
         return res;
     }
@@ -268,7 +269,7 @@ public class ComponentMyBatisHelper {
      */
     @SuppressWarnings("unchecked")
     private static <E extends IComponent> Set<Class<? extends IComponent>> findLinks(Class<E> componentClass) {
-        Set<Class<? extends IComponent>> res = new HashSet<Class<? extends IComponent>>();
+        Set<Class<? extends IComponent>> res = new HashSet<>();
 
         Cache cache = componentClass.getAnnotation(Cache.class);
         if (cache != null && cache.links() != null && cache.links().length > 0) {
@@ -400,11 +401,8 @@ public class ComponentMyBatisHelper {
     public static <E extends IComponent> Set<String> getPropertyNamesWithNlsColumn(Class<E> componentClass) {
         Set<String> res = new HashSet<>();
         ComponentDescriptor<E> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
-        for (ComponentDescriptor.PropertyDescriptor propertyDescriptor : componentDescriptor.getPropertyDescriptors()) {
-            if (propertyDescriptor.getMethod().isAnnotationPresent(NlsColumn.class)) {
-                res.add(propertyDescriptor.getPropertyName());
-            }
-        }
+        res.addAll(componentDescriptor.getPropertyDescriptors().stream().filter(propertyDescriptor -> propertyDescriptor.getMethod().isAnnotationPresent(NlsColumn.class))
+                .map(ComponentDescriptor.PropertyDescriptor::getPropertyName).collect(Collectors.toList()));
         return res;
     }
 

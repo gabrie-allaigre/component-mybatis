@@ -8,12 +8,9 @@ import com.synaptix.entity.annotation.NlsColumn;
 import com.synaptix.mybatis.component.helper.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.session.ComponentConfiguration;
 import com.synaptix.mybatis.component.session.handler.INlsColumnHandler;
-import org.apache.ibatis.builder.SqlSourceBuilder;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.SqlSource;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;

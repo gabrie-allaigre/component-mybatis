@@ -34,6 +34,8 @@ public class TracableTriggerObserver extends AbstractTriggerObserver {
                     break;
                 case Delete:
                     break;
+                default:
+                    break;
                 }
             }
 
@@ -48,6 +50,8 @@ public class TracableTriggerObserver extends AbstractTriggerObserver {
                         cancelable.setCanceledDate(new Date());
                         break;
                     case Delete:
+                        break;
+                    default:
                         break;
                     }
                 }

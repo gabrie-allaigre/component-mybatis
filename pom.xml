@@ -24,7 +24,6 @@
         <sonar-maven-plugin.version>2.6</sonar-maven-plugin.version>
 
         <guava.version>19.0</guava.version>
-        <apt-debug.version>1.0.0-SNAPSHOT</apt-debug.version>
 
         <jacoco-maven-plugin.version>0.7.5.201505241946</jacoco-maven-plugin.version>
         <jacoco.it.execution.data.file>${project.build.directory}/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
@@ -37,7 +36,7 @@
         <generated.sources.dir>${project.build.directory}/generated-sources/apt</generated.sources.dir>
         <generated.test.sources.dir>${project.build.directory}/generated-test-sources/apt</generated.test.sources.dir>
 
-        <component-bean.version>1.2.0-SNAPSHOT</component-bean.version>
+        <component-bean.version>2.0.0</component-bean.version>
         <mybatis.version>3.3.1</mybatis.version>
         <mybatis-guice.version>3.8.0-SNAPSHOT</mybatis-guice.version>
         <guice.version>4.0</guice.version>

@@ -33,7 +33,7 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
             propertySource = new String[] { EntityHelper.findIdPropertyName(componentDescriptor.getComponentClass()) };
         }
 
-        Class<?> javaType = collection.javaType() != null && collection.javaType() != void.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
+        Class<?> javaType = collection.javaType() != null && collection.javaType() != java.util.Collection.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
         if (!java.util.Collection.class.isAssignableFrom(javaType)) {
             throw new IllegalArgumentException(
                     "Not accept javaType for Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName() + " javaType=" + javaType);
@@ -62,9 +62,9 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
 
             Class<? extends IComponent> subComponentClass = (Class<? extends IComponent>) ofType;
             String[] propertyTarget = collection.propertyTarget();
-            if (propertyTarget == null || propertyTarget.length == 0) {
+/*            if (propertyTarget == null || propertyTarget.length == 0) {
                 propertyTarget = new String[] { EntityHelper.findIdPropertyName(subComponentClass) };
-            }
+            }*/
             ComponentResultMapHelper.checkTarget(ComponentFactory.getInstance().getDescriptor(subComponentClass), propertyTarget);
 
             boolean ignoreCancel = ICancelable.class.isAssignableFrom(subComponentClass);

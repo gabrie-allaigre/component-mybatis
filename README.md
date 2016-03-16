@@ -112,7 +112,7 @@ Injector injector = Guice.createInjector(new MyBatisModule() {
         ComponentSqlSessionManager componentSqlSessionManager = ComponentSqlSessionManager.newInstance(sqlSessionManager);
 ```
 
-# Utilisation
+# Base
 
 On part du principe qu'il y a un component bean :
 
@@ -125,7 +125,7 @@ public interface ICountry extends IComponent {
 
 ## Liste des Annotations
 
-- @Entity : Donne le nom de la table sur un component bean
+- **@Entity** : Donne le nom de la table sur un component bean
 
 | Propriété | Type | Description |
 |-----------|------|---------|
@@ -140,7 +140,7 @@ public interface ICountry extends IComponent {
 ```
 
 
-- @Cache : Active le cache pour un component bean. Le cache sera automatiquement vidé dans les cas suivant : insert, update, delete et dés la modification d'un sous component (Association, Collection). Le cache est sensible au nls.
+- **@Cache** : Active le cache pour un component bean. Le cache sera automatiquement vidé dans les cas suivant : insert, update, delete et dés la modification d'un sous component (Association, Collection). Le cache est sensible au nls.
 
 | Propriété | Type | Description |
 |-----------|------|---------|
@@ -158,7 +158,7 @@ Exemple :
 public interface ICountry extends IComponent {
 ```
 
-- @Column : Permet de déclarer une colonne par rapport à un champs. Elle doit être mise sur le getter uniquement.
+- **@Column** : Permet de déclarer une colonne par rapport à un champs. Elle doit être mise sur le getter uniquement.
  
 | Propriété | Type | Description |
 |-----------|------|---------|
@@ -171,14 +171,44 @@ Exemple :
 
 ```java
 
-    @Column(name = "NAME")
-    String getName();
+    @Column(name = "CODE")
+    String getCode();
     
-    void setName(String name);
+    void setCode(String code);
 
 ```
 
-- @NlsColumn : Permet de déclarer une colonne comme traduisible. Voir plus bas pour le paramétrage de INlsColumnHandler
+- **@Id** : Permet de déclarer une colonne comme l'identifiant unique de la table. Il ne peut y en avoir qu'un. Il doit être couplé avec un **@Column**.
+
+| Propriété | Type | Description |
+|-----------|------|---------|
+| keyGeneratorId      | String | Id d'un generateur de clef. Par défaut "". |
+| keyGeneratorClass      | Class<? extends KeyGenerator> | Class d'un générateur de clef. Par defaut NoKeyGenerator.class. |
+
+```java
+
+    @Id
+    @Column(name = "ID")
+    String getId();
+    
+    void setId(String id);
+
+```
+
+
+- **@Version** : Permet de déclarer une colonne comme la version de l'objet. Il ne peut y en avoir qu'un. Il doit être couplé avec un **@Column**. Il doit être obligatoirement un `int` ou un `long`.
+
+```java
+
+    @Version
+    @Column(name = "VERSION")
+    int getVersion();
+    
+    void setVersion(int version);
+
+```
+
+- **@NlsColumn** : Permet de déclarer une colonne comme traduisible. Voir plus bas pour le paramétrage de INlsColumnHandler
 
 | Propriété | Type | Description |
 |-----------|------|---------|
@@ -201,23 +231,194 @@ Exemple :
 
 ```
 
-- @Id : Permet de déclarer une colonne comme l'identifiant unique de la table.
+- **@Association** : Permet de faire une relation vers 1. Il faut que l'identifiant soit dans le component courant.
 
-- @Version
-- @Association
-- @Collection
+| Propriété | Type | Description |
+|-----------|------|---------|
+| propertySource      | String[] | Obligatoire. Nom du champs dans le component source, il peut y en avoir plusieurs |
+| propertyTarget      | String[] | Nom du champs dans le component cible, il faut qu'il est le même nombre de champs que la source. Par défaut {}, l'identifiant unique de la cible sera pris |
+| javaType      | Class<?> | Le type de l'association. Par defaut void.class, il sera pris sur le type de retour |
+| select      | String | Namespace+id de la rêquete MyBatis. Par défaut "",  si vide, il utilise la version dynamique |
+| fetchType      | FetchType | Type de chargement. Par défaut DEFAULT |
+| joinTable      | JoinTable[] | Permet de définir des sous-jointures pour la rêquete dynamique. Voir plus bas |
+
+```java
+
+    @Column(name = "CONTINENT_ID")
+    IId getContinentId();
+    
+    void setContinentId(IId continentId);
+
+    @Association(propertySource = CountryFields.continentId)
+    IContinent getContinent();
+    
+    void setContinent(IContinent continent);
+
+```
+
+- **@Collection** : Permet de faire une relation vers n.
+
+| Propriété | Type | Description |
+|-----------|------|---------|
+| propertySource      | String[] | Nom du champs dans le component source, il peut y en avoir plusieurs. Par défaut {}, l'identifiant unique de la source sera pris |
+| propertyTarget      | String[] | Obligatoire. Nom du champs dans le component cible, il faut qu'il est le même nombre de champs que la source |
+| javaType      | Class<? extends java.util.Collection> | Le type de la collection. Par defaut Collection.class, il sera pris sur le type de retour |
+| ofType      | Class<?> | Le type d'élément de la collection. Par defaut void.class, il sera pris sur le type de retour dans la collection |
+| select      | String | Namespace+id de la rêquete MyBatis. Par défaut "",  si vide, il utilise la version dynamique |
+| fetchType      | FetchType | Type de chargement. Par défaut DEFAULT |
+| joinTable      | JoinTable[] | Permet de définir des sous-jointures pour la rêquete dynamique. Voir plus bas |
+
+```java
+
+    @Collection(propertyTarget = StateFields.countryId)
+    List<IState> getStates();
+    
+    void setStates(List<IState> states);
+
+```
+
+### Explication de la jointure pour l'association et la collection.
+
+Permet de faire des jointures de la source vers la cible. Il faut préciser le nom de la table et chaque colonne à gauche et à droite.
+
+Exemple, si on doit faire 2 jointures pour avoir la liste des états à partir d'un pays : 
+
+```java
+@Collection(propertyTarget = AddressFields.id, { @JoinTable(name = "T_ASSO_COUNTRY_TOTO", left = "COUNTRY_ID", right = "TOTO_ID"), @JoinTable(name = "T_ASSO_TOTO_STATE", left = "TOTO_ID", right = "STATE_ID") })
+```
+
+cela donnera
+
+```sql
+select c.* from T_STATE c inner join T_ASSO_TOTO_STATE u1 on u1.STATE_ID = c.ID inner join T_ASSO_COUNTRY_TOTO u2 on u2.TOTO_ID = u1.TOTO_ID where u2.COUNTRY_ID = #{id}
+```
+
+### Exemple final
+
+```java
+@ComponentBean
+@Entity(name = "T_COUNTRY")
+public interface ICountry extends IComponent {
+
+    @Id
+    @Column(name = "ID")
+    String getId();
+    
+    void setId(String id);
+
+    @Version
+    @Column(name = "VERSION")
+    int getVersion();
+    
+    void setVersion(int version);
+
+    @Column(name = "CODE")
+    String getCode();
+    
+    void setCode(String code);
+
+    @NlsColumn(name = "NAME")
+    String getName();
+    
+    void setName(String name);
+
+    @Column(name = "CONTINENT_ID")
+    IId getContinentId();
+    
+    void setContinentId(IId continentId);
+
+    @Association(propertySource = CountryFields.continentId)
+    IContinent getContinent();
+    
+    void setContinent(IContinent continent);
+
+    @Collection(propertyTarget = StateFields.countryId)
+    List<IState> getStates();
+    
+    void setStates(List<IState> states);
+
+}
+```
+
+## Component bean d'aide
+
+Il existe des component bean d'aide.
+
+- **IEntity** : Elle rajoute un `id` de type `IId` et une `version` de type `int`. L'identifiant est généré automatiquement à l'insertion à partir de `IdFactory`
+
+```java
+@ComponentBean
+@Entity(name = "T_COUNTRY")
+public interface ICountry extends IEntity {
+
+    @Column(name = "CODE")
+    String getCode();
+    
+    void setCode(String code);
+
+   ...
+   
+}
+```
+
+- **ITracable** : Rajoute des champs de création et de mise à jour par qui et quand. Un observeur rempli les champs à partir de la `TracableTriggerObserver`, elle prend en paramètre un `IUserByHandler`.
+
+- **ICancelable** : Rajoute des champs d'annulation par qui et quand. Elle utilise le même observeur que pour les traces.
 
 ## Accés
 
 **ComponentSqlSessionManager** fournit différentes fonctions :
 
-- FindById
-- Insert
-- Update
-- Delete
-
-### FindById
+- **FindById** : Recherche un component bean à partir de son identifiant unique
 
 ```java
-componentSqlSessionManager.findById(ICountry.class, 0);
+componentSqlSessionManager.findById(ICountry.class, IdFactory.IdString.from("0"));
 ```
+
+- **Insert** : Insert un component bean
+
+```java
+componentSqlSessionManager.insert(country);
+```
+
+- **Update** : Met à jour un component bean
+
+```java
+componentSqlSessionManager.update(country);
+```
+
+- **Delete** : Efface un component bean
+
+```java
+componentSqlSessionManager.delete(country);
+```
+
+# Avancé
+
+Les différents clefs généré automatiquement :
+
+- "com.monpackage.ICountry/resultMap"
+
+- "com.monpackage.ICountry/cache"
+
+- "com.monpackage.ICountry/findById"
+
+- "com.monpackage.ICountry/findComponentsBy?properties=id"
+
+- "com.monpackage.ICountry/findComponentsBy?properties=code,version"
+
+- "com.monpackage.ICountry/findComponentsBy?properties=id&ignoreCancel"
+
+- "com.monpackage.ICountry/findComponentsByJoinTable?sourceComponent=com.monpackage.IContinent&sourceProperties=id&targetProperties=id&join=t_continent_toto;continent_id;toto_id;#t_toto_country;toto_id;country_id"
+
+- "com.monpackage.ICountry/findComponentsByJoinTable?sourceComponent=com.monpackage.IContinent&sourceProperties=id&targetProperties=id&join=t_continent_toto;continent_id;toto_id;#t_toto_country;toto_id;country_id&ignoreCancel"
+
+- "com.monpackage.ICountry/findNlsColumn?property=name"
+
+- "com.monpackage.ICountry/insert"
+
+- "com.monpackage.ICountry/update"
+
+- "com.monpackage.ICountry/update?nlsProperties=name"
+
+- "com.monpackage.ICountry/delete"

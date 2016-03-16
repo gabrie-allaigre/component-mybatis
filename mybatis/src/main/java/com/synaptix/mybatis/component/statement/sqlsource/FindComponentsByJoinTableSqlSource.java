@@ -70,14 +70,14 @@ public class FindComponentsByJoinTableSqlSource<E extends IComponent> implements
             List<String> ands = new ArrayList<>();
             if (j == joins.size() - 1) {
                 for (int k = 0; k < targetProperties.length; k++) {
-                    ComponentDescriptor.PropertyDescriptor propertyDescriptor = sourceComponentDescriptor.getPropertyDescriptor(targetProperties[k]);
+                    ComponentDescriptor.PropertyDescriptor propertyDescriptor = componentDescriptor.getPropertyDescriptor(targetProperties[k]);
                     if (propertyDescriptor == null) {
-                        throw new IllegalArgumentException("Not exists property for Component=" + componentClass + " with property=" + targetProperties[j]);
+                        throw new IllegalArgumentException("Not exists property for Component=" + componentDescriptor.getComponentClass() + " with property=" + targetProperties[j]);
                     }
 
-                    Column column = ComponentMyBatisHelper.getColumnAnnotation(sourceComponentDescriptor, propertyDescriptor);
+                    Column column = ComponentMyBatisHelper.getColumnAnnotation(componentDescriptor, propertyDescriptor);
                     if (column == null) {
-                        throw new IllegalArgumentException("Not present annotation Column for Component=" + componentClass + " with property=" + propertyDescriptor.getPropertyName());
+                        throw new IllegalArgumentException("Not present annotation Column for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
                     }
                     ands.add(label + "." + rights[k] + " = t." + column.name());
                 }
@@ -100,12 +100,12 @@ public class FindComponentsByJoinTableSqlSource<E extends IComponent> implements
             ComponentDescriptor.PropertyDescriptor propertyDescriptor = sourceComponentDescriptor.getPropertyDescriptor(sourceProperties[j]);
 
             if (propertyDescriptor == null) {
-                throw new IllegalArgumentException("Not exists property for Component=" + componentClass + " with property=" + sourceProperties[j]);
+                throw new IllegalArgumentException("Not exists property for Component=" + sourceComponentDescriptor.getComponentClass() + " with property=" + sourceProperties[j]);
             }
 
             Column column = ComponentMyBatisHelper.getColumnAnnotation(sourceComponentDescriptor, propertyDescriptor);
             if (column == null) {
-                throw new IllegalArgumentException("Not present annotation Column for Component=" + componentClass + " with property=" + propertyDescriptor.getPropertyName());
+                throw new IllegalArgumentException("Not present annotation Column for Component=" + sourceComponentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
             }
             sqlBuilder.WHERE("u" + i + "." + lefts[j] + " = " + ComponentMyBatisHelper.buildColumn(sourceComponentDescriptor, propertyDescriptor, column, StatementNameHelper.buildParam(param)));
 

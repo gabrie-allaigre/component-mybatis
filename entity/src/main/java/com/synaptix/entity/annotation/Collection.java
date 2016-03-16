@@ -21,14 +21,14 @@ public @interface Collection {
      *
      * @return one or multiple
      */
-    String[] propertyTarget() default {};
+    String[] propertyTarget();
 
     /**
      * Java type for collection
      *
      * @return javaType or void.class for auto
      */
-    Class<?> javaType() default void.class;
+    Class<? extends java.util.Collection> javaType() default java.util.Collection.class;
 
     /**
      * Java type for element in collection

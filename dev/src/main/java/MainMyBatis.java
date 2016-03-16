@@ -4,6 +4,7 @@ import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
+import com.synaptix.entity.factory.IdFactory;
 import com.synaptix.mybatis.component.factory.ComponentObjectFactory;
 import com.synaptix.mybatis.component.session.ComponentSqlSessionManager;
 import com.synaptix.mybatis.component.session.handler.INlsColumnHandler;
@@ -14,8 +15,7 @@ import com.synaptix.mybatis.guice.session.ComponentSqlSessionManagerProvider;
 import com.synaptix.mybatis.simple.observer.TracableTriggerObserver;
 import mapper.NlsMapper;
 import mapper.UserMapper;
-import model.CountryBuilder;
-import model.ICountry;
+import model.IUser;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.mybatis.guice.MyBatisModule;
@@ -81,6 +81,11 @@ public class MainMyBatis {
         FooService fooService = injector.getInstance(FooService.class);
         fooService.init("init-script.sql");
 
+        IUser user = fooService.findById(IUser.class, IdFactory.IdString.from("1"));
+        System.out.println(user.getAddresses());
+
+
+        /*
         ICountry country = CountryBuilder.newBuilder().code("FRA").name("France").build();
         System.out.println(fooService.insert(country));
         System.out.println(country);
@@ -101,7 +106,7 @@ public class MainMyBatis {
         fooService.update(country2);
 
         defaultNlsColumnHandler.setLanguageCode("eng");
-        System.out.println(fooService.findById(ICountry.class, country.getId()));
+        System.out.println(fooService.findById(ICountry.class, country.getId()));*/
     }
 }
 

@@ -54,7 +54,7 @@ public interface IUser extends IEntity, ITracable {
     void setAddress(IAddress address);
 
     //@Collection(joinTable = { @JoinTable(name = "t_asso_user_toto", left = "user_id", right = "toto_id"), @JoinTable(name = "t_asso_toto_address", left = "toto_id", right = "address_id") })
-    @Collection(joinTable = @JoinTable(name = "t_asso_user_address", left = "user_id", right = "address_id"))
+    @Collection(propertyTarget = AddressFields.id, joinTable = @JoinTable(name = "t_asso_user_address", left = "user_id", right = "address_id"))
     List<IAddress> getAddresses();
 
     void setAddresses(List<IAddress> addresses);

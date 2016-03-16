@@ -6,6 +6,7 @@ import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
 import com.synaptix.component.helper.ComponentHelper;
 import com.synaptix.entity.annotation.*;
+import com.synaptix.entity.annotation.Collection;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
@@ -14,8 +15,7 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ComponentMyBatisHelper {
@@ -290,7 +290,7 @@ public class ComponentMyBatisHelper {
             } else if (propertyDescriptor.getMethod().isAnnotationPresent(Collection.class)) {
                 Collection collection = propertyDescriptor.getMethod().getAnnotation(Collection.class);
 
-                Class<?> javaType = collection.javaType() != null && collection.javaType() != void.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
+                Class<?> javaType = collection.javaType() != null && collection.javaType() != java.util.Collection.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
                 if (!java.util.Collection.class.isAssignableFrom(javaType)) {
                     throw new IllegalArgumentException(
                             "Not accept javaType for Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName() + " javaType="
@@ -364,7 +364,7 @@ public class ComponentMyBatisHelper {
             } else if (propertyDescriptor.getMethod().isAnnotationPresent(Collection.class)) {
                 Collection collection = propertyDescriptor.getMethod().getAnnotation(Collection.class);
 
-                Class<?> javaType = collection.javaType() != null && collection.javaType() != void.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
+                Class<?> javaType = collection.javaType() != null && collection.javaType() != java.util.Collection.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
                 if (!java.util.Collection.class.isAssignableFrom(javaType)) {
                     throw new IllegalArgumentException(
                             "Not accept javaType for Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName() + " javaType="

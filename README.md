@@ -178,8 +178,31 @@ Exemple :
 
 ```
 
-- @NlsColumn
-- @Id
+- @NlsColumn : Permet de déclarer une colonne comme traduisible. Voir plus bas pour le paramétrage de INlsColumnHandler
+
+| Propriété | Type | Description |
+|-----------|------|---------|
+| name      | String | Obligatoire. Nom de la colonne en base de donnée |
+| javaType      | Class<?> | Type java de la colonne. Par défaut void.class, celui-ci est calculé par rapport au type de retour |
+| jdbcType      | JdbcType | Type jdbc de la colonne. Par défaut JdbcType.UNDEFINED |
+| typeHandler      | Class<? extends TypeHandler<?>> | TypeHandler pour la transformation jdbc. Par défaut UnknownTypeHandler.class |
+| propertySource      | String[] | Liste des champs à retourner au select. Par défaut [], si vide, il utilise le champs noté @Id |
+| select      | String | Namespace+id de la requete MyBatis. Par défaut "", si vide, il utilise la version dynamique à partir de INlsColumnHandler |
+| fetchType      | FetchType | Type de chargement. Par défaut DEFAULT |
+
+Exemple : 
+
+```java
+
+    @NlsColumn(name = "NAME")
+    String getName();
+    
+    void setName(String name);
+
+```
+
+- @Id : Permet de déclarer une colonne comme l'identifiant unique de la table.
+
 - @Version
 - @Association
 - @Collection

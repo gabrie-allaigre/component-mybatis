@@ -14,7 +14,7 @@ Pour l'utiliser, il faut ajouter dans le 'pom.xml' du projet les dépendances :
     <dependency>
         <groupId>com.synaptix</groupId>
         <artifactId>component-mybatis</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
     </dependency>
 </dependencies>
 ```
@@ -395,7 +395,7 @@ componentSqlSessionManager.delete(country);
 
 # Avancé
 
-Les différents clefs généré automatiquement :
+Les différents clefs générées automatiquement :
 
 - "com.monpackage.ICountry/resultMap"
 

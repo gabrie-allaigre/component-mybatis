@@ -1,0 +1,15 @@
+# 1.1.0-SNAPSHOT
+
+# 1.0.1
+
+    - Fix bug in join
+
+# 1.0.0
+
+    - ResultMap
+    - Insert
+    - Update
+    - Delete
+    - FindById
+    - Cache
+    - Nls

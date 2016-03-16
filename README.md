@@ -125,9 +125,59 @@ public interface ICountry extends IComponent {
 
 ## Liste des Annotations
 
-- @Entity
-- @Cache
-- @Column
+- @Entity : Donne le nom de la table sur un component bean
+
+| Propriété | Type | Description |
+|-----------|------|---------|
+| name      | String |  Obligatoire, nom de la table en base de donnée |
+
+Exemple :
+
+```java
+@ComponentBean
+@Entity(name = "T_COUNTRY")
+public interface ICountry extends IComponent {
+```
+
+
+- @Cache : Active le cache pour un component bean. Le cache sera automatiquement vidé dans les cas suivant : insert, update, delete et dés la modification d'un sous component (Association, Collection). Le cache est sensible au nls.
+
+| Propriété | Type | Description |
+|-----------|------|---------|
+| readWrite      | boolean | Si false, la même instance de l'objet sera fournit par le cache sinon une nouvelle instance à chaque fois. Par défaut false |
+| size      | int | Nombre d'objet gardé dans le cache. Par défaut 512 |
+| clearInterval      | long | Temps de cache avec un nettoyage en milliseconde. Par défaut 1 heure (60 * 60 * 1000) |
+| links      | Class<? extends IComponent>[] | Liste de component bean a lié à ce cache. Si les links sont modifié le cache est vidé |
+
+Exemple : 
+
+```java
+@ComponentBean
+@Entity(name = "T_COUNTRY")
+@Cache
+public interface ICountry extends IComponent {
+```
+
+- @Column : Permet de déclarer une colonne par rapport à un champs. Elle doit être mise sur le getter uniquement.
+ 
+| Propriété | Type | Description |
+|-----------|------|---------|
+| name      | String | Obligatoire. Nom de la colonne en base de donnée |
+| javaType      | Class<?> | Type java de la colonne. Par défaut void.class, celui-ci est calculé par rapport au type de retour |
+| jdbcType      | JdbcType | Type jdbc de la colonne. Par défaut JdbcType.UNDEFINED |
+| typeHandler      | Class<? extends TypeHandler<?>> | TypeHandler pour la transformation jdbc. Par défaut UnknownTypeHandler.class |
+
+Exemple : 
+
+```java
+
+    @Column(name = "NAME")
+    String getName();
+    
+    void setName(String name);
+
+```
+
 - @NlsColumn
 - @Id
 - @Version

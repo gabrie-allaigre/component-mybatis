@@ -89,7 +89,7 @@ public class MainMyBatis {
         defaultNlsColumnHandler.setLanguageCode("eng");
         ICountry country1 = fooService.findById(ICountry.class, country.getId());
         System.out.println(country1);
-        country1.setName("French");
+        country1.setName(null);
         fooService.update(country1);
 
         System.out.println(fooService.findById(ICountry.class, country.getId()));

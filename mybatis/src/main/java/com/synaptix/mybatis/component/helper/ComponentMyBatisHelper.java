@@ -199,9 +199,9 @@ public class ComponentMyBatisHelper {
      * @return #{...}
      */
     public static String buildColumn(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor, Column column, String param) {
-        Class<?> javaType = column.javaType() != null && column.javaType() != void.class ? column.javaType() : propertyDescriptor.getPropertyClass();
-        JdbcType jdbcType = column.jdbcType() != null && !JdbcType.UNDEFINED.equals(column.jdbcType()) ? column.jdbcType() : null;
-        Class<? extends TypeHandler<?>> typeHandlerClass = column.typeHandler() != null && !UnknownTypeHandler.class.equals(column.typeHandler()) ? column.typeHandler() : null;
+        Class<?> javaType = column.javaType() != void.class ? column.javaType() : propertyDescriptor.getPropertyClass();
+        JdbcType jdbcType = !JdbcType.UNDEFINED.equals(column.jdbcType()) ? column.jdbcType() : null;
+        Class<? extends TypeHandler<?>> typeHandlerClass = !UnknownTypeHandler.class.equals(column.typeHandler()) ? column.typeHandler() : null;
 
         return "#{" + param + ",javaType=" + javaType.getCanonicalName() + (jdbcType != null ? ",jdbcType=" + jdbcType.name() : "") + (typeHandlerClass != null ?
                 ",typeHandler=" + typeHandlerClass.getCanonicalName() :
@@ -230,9 +230,9 @@ public class ComponentMyBatisHelper {
      * @return #{...}
      */
     public static String buildNlsColumn(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor, NlsColumn nlsColumn, String param) {
-        Class<?> javaType = nlsColumn.javaType() != null && nlsColumn.javaType() != void.class ? nlsColumn.javaType() : propertyDescriptor.getPropertyClass();
-        JdbcType jdbcType = nlsColumn.jdbcType() != null && !JdbcType.UNDEFINED.equals(nlsColumn.jdbcType()) ? nlsColumn.jdbcType() : null;
-        Class<? extends TypeHandler<?>> typeHandlerClass = nlsColumn.typeHandler() != null && !UnknownTypeHandler.class.equals(nlsColumn.typeHandler()) ? nlsColumn.typeHandler() : null;
+        Class<?> javaType = nlsColumn.javaType() != void.class ? nlsColumn.javaType() : propertyDescriptor.getPropertyClass();
+        JdbcType jdbcType = !JdbcType.UNDEFINED.equals(nlsColumn.jdbcType()) ? nlsColumn.jdbcType() : null;
+        Class<? extends TypeHandler<?>> typeHandlerClass = !UnknownTypeHandler.class.equals(nlsColumn.typeHandler()) ? nlsColumn.typeHandler() : null;
 
         return "#{" + param + ",javaType=" + javaType.getCanonicalName() + (jdbcType != null ? ",jdbcType=" + jdbcType.name() : "") + (typeHandlerClass != null ?
                 ",typeHandler=" + typeHandlerClass.getCanonicalName() :
@@ -272,7 +272,7 @@ public class ComponentMyBatisHelper {
         Set<Class<? extends IComponent>> res = new HashSet<>();
 
         Cache cache = componentClass.getAnnotation(Cache.class);
-        if (cache != null && cache.links() != null && cache.links().length > 0) {
+        if (cache != null && cache.links().length > 0) {
             for (int i = 0; i < cache.links().length; i++) {
                 res.add(cache.links()[i]);
             }
@@ -283,14 +283,14 @@ public class ComponentMyBatisHelper {
             if (propertyDescriptor.getMethod().isAnnotationPresent(Association.class)) {
                 Association association = propertyDescriptor.getMethod().getAnnotation(Association.class);
 
-                Class<?> javaType = association.javaType() != null && association.javaType() != void.class ? association.javaType() : propertyDescriptor.getPropertyClass();
+                Class<?> javaType = association.javaType() != void.class ? association.javaType() : propertyDescriptor.getPropertyClass();
                 if (ComponentFactory.getInstance().isComponentType(javaType)) {
                     res.add((Class<? extends IComponent>) javaType);
                 }
             } else if (propertyDescriptor.getMethod().isAnnotationPresent(Collection.class)) {
                 Collection collection = propertyDescriptor.getMethod().getAnnotation(Collection.class);
 
-                Class<?> javaType = collection.javaType() != null && collection.javaType() != java.util.Collection.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
+                Class<?> javaType = collection.javaType() != java.util.Collection.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
                 if (!java.util.Collection.class.isAssignableFrom(javaType)) {
                     throw new IllegalArgumentException(
                             "Not accept javaType for Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName() + " javaType="
@@ -317,7 +317,7 @@ public class ComponentMyBatisHelper {
     public static <E extends IComponent> Class<?> getCollectionElementClass(ComponentDescriptor<E> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor,
             Collection collection) {
         Class<?> ofType = collection.ofType();
-        if (ofType == null || ofType == void.class) {
+        if (ofType == void.class) {
             Type type = getCollectionElementType(TypeToken.of(propertyDescriptor.getPropertyType()));
             if (type == null) {
                 throw new IllegalArgumentException("Not accept Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());

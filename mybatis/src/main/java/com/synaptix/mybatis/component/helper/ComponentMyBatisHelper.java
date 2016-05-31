@@ -6,7 +6,6 @@ import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
 import com.synaptix.component.helper.ComponentHelper;
 import com.synaptix.entity.annotation.*;
-import com.synaptix.entity.annotation.Collection;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
@@ -15,7 +14,8 @@ import org.apache.ibatis.type.UnknownTypeHandler;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ComponentMyBatisHelper {
@@ -346,8 +346,14 @@ public class ComponentMyBatisHelper {
      * @param componentClass component class
      * @return true if use NlsColumn annotation
      */
-    @SuppressWarnings("unchecked")
     public static <E extends IComponent> boolean isAllUseNlsColumn(Class<E> componentClass) {
+        return isAllUseNlsColumnDejaVue(componentClass, new HashSet<>());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <E extends IComponent> boolean isAllUseNlsColumnDejaVue(Class<E> componentClass, Set<Class<?>> dejaVues) {
+        dejaVues.add(componentClass);
+
         ComponentDescriptor<E> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
         for (ComponentDescriptor.PropertyDescriptor propertyDescriptor : componentDescriptor.getPropertyDescriptors()) {
             if (propertyDescriptor.getMethod().isAnnotationPresent(NlsColumn.class)) {
@@ -355,25 +361,25 @@ public class ComponentMyBatisHelper {
             } else if (propertyDescriptor.getMethod().isAnnotationPresent(Association.class)) {
                 Association association = propertyDescriptor.getMethod().getAnnotation(Association.class);
 
-                Class<?> javaType = association.javaType() != null && association.javaType() != void.class ? association.javaType() : propertyDescriptor.getPropertyClass();
+                Class<?> javaType = association.javaType() != void.class ? association.javaType() : propertyDescriptor.getPropertyClass();
                 if (ComponentFactory.getInstance().isComponentType(javaType)) {
-                    if (isAllUseNlsColumn((Class<? extends IComponent>) javaType)) {
+                    if (!dejaVues.contains(javaType) && isAllUseNlsColumnDejaVue((Class<? extends IComponent>) javaType, dejaVues)) {
                         return true;
                     }
                 }
             } else if (propertyDescriptor.getMethod().isAnnotationPresent(Collection.class)) {
                 Collection collection = propertyDescriptor.getMethod().getAnnotation(Collection.class);
 
-                Class<?> javaType = collection.javaType() != null && collection.javaType() != java.util.Collection.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
+                Class<?> javaType = collection.javaType() != java.util.Collection.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
                 if (!java.util.Collection.class.isAssignableFrom(javaType)) {
                     throw new IllegalArgumentException(
                             "Not accept javaType for Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName() + " javaType="
                                     + javaType);
                 }
 
-                Class<?> clazz = getCollectionElementClass(componentDescriptor, propertyDescriptor, collection);
-                if (ComponentFactory.getInstance().isComponentType(clazz)) {
-                    if (isAllUseNlsColumn((Class<? extends IComponent>) clazz)) {
+                Class<?> elementClass = getCollectionElementClass(componentDescriptor, propertyDescriptor, collection);
+                if (ComponentFactory.getInstance().isComponentType(elementClass)) {
+                    if (!dejaVues.contains(elementClass) && isAllUseNlsColumnDejaVue((Class<? extends IComponent>) elementClass, dejaVues)) {
                         return true;
                     }
                 }

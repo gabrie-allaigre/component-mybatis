@@ -27,16 +27,16 @@ public class ColumnResultMappingFactory extends AbstractResultMappingFactory<Col
             throw new IllegalArgumentException("Not name in column for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
         }
 
-        Class<?> javaType = column.javaType() != null && column.javaType() != void.class ? column.javaType() : propertyDescriptor.getPropertyClass();
+        Class<?> javaType = column.javaType() != void.class ? column.javaType() : propertyDescriptor.getPropertyClass();
 
         ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(componentConfiguration, propertyDescriptor.getPropertyName(), columnName, javaType);
         if (propertyDescriptor.getMethod().isAnnotationPresent(Id.class)) {
             resultMappingBuilder.flags(Collections.singletonList(ResultFlag.ID));
         }
-        if (column.jdbcType() != null && !JdbcType.UNDEFINED.equals(column.jdbcType())) {
+        if (!JdbcType.UNDEFINED.equals(column.jdbcType())) {
             resultMappingBuilder.jdbcType(column.jdbcType());
         }
-        if (column.typeHandler() != null && !UnknownTypeHandler.class.equals(column.typeHandler())) {
+        if (!UnknownTypeHandler.class.equals(column.typeHandler())) {
             resultMappingBuilder.typeHandler(componentConfiguration.getTypeHandlerRegistry().getTypeHandler(column.typeHandler()));
         }
         return resultMappingBuilder.build();

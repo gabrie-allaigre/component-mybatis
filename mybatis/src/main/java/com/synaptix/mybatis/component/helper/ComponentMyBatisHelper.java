@@ -347,11 +347,11 @@ public class ComponentMyBatisHelper {
      * @return true if use NlsColumn annotation
      */
     public static <E extends IComponent> boolean isAllUseNlsColumn(Class<E> componentClass) {
-        return _isAllUseNlsColumn(componentClass, new HashSet<>());
+        return isAllUseNlsColumnDejaVue(componentClass, new HashSet<>());
     }
 
     @SuppressWarnings("unchecked")
-    private static <E extends IComponent> boolean _isAllUseNlsColumn(Class<E> componentClass, Set<Class<?>> dejaVues) {
+    private static <E extends IComponent> boolean isAllUseNlsColumnDejaVue(Class<E> componentClass, Set<Class<?>> dejaVues) {
         dejaVues.add(componentClass);
 
         ComponentDescriptor<E> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
@@ -363,7 +363,7 @@ public class ComponentMyBatisHelper {
 
                 Class<?> javaType = association.javaType() != void.class ? association.javaType() : propertyDescriptor.getPropertyClass();
                 if (ComponentFactory.getInstance().isComponentType(javaType)) {
-                    if (!dejaVues.contains(javaType) && isAllUseNlsColumn((Class<? extends IComponent>) javaType)) {
+                    if (!dejaVues.contains(javaType) && isAllUseNlsColumnDejaVue((Class<? extends IComponent>) javaType, dejaVues)) {
                         return true;
                     }
                 }
@@ -379,7 +379,7 @@ public class ComponentMyBatisHelper {
 
                 Class<?> elementClass = getCollectionElementClass(componentDescriptor, propertyDescriptor, collection);
                 if (ComponentFactory.getInstance().isComponentType(elementClass)) {
-                    if (!dejaVues.contains(elementClass) && isAllUseNlsColumn((Class<? extends IComponent>) elementClass)) {
+                    if (!dejaVues.contains(elementClass) && isAllUseNlsColumnDejaVue((Class<? extends IComponent>) elementClass, dejaVues)) {
                         return true;
                     }
                 }

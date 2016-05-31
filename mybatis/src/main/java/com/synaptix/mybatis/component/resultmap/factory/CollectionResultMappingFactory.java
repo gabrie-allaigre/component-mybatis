@@ -25,15 +25,21 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
 
     @SuppressWarnings("unchecked")
     @Override
-    public ResultMapping buildColumnResultMapping(ComponentConfiguration componentConfiguration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
+    public ResultMapping buildColumnResultMapping(ComponentConfiguration componentConfiguration, ComponentDescriptor<?> componentDescriptor,
+            ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         Collection collection = propertyDescriptor.getMethod().getAnnotation(Collection.class);
 
         String[] propertySource = collection.propertySource();
-        if (propertySource == null || propertySource.length == 0) {
-            propertySource = new String[] { EntityHelper.findIdPropertyName(componentDescriptor.getComponentClass()) };
+        if (propertySource.length == 0) {
+            String idPropertyName = EntityHelper.findIdPropertyName(componentDescriptor.getComponentClass());
+            if (idPropertyName == null) {
+                throw new IllegalArgumentException(
+                        "Not find Id property for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName() + ", fill propertySource");
+            }
+            propertySource = new String[] { idPropertyName };
         }
 
-        Class<?> javaType = collection.javaType() != null && collection.javaType() != java.util.Collection.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
+        Class<?> javaType = collection.javaType() != java.util.Collection.class ? collection.javaType() : propertyDescriptor.getPropertyClass();
         if (!java.util.Collection.class.isAssignableFrom(javaType)) {
             throw new IllegalArgumentException(
                     "Not accept javaType for Collection for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName() + " javaType=" + javaType);
@@ -62,15 +68,12 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
 
             Class<? extends IComponent> subComponentClass = (Class<? extends IComponent>) ofType;
             String[] propertyTarget = collection.propertyTarget();
-/*            if (propertyTarget == null || propertyTarget.length == 0) {
-                propertyTarget = new String[] { EntityHelper.findIdPropertyName(subComponentClass) };
-            }*/
             ComponentResultMapHelper.checkTarget(ComponentFactory.getInstance().getDescriptor(subComponentClass), propertyTarget);
 
             boolean ignoreCancel = ICancelable.class.isAssignableFrom(subComponentClass);
 
             JoinTable[] joinTables = collection.joinTable();
-            if (joinTables != null && joinTables.length > 0) {
+            if (joinTables.length > 0) {
                 List<Pair<String, Pair<String[], String[]>>> joins = ComponentResultMapHelper.joinTables(componentDescriptor, propertyDescriptor, joinTables, propertySource, propertyTarget);
                 resultMappingBuilder.nestedQueryId(
                         StatementNameHelper.buildFindComponentsByJoinTableKey(componentDescriptor.getComponentClass(), subComponentClass, ignoreCancel, joins, propertySource, propertyTarget));

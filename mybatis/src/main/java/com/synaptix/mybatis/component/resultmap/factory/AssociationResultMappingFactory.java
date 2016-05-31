@@ -23,7 +23,8 @@ public class AssociationResultMappingFactory extends AbstractResultMappingFactor
 
     @SuppressWarnings("unchecked")
     @Override
-    public ResultMapping buildColumnResultMapping(ComponentConfiguration componentConfiguration, ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
+    public ResultMapping buildColumnResultMapping(ComponentConfiguration componentConfiguration, ComponentDescriptor<?> componentDescriptor,
+            ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         Association assossiation = propertyDescriptor.getMethod().getAnnotation(Association.class);
 
         String[] propertySource = assossiation.propertySource();
@@ -33,7 +34,7 @@ public class AssociationResultMappingFactory extends AbstractResultMappingFactor
             column = sourceColumns.get(0).getRight();
         }
 
-        Class<?> javaType = assossiation.javaType() != null && assossiation.javaType() != void.class ? assossiation.javaType() : propertyDescriptor.getPropertyClass();
+        Class<?> javaType = assossiation.javaType() != void.class ? assossiation.javaType() : propertyDescriptor.getPropertyClass();
 
         ResultMapping.Builder resultMappingBuilder = new ResultMapping.Builder(componentConfiguration, propertyDescriptor.getPropertyName(), column, javaType);
         resultMappingBuilder.composites(ComponentResultMapHelper.buildComposites(componentConfiguration, sourceColumns));
@@ -48,13 +49,18 @@ public class AssociationResultMappingFactory extends AbstractResultMappingFactor
         } else if (ComponentFactory.getInstance().isComponentType(javaType)) {
             Class<? extends IComponent> subComponentClass = (Class<? extends IComponent>) javaType;
             String[] propertyTarget = assossiation.propertyTarget();
-            if (propertyTarget == null || propertyTarget.length == 0) {
-                propertyTarget = new String[] { EntityHelper.findIdPropertyName(subComponentClass) };
+            if (propertyTarget.length == 0) {
+                String idPropertyName = EntityHelper.findIdPropertyName(subComponentClass);
+                if (idPropertyName == null) {
+                    throw new IllegalArgumentException(
+                            "Not find Id property for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName() + ", fill propertyTarget");
+                }
+                propertyTarget = new String[] { idPropertyName };
             }
             ComponentResultMapHelper.checkTarget(ComponentFactory.getInstance().getDescriptor(subComponentClass), propertyTarget);
 
             JoinTable[] joinTables = assossiation.joinTable();
-            if (joinTables != null && joinTables.length > 0) {
+            if (joinTables.length > 0) {
                 List<Pair<String, Pair<String[], String[]>>> joins = ComponentResultMapHelper.joinTables(componentDescriptor, propertyDescriptor, joinTables, propertySource, propertyTarget);
                 resultMappingBuilder
                         .nestedQueryId(StatementNameHelper.buildFindComponentsByJoinTableKey(componentDescriptor.getComponentClass(), subComponentClass, false, joins, propertySource, propertyTarget));

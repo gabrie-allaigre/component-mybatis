@@ -18,52 +18,52 @@ DROP TABLE t_group
 IF EXISTS;
 
 CREATE TABLE t_group (
-  id           VARCHAR(256),
-  version      INT,
-  user_id      VARCHAR(256),
-  name         VARCHAR(256),
-  created_date DATETIME,
-  created_by   VARCHAR(240),
-  updated_date DATETIME,
-  updated_by   VARCHAR(240),
-  canceled BOOLEAN DEFAULT FALSE,
-  canceled_date  DATETIME,
-  canceled_by    VARCHAR(240)
+  id            VARCHAR(256),
+  version       INT,
+  user_id       VARCHAR(256),
+  name          VARCHAR(256),
+  created_date  DATETIME,
+  created_by    VARCHAR(240),
+  updated_date  DATETIME,
+  updated_by    VARCHAR(240),
+  canceled      BOOLEAN DEFAULT FALSE,
+  canceled_date DATETIME,
+  canceled_by   VARCHAR(240)
 );
 
 DROP TABLE t_address
 IF EXISTS;
 
 CREATE TABLE t_address (
-  id           VARCHAR(256),
-  version      INT,
-  city         VARCHAR(256),
-  postal_zip   VARCHAR(256),
-  country_id   VARCHAR(256),
-  created_date DATETIME,
-  created_by   VARCHAR(240),
-  updated_date DATETIME,
-  updated_by   VARCHAR(240),
-  canceled BOOLEAN DEFAULT FALSE,
-  canceled_date  DATETIME,
-  canceled_by    VARCHAR(240)
+  id            VARCHAR(256),
+  version       INT,
+  city          VARCHAR(256),
+  postal_zip    VARCHAR(256),
+  country_id    VARCHAR(256),
+  created_date  DATETIME,
+  created_by    VARCHAR(240),
+  updated_date  DATETIME,
+  updated_by    VARCHAR(240),
+  canceled      BOOLEAN DEFAULT FALSE,
+  canceled_date DATETIME,
+  canceled_by   VARCHAR(240)
 );
 
 DROP TABLE t_country
 IF EXISTS;
 
 CREATE TABLE t_country (
-  id           VARCHAR(256),
-  version      INT,
-  code         VARCHAR(256),
-  name         VARCHAR(256),
-  created_date DATETIME,
-  created_by   VARCHAR(240),
-  updated_date DATETIME,
-  updated_by   VARCHAR(240),
-  canceled BOOLEAN DEFAULT FALSE,
-  canceled_date  DATETIME,
-  canceled_by    VARCHAR(240)
+  id            VARCHAR(256),
+  version       INT,
+  code          VARCHAR(256),
+  name          VARCHAR(256),
+  created_date  DATETIME,
+  created_by    VARCHAR(240),
+  updated_date  DATETIME,
+  updated_by    VARCHAR(240),
+  canceled      BOOLEAN DEFAULT FALSE,
+  canceled_date DATETIME,
+  canceled_by   VARCHAR(240)
 );
 
 DROP TABLE t_asso_user_address
@@ -84,6 +84,16 @@ CREATE TABLE t_nls (
   table_id      VARCHAR(256),
   meaning       VARCHAR(256)
 );
+
+DROP TABLE t_categorie
+IF EXISTS;
+
+CREATE TABLE t_categorie (
+  id_categorie        INT,
+  id_categorie_parent INT,
+  LIB_CATEGORIE       VARCHAR(256)
+);
+
 
 INSERT INTO t_nls (table_name, column_name, language_code, table_id, meaning) VALUES ('T_COUNTRY', 'NAME', 'eng', '1', 'Cheese');
 INSERT INTO t_nls (table_name, column_name, language_code, table_id, meaning) VALUES ('T_COUNTRY', 'NAME', 'fra', '1', 'Fromage');
@@ -111,3 +121,10 @@ INSERT INTO t_group (id, version, user_id, name, created_date, created_by) VALUE
 INSERT INTO t_group (id, version, user_id, name, created_date, created_by) VALUES ('3', 0, '2', 'user', SYSDATE, 'GABY');
 INSERT INTO t_group (id, version, user_id, name, created_date, created_by, canceled, canceled_date, canceled_by) VALUES ('4', 0, '1', 'simple', SYSDATE, 'GABY', TRUE, SYSDATE, 'GABY');
 
+INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (0, null, 'ELISE');
+INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (1, 0, 'JOSE');
+INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (2, 0, 'BEATRICE');
+INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (3, 0, 'MARIE');
+INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (4, 2, 'GABRIEL');
+INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (5, 2, 'DAVID');
+INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (6, 1, 'LEA');

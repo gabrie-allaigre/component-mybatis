@@ -14,7 +14,7 @@ Pour l'utiliser, il faut ajouter dans le 'pom.xml' du projet les dépendances :
     <dependency>
         <groupId>com.synaptix</groupId>
         <artifactId>component-mybatis</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </dependency>
 </dependencies>
 ```

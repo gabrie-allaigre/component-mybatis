@@ -36,8 +36,8 @@
         <generated.test.sources.dir>${project.build.directory}/generated-test-sources/apt</generated.test.sources.dir>
 
         <component-bean.version>2.0.0</component-bean.version>
-        <mybatis.version>3.3.1</mybatis.version>
-        <mybatis-guice.version>3.8.0-SNAPSHOT</mybatis-guice.version>
+        <mybatis.version>3.4.1</mybatis.version>
+        <mybatis-guice.version>3.8</mybatis-guice.version>
         <guice.version>4.0</guice.version>
         <javassist.version>3.18.2-GA</javassist.version>
         <hsqldb.version>2.3.3</hsqldb.version>
@@ -46,6 +46,13 @@
         <name>TalanLabs</name>
         <url>http://www.talanlabs.com</url>
     </organization>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <developers>
         <developer>
             <name>Gabriel Allaigre</name>

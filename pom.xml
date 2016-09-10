@@ -35,7 +35,7 @@
         <generated.sources.dir>${project.build.directory}/generated-sources/apt</generated.sources.dir>
         <generated.test.sources.dir>${project.build.directory}/generated-test-sources/apt</generated.test.sources.dir>
 
-        <component-bean.version>2.0.0</component-bean.version>
+        <component-bean.version>2.1.1</component-bean.version>
         <mybatis.version>3.4.1</mybatis.version>
         <mybatis-guice.version>3.8</mybatis-guice.version>
         <guice.version>4.0</guice.version>

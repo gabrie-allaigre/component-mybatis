@@ -55,6 +55,8 @@ public abstract class AbstractIntegration {
         componentConfiguration.getMappedStatementFactoryRegistry().registry(new InsertMappedStatementFactory());
         componentConfiguration.getMappedStatementFactoryRegistry().registry(new UpdateMappedStatementFactory());
         componentConfiguration.getMappedStatementFactoryRegistry().registry(new DeleteMappedStatementFactory());
+        componentConfiguration.getMappedStatementFactoryRegistry().registry(new DeleteEntityByIdMappedStatementFactory());
+        componentConfiguration.getMappedStatementFactoryRegistry().registry(new DeleteComponentsByMappedStatementFactory());
 
         componentConfiguration.getResultMapFactoryRegistry().registry(new ComponentResultMapFactory());
 

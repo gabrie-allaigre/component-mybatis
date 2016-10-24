@@ -389,4 +389,94 @@ public class StatementNameTest {
         softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindNlsColumnKey("model.IUser/findNlsColumn?property=name")).isNull();
         softAssertions.assertAll();
     }
+
+    @Test
+    public void testBuildDeleteEntityByIdKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.buildDeleteEntityByIdKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.buildDeleteEntityByIdKey(IUser.class)).isEqualTo("com.synaptix.mybatis.test.data.IUser/deleteEntityById");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testIsDeleteEntityByIdKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.isDeleteEntityByIdKey(null)).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteEntityByIdKey("com.model.IUser/deleteEntityById")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteEntityByIdKey("com.model.IUser1/deleteEntityById")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteEntityByIdKey("model.IUser/deleteEntityById")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteEntityByIdKey("IUser/deleteEntityById")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteEntityByIdKey("model.IUser")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteEntityByIdKey("/deleteEntityById")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteEntityByIdKey("model-IUser/deleteEntityById")).isFalse();
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractComponentNameInDeleteEntityByIdKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInDeleteEntityByIdKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInDeleteEntityByIdKey("com.synaptix.mybatis.test.data.IUser/deleteEntityById")).isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInDeleteEntityByIdKey("model.IUser/deleteEntityById")).isNull();
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testBuildDeleteComponentsByKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.buildDeleteComponentsByKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.buildDeleteComponentsByKey(IUser.class)).isNull();
+        softAssertions.assertThat(StatementNameHelper.buildDeleteComponentsByKey(IUser.class)).isNull();
+        softAssertions.assertThat(StatementNameHelper.buildDeleteComponentsByKey(IUser.class, "login")).isEqualTo("com.synaptix.mybatis.test.data.IUser/deleteComponentsBy?properties=login");
+        softAssertions.assertThat(StatementNameHelper.buildDeleteComponentsByKey(IUser.class, "login"))
+                .isEqualTo("com.synaptix.mybatis.test.data.IUser/deleteComponentsBy?properties=login");
+        softAssertions.assertThat(StatementNameHelper.buildDeleteComponentsByKey(IUser.class, "login", "password"))
+                .isEqualTo("com.synaptix.mybatis.test.data.IUser/deleteComponentsBy?properties=login,password");
+        softAssertions.assertThat(StatementNameHelper.buildDeleteComponentsByKey(IUser.class, "login", "password"))
+                .isEqualTo("com.synaptix.mybatis.test.data.IUser/deleteComponentsBy?properties=login,password");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testIsDeleteComponentsByKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey(null)).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("model.IUser/deleteComponentsBy?properties=login")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("com.model.IUser/deleteComponentsBy?properties=login")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("model.IUser/deleteComponentsBy?properties=idUser")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("model.IUser/deleteComponentsBy?properties=idUser,login")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("model.IUser/deleteComponentsBy?properties=idUser;login")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("model.IUser/deleteComponentsBy?properties=idUser,login")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("model.IUser/deleteComponentsBy?properties=idUser,login&toto")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("model.IUser/deleteComponentsBy?idUser")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("model.IUser/deleteComponentsBy")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("model.IUser/deleteComponentsBy?")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("model.IUser")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("/deleteComponentsBy")).isFalse();
+        softAssertions.assertThat(StatementNameHelper.isDeleteComponentsByKey("model-IUser/deleteComponentsBy")).isFalse();
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractComponentNameInDeleteComponentsByKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInDeleteComponentsByKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInDeleteComponentsByKey("com.synaptix.mybatis.test.data.IUser/deleteComponentsBy?properties=login")).isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInDeleteComponentsByKey("model.IUser/deleteComponentsBy?properties=login")).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInDeleteComponentsByKey("com.synaptix.mybatis.test.data.IUser/deleteComponentsBy?properties=login,password"))
+                .isEqualTo(IUser.class);
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void testExtractIdParentNameInDeleteComponentsByKey() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(StatementNameHelper.extractPropertyNamesInDeleteComponentsByKey(null)).isNull();
+        softAssertions.assertThat(StatementNameHelper.extractPropertyNamesInDeleteComponentsByKey("IUser/deleteComponentsBy?properties=login")).containsOnly("login");
+        softAssertions.assertThat(StatementNameHelper.extractPropertyNamesInDeleteComponentsByKey("model.IUser/deleteComponentsBy?properties=login")).containsOnly("login");
+        softAssertions.assertThat(StatementNameHelper.extractPropertyNamesInDeleteComponentsByKey("model.IUser/deleteComponentsBy?properties=idUser")).containsOnly("idUser");
+        softAssertions.assertThat(StatementNameHelper.extractPropertyNamesInDeleteComponentsByKey("com.model.IUser/deleteComponentsBy?properties=idUser")).containsOnly("idUser");
+        softAssertions.assertThat(StatementNameHelper.extractPropertyNamesInDeleteComponentsByKey("com.model.IUser/deleteComponentsBy?properties=idUser,password")).containsOnly("idUser", "password");
+        softAssertions.assertAll();
+    }
 }

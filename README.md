@@ -101,6 +101,8 @@ Injector injector = Guice.createInjector(new MyBatisModule() {
         componentConfiguration.getMappedStatementFactoryRegistry().registry(new InsertMappedStatementFactory());
         componentConfiguration.getMappedStatementFactoryRegistry().registry(new UpdateMappedStatementFactory());
         componentConfiguration.getMappedStatementFactoryRegistry().registry(new DeleteMappedStatementFactory());
+        componentConfiguration.getMappedStatementFactoryRegistry().registry(new DeleteEntityByIdMappedStatementFactory());
+        componentConfiguration.getMappedStatementFactoryRegistry().registry(new DeleteComponentsByMappedStatementFactory());
         componentConfiguration.getResultMapFactoryRegistry().registry(new ComponentResultMapFactory());
         componentConfiguration.getCacheFactoryRegistry().registry(new ComponentCacheFactory());
         componentConfiguration.getTriggerDispatcher().addTriggerObserver(new TracableTriggerObserver(new DefaultUserByHandler()));
@@ -397,11 +399,25 @@ componentSqlSessionManager.delete(country);
 
 Les différents clefs générées automatiquement :
 
+## ResultMap
+
+Donne le result map de l'objet en paramètre, ici com.monpackage.ICountry
+
 - "com.monpackage.ICountry/resultMap"
+
+## Cache
+
+Donne le cache pour un objet, ici com.monpackage.ICountry
 
 - "com.monpackage.ICountry/cache"
 
+## MapperStatement
+
+Recherche l'objet selon son Id
+
 - "com.monpackage.ICountry/findById"
+
+Recherche les objets selon une liste de propriétés
 
 - "com.monpackage.ICountry/findComponentsBy?properties=id"
 
@@ -409,16 +425,36 @@ Les différents clefs générées automatiquement :
 
 - "com.monpackage.ICountry/findComponentsBy?properties=id&ignoreCancel"
 
+Recherche l'objet selon des jointures
+
 - "com.monpackage.ICountry/findComponentsByJoinTable?sourceComponent=com.monpackage.IContinent&sourceProperties=id&targetProperties=id&join=t_continent_toto;continent_id;toto_id;#t_toto_country;toto_id;country_id"
 
 - "com.monpackage.ICountry/findComponentsByJoinTable?sourceComponent=com.monpackage.IContinent&sourceProperties=id&targetProperties=id&join=t_continent_toto;continent_id;toto_id;#t_toto_country;toto_id;country_id&ignoreCancel"
 
+Recherche la traduction d'une propriété de l'objet
+
 - "com.monpackage.ICountry/findNlsColumn?property=name"
+
+Insertion de l'objet (pas des fils)
 
 - "com.monpackage.ICountry/insert"
 
+Mise à jour de l'objet (pas des fils)
+
 - "com.monpackage.ICountry/update"
+
+Mise à jour de l'objet et force la mise à jour d'une propiété NLS
 
 - "com.monpackage.ICountry/update?nlsProperties=name"
 
+Efface l'objet ou l'annule si il est annulable
+
 - "com.monpackage.ICountry/delete"
+
+Efface l'objet selon son Id
+
+- "com.monpackage.ICountry/deleteEntityById"
+
+Efface les objets selon les propriétés
+
+- "com.monpackage.ICountry/deleteComponentsBy?properties=code,version"

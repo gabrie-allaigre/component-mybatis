@@ -25,7 +25,7 @@ public class StatementNameHelper {
 
     private static final String DELETE_NAME = "delete";
 
-    private static final String DELETE_ENTITY_BY_ID_NAME = "deleteById";
+    private static final String DELETE_ENTITY_BY_ID_NAME = "deleteEntityById";
 
     private static final String DELETE_COMPONENTS_BY_NAME = "deleteComponentsBy";
 

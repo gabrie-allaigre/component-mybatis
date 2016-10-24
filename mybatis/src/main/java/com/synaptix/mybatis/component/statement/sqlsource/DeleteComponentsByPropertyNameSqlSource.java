@@ -3,7 +3,6 @@ package com.synaptix.mybatis.component.statement.sqlsource;
 import com.synaptix.component.IComponent;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.component.factory.ComponentFactory;
-import com.synaptix.entity.ICancelable;
 import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.Entity;
 import com.synaptix.mybatis.component.helper.ComponentMyBatisHelper;
@@ -25,12 +24,8 @@ public class DeleteComponentsByPropertyNameSqlSource<E extends IComponent> imple
 
     private final SqlSource sqlSource;
 
-    private final boolean ignoreCancel;
-
-    public DeleteComponentsByPropertyNameSqlSource(ComponentConfiguration componentConfiguration, Class<E> componentClass, boolean ignoreCancel, String... propertyNames) {
+    public DeleteComponentsByPropertyNameSqlSource(ComponentConfiguration componentConfiguration, Class<E> componentClass, String... propertyNames) {
         super();
-
-        this.ignoreCancel = ignoreCancel && ICancelable.class.isAssignableFrom(componentClass);
 
         SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(componentConfiguration);
 
@@ -49,7 +44,7 @@ public class DeleteComponentsByPropertyNameSqlSource<E extends IComponent> imple
         Entity entity = ComponentMyBatisHelper.getEntityAnnotation(cd);
 
         SQL sqlBuilder = new SQL();
-        sqlBuilder.DELETE_FROM(entity.name()+" t");
+        sqlBuilder.DELETE_FROM(entity.name() + " t");
         int param = 1;
         for (String propertyName : propertyNames) {
             ComponentDescriptor.PropertyDescriptor propertyDescriptor = cd.getPropertyDescriptor(propertyName);

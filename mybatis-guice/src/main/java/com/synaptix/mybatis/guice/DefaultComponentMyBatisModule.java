@@ -20,6 +20,8 @@ public final class DefaultComponentMyBatisModule extends AbstractComponentMyBati
         addMappedStatementFactoryClass(InsertMappedStatementFactory.class);
         addMappedStatementFactoryClass(UpdateMappedStatementFactory.class);
         addMappedStatementFactoryClass(DeleteMappedStatementFactory.class);
+        addMappedStatementFactoryClass(DeleteEntityByIdMappedStatementFactory.class);
+        addMappedStatementFactoryClass(DeleteComponentsByMappedStatementFactory.class);
 
         addCacheFactoryClass(ComponentCacheFactory.class);
     }

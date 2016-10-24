@@ -25,6 +25,10 @@ public class StatementNameHelper {
 
     private static final String DELETE_NAME = "delete";
 
+    private static final String DELETE_ENTITY_BY_ID_NAME = "deleteById";
+
+    private static final String DELETE_COMPONENTS_BY_NAME = "deleteComponentsBy";
+
     private static final String FIND_NLS_COLUMN_NAME = "findNlsColumn";
 
     private static final String PROPERTY = "property";
@@ -71,6 +75,10 @@ public class StatementNameHelper {
     private static final Pattern UPDATE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + UPDATE_NAME + "(\\?" + NLS_PROPERTIES + "=(" + PROPERTIES_PAT + ")?)?");
 
     private static final Pattern DELETE_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + DELETE_NAME);
+
+    private static final Pattern DELETE_ENTITY_BY_ID_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + DELETE_ENTITY_BY_ID_NAME);
+
+    private static final Pattern DELETE_COMPONENTS_BY_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + DELETE_COMPONENTS_BY_NAME + "\\?" + PROPERTIES + "=(" + PROPERTIES_PAT + ")");
 
     private static final Pattern FIND_NLS_COLUMN_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + FIND_NLS_COLUMN_NAME + "\\?" + PROPERTY + "=(" + PROPERTY_PAT + ")");
 
@@ -137,7 +145,7 @@ public class StatementNameHelper {
     // FindComponentsBy
 
     /**
-     * Build find component by id key
+     * Build find components by id key
      *
      * @param componentClass component class
      * @param useCheckCancel use check cancel
@@ -154,7 +162,7 @@ public class StatementNameHelper {
     }
 
     /**
-     * Verify is find entity by id key
+     * Verify is find components by
      *
      * @param key key
      * @return true or false
@@ -580,4 +588,115 @@ public class StatementNameHelper {
         }
         return m.group(3);
     }
+
+    // DeleteEntityById
+
+    /**
+     * Build delete entity by id key
+     *
+     * @param componentClass component class
+     * @return key
+     */
+    public static <E extends IComponent> String buildDeleteEntityByIdKey(Class<E> componentClass) {
+        if (componentClass == null) {
+            return null;
+        }
+        return componentClass.getCanonicalName() + "/" + DELETE_ENTITY_BY_ID_NAME;
+    }
+
+    /**
+     * Verify is delete entity by id key
+     *
+     * @param key key
+     * @return true or false
+     */
+    public static boolean isDeleteEntityByIdKey(String key) {
+        if (StringUtils.isBlank(key)) {
+            return false;
+        }
+        Matcher m = DELETE_ENTITY_BY_ID_PATTERN.matcher(key);
+        return m.matches();
+    }
+
+    /**
+     * Extract component in the key
+     *
+     * @param key key
+     * @return component class
+     */
+    public static <E extends IComponent> Class<E> extractComponentClassInDeleteEntityByIdKey(String key) {
+        if (!isDeleteEntityByIdKey(key)) {
+            return null;
+        }
+        Matcher m = DELETE_ENTITY_BY_ID_PATTERN.matcher(key);
+        if (!m.find()) {
+            return null;
+        }
+        return ComponentMyBatisHelper.loadComponentClass(m.group(1));
+    }
+
+    // DeleteComponentsBy
+
+    /**
+     * Build delete components by
+     *
+     * @param componentClass component class
+     * @param propertyNames  array of property
+     * @return key
+     */
+    public static <E extends IComponent> String buildDeleteComponentsByKey(Class<E> componentClass, String... propertyNames) {
+        if (componentClass == null || propertyNames == null || propertyNames.length == 0) {
+            return null;
+        }
+        return componentClass.getCanonicalName() + "/" + DELETE_COMPONENTS_BY_NAME + "?" + PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, propertyNames);
+    }
+
+    /**
+     * Verify is delete components by
+     *
+     * @param key key
+     * @return true or false
+     */
+    public static boolean isDeleteComponentsByKey(String key) {
+        if (StringUtils.isBlank(key)) {
+            return false;
+        }
+        Matcher m = DELETE_COMPONENTS_BY_PATTERN.matcher(key);
+        return m.matches();
+    }
+
+    /**
+     * Extract component in the key
+     *
+     * @param key key
+     * @return component class
+     */
+    public static <E extends IComponent> Class<E> extractComponentClassInDeleteComponentsByKey(String key) {
+        if (!isDeleteComponentsByKey(key)) {
+            return null;
+        }
+        Matcher m = DELETE_COMPONENTS_BY_PATTERN.matcher(key);
+        if (!m.find()) {
+            return null;
+        }
+        return ComponentMyBatisHelper.loadComponentClass(m.group(1));
+    }
+
+    /**
+     * Extract properties
+     *
+     * @param key key
+     * @return properties
+     */
+    public static String[] extractPropertyNamesInDeleteComponentsByKey(String key) {
+        if (!isDeleteComponentsByKey(key)) {
+            return null;
+        }
+        Matcher m = DELETE_COMPONENTS_BY_PATTERN.matcher(key);
+        if (!m.find()) {
+            return null;
+        }
+        return m.group(3).split(PROPERTIES_SEPARATOR);
+    }
+
 }

@@ -45,6 +45,8 @@ public class StatementNameHelper {
 
     private static final String JOIN = "join";
 
+    private static final String ORDER_BY = "orderBy";
+
     private static final String IGNORE_CANCEL = "ignoreCancel";
 
     private static final String PARAM = "";
@@ -61,14 +63,20 @@ public class StatementNameHelper {
 
     private static final String JOINS_PAT = "(" + JOIN_PAT + "#)*" + JOIN_PAT;
 
+    private static final String SORT_PAT = "Asc|Desc|AscNullsFirst|AscNullsLast|DescNullsFirst|DescNullsLast";
+
+    private static final String ORDER_BY_PAT = PROPERTY_PAT + ";" + SORT_PAT;
+
+    private static final String ORDERS_BY_PAT = "(" + ORDER_BY_PAT + "#)*" + ORDER_BY_PAT;
+
     private static final Pattern FIND_ENTITY_BY_ID_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + FIND_ENTITY_BY_ID_NAME);
 
-    private static final Pattern FIND_COMPONENTS_BY_PATTERN = Pattern
-            .compile("(" + COMPONENT_CLASS_PAT + ")/" + FIND_COMPONENTS_BY_NAME + "\\?" + PROPERTIES + "=(" + PROPERTIES_PAT + ")(&(" + IGNORE_CANCEL + "))?");
+    private static final Pattern FIND_COMPONENTS_BY_PATTERN = Pattern.compile(
+            "(" + COMPONENT_CLASS_PAT + ")/" + FIND_COMPONENTS_BY_NAME + "\\?" + PROPERTIES + "=(" + PROPERTIES_PAT + ")(&" + ORDER_BY + "=(" + ORDERS_BY_PAT + "))?(&(" + IGNORE_CANCEL + "))?");
 
     private static final Pattern FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN = Pattern.compile(
             "(" + COMPONENT_CLASS_PAT + ")/" + FIND_COMPONENTS_BY_JOIN_TABLE_NAME + "\\?" + SOURCE_COMPONENT + "=(" + COMPONENT_CLASS_PAT + ")&" + SOURCE_PROPERTIES + "=(" + PROPERTIES_PAT + ")&"
-                    + TARGET_PROPERTIES + "=(" + PROPERTIES_PAT + ")&" + JOIN + "=(" + JOINS_PAT + ")(&(" + IGNORE_CANCEL + "))?");
+                    + TARGET_PROPERTIES + "=(" + PROPERTIES_PAT + ")&" + JOIN + "=(" + JOINS_PAT + ")(&" + ORDER_BY + "=(" + ORDERS_BY_PAT + "))?(&(" + IGNORE_CANCEL + "))?");
 
     private static final Pattern INSERT_PATTERN = Pattern.compile("(" + COMPONENT_CLASS_PAT + ")/" + INSERT_NAME);
 

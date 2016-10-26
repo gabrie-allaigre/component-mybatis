@@ -228,7 +228,7 @@ public class StatementNameHelper {
             return false;
         }
         Matcher m = FIND_COMPONENTS_BY_PATTERN.matcher(key);
-        return m.find() && IGNORE_CANCEL.equals(m.group(6));
+        return m.find() && IGNORE_CANCEL.equals(m.group(9));
     }
 
     // FindComponentsByJoinTable
@@ -374,7 +374,7 @@ public class StatementNameHelper {
             return false;
         }
         Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
-        return m.find() && IGNORE_CANCEL.equals(m.group(16));
+        return m.find() && IGNORE_CANCEL.equals(m.group(19));
     }
 
     // Insert

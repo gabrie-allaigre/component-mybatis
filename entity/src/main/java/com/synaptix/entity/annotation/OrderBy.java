@@ -7,7 +7,7 @@ public @interface OrderBy {
     Sort sort() default Sort.Asc;
 
     enum Sort {
-        Asc, Desc, AscNullsFisrt, AscNullsLast, DescNullsFisrt, DescNullsLast
+        Asc, Desc
     }
 
 }

@@ -63,7 +63,7 @@ public class StatementNameHelper {
 
     private static final String JOINS_PAT = "(" + JOIN_PAT + "#)*" + JOIN_PAT;
 
-    private static final String SORT_PAT = "Asc|Desc|AscNullsFirst|AscNullsLast|DescNullsFirst|DescNullsLast";
+    private static final String SORT_PAT = "(Asc|Desc)";
 
     private static final String ORDER_BY_PAT = PROPERTY_PAT + ";" + SORT_PAT;
 
@@ -158,15 +158,17 @@ public class StatementNameHelper {
      * @param componentClass component class
      * @param useCheckCancel use check cancel
      * @param propertyNames  array of property
+     * @param orderBys       list of order by
      * @return key
      */
-    public static <E extends IComponent> String buildFindComponentsByKey(Class<E> componentClass, boolean useCheckCancel, String... propertyNames) {
+    public static <E extends IComponent> String buildFindComponentsByKey(Class<E> componentClass, boolean useCheckCancel, String[] propertyNames, List<Pair<String, String>> orderBys) {
         if (componentClass == null || propertyNames == null || propertyNames.length == 0) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + FIND_COMPONENTS_BY_NAME + "?" + PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, propertyNames) + (useCheckCancel ?
-                "&" + IGNORE_CANCEL :
-                "");
+        List<String> os = orderBys != null && !orderBys.isEmpty() ? orderBys.stream().map(o -> o.getLeft() + ";" + o.getRight()).collect(Collectors.toList()) : null;
+        return componentClass.getCanonicalName() + "/" + FIND_COMPONENTS_BY_NAME + "?" + PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, propertyNames) + (os != null ?
+                "&" + ORDER_BY + "=" + String.join("#", os) :
+                "") + (useCheckCancel ? "&" + IGNORE_CANCEL : "");
     }
 
     /**
@@ -218,6 +220,32 @@ public class StatementNameHelper {
     }
 
     /**
+     * Extract order by
+     *
+     * @param key key
+     * @return order by
+     */
+    public static List<Pair<String, String>> extractOrderBiesInFindComponentsByKey(String key) {
+        if (!isFindComponentsByKey(key)) {
+            return null;
+        }
+        Matcher m = FIND_COMPONENTS_BY_PATTERN.matcher(key);
+        if (!m.find()) {
+            return null;
+        }
+        List<Pair<String, String>> res = new ArrayList<>();
+        String group = m.group(6);
+        if (StringUtils.isNotBlank(group)) {
+            String[] os = group.split("#");
+            for (String o : os) {
+                String[] ss = o.split(";");
+                res.add(Pair.of(ss[0], ss[1]));
+            }
+        }
+        return res;
+    }
+
+    /**
      * Extract ignore cancel
      *
      * @param key key
@@ -228,7 +256,7 @@ public class StatementNameHelper {
             return false;
         }
         Matcher m = FIND_COMPONENTS_BY_PATTERN.matcher(key);
-        return m.find() && IGNORE_CANCEL.equals(m.group(9));
+        return m.find() && IGNORE_CANCEL.equals(m.group(11));
     }
 
     // FindComponentsByJoinTable
@@ -242,10 +270,11 @@ public class StatementNameHelper {
      * @param joins                list of join
      * @param sourceProperties     properties source
      * @param targetProperties     properties target
+     * @param orderBys             list of order by
      * @return key
      */
     public static <E extends IComponent, F extends IComponent> String buildFindComponentsByJoinTableKey(Class<E> sourceComponentClass, Class<F> targetComponentClass, boolean useCheckCancel,
-            List<Pair<String, Pair<String[], String[]>>> joins, String[] sourceProperties, String[] targetProperties) {
+            List<Pair<String, Pair<String[], String[]>>> joins, String[] sourceProperties, String[] targetProperties, List<Pair<String, String>> orderBys) {
         if (sourceComponentClass == null || targetComponentClass == null || sourceProperties == null || sourceProperties.length == 0 || joins == null || joins.size() == 0 || targetProperties == null
                 || targetProperties.length == 0) {
             return null;
@@ -253,9 +282,10 @@ public class StatementNameHelper {
         List<String> js = joins.stream()
                 .map(join -> join.getLeft() + ";" + String.join(PROPERTIES_SEPARATOR, join.getRight().getLeft()) + ";" + String.join(PROPERTIES_SEPARATOR, join.getRight().getRight()))
                 .collect(Collectors.toList());
+        List<String> os = orderBys != null && !orderBys.isEmpty() ? orderBys.stream().map(o -> o.getLeft() + ";" + o.getRight()).collect(Collectors.toList()) : null;
         return targetComponentClass.getCanonicalName() + "/" + FIND_COMPONENTS_BY_JOIN_TABLE_NAME + "?" + SOURCE_COMPONENT + "=" + sourceComponentClass.getCanonicalName() + "&" + SOURCE_PROPERTIES
                 + "=" + String.join(PROPERTIES_SEPARATOR, sourceProperties) + "&" + TARGET_PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, targetProperties) + "&" + JOIN + "=" + String
-                .join("#", js) + (useCheckCancel ? "&" + IGNORE_CANCEL : "");
+                .join("#", js) + (os != null ? "&" + ORDER_BY + "=" + String.join("#", os) : "") + (useCheckCancel ? "&" + IGNORE_CANCEL : "");
     }
 
     /**
@@ -364,6 +394,32 @@ public class StatementNameHelper {
     }
 
     /**
+     * Extract order by
+     *
+     * @param key key
+     * @return order by
+     */
+    public static List<Pair<String, String>> extractOrderBiesInFindComponentsByJoinTableKey(String key) {
+        if (!isFindComponentsByJoinTableKey(key)) {
+            return null;
+        }
+        Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
+        if (!m.find()) {
+            return null;
+        }
+        List<Pair<String, String>> res = new ArrayList<>();
+        String group = m.group(16);
+        if (StringUtils.isNotBlank(group)) {
+            String[] os = group.split("#");
+            for (String o : os) {
+                String[] ss = o.split(";");
+                res.add(Pair.of(ss[0], ss[1]));
+            }
+        }
+        return res;
+    }
+
+    /**
      * Extract ignore cancel
      *
      * @param key key
@@ -374,7 +430,7 @@ public class StatementNameHelper {
             return false;
         }
         Matcher m = FIND_COMPONENTS_BY_JOIN_TABLE_PATTERN.matcher(key);
-        return m.find() && IGNORE_CANCEL.equals(m.group(19));
+        return m.find() && IGNORE_CANCEL.equals(m.group(21));
     }
 
     // Insert

@@ -2,9 +2,7 @@ package com.synaptix.mybatis.test.it;
 
 import com.synaptix.entity.factory.IdFactory;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
-import com.synaptix.mybatis.test.data.IAddress;
-import com.synaptix.mybatis.test.data.ICountry;
-import com.synaptix.mybatis.test.data.IUser;
+import com.synaptix.mybatis.test.data.*;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
@@ -55,18 +53,17 @@ public class FindByIdIT extends AbstractIntegration {
 
     @Test
     public void testCollection() {
-        IUser user = sqlSessionManager.<IUser>selectOne(StatementNameHelper.buildFindEntityByIdKey(IUser.class), IdFactory.IdString.from("1"));
+        IUser user = sqlSessionManager.selectOne(StatementNameHelper.buildFindEntityByIdKey(IUser.class), IdFactory.IdString.from("1"));
 
         Assertions.assertThat(user.getGroups()).isNotNull().hasSize(2);
 
         Assertions.assertThat(user.getAddresses()).isNotNull().hasSize(3);
-
     }
 
     @Test
     public void testNlsColumn() {
         defaultNlsColumnHandler.setLanguageCode("fra");
-        ICountry country = sqlSessionManager.<ICountry>selectOne(StatementNameHelper.buildFindEntityByIdKey(ICountry.class), IdFactory.IdString.from("1"));
+        ICountry country = sqlSessionManager.selectOne(StatementNameHelper.buildFindEntityByIdKey(ICountry.class), IdFactory.IdString.from("1"));
 
         SoftAssertions softAssertions = new SoftAssertions();
         softAssertions.assertThat(country.getId()).isEqualTo(IdFactory.IdString.from("1"));
@@ -90,5 +87,24 @@ public class FindByIdIT extends AbstractIntegration {
         softAssertions.assertThat(user.getAddressId()).isEqualTo(IdFactory.IdString.from("2"));
         softAssertions.assertThat(user.getCreatedBy()).isEqualTo("GABY");
         softAssertions.assertAll();
+    }
+
+    @Test
+    public void testOrderBy() {
+        ITrain train = sqlSessionManager.selectOne(StatementNameHelper.buildFindEntityByIdKey(ITrain.class), IdFactory.IdString.from("1"));
+        Assertions.assertThat(train.getWagons()).isNotNull().hasSize(5).extracting("position").containsExactly(5, 1, 2, 4, 3);
+        Assertions.assertThat(train.getWagons()).isNotNull().hasSize(5).extracting("code").containsSequence("000000000001", "000000000002", "000000000003", "000000000004", "000000000005");
+
+        ITrain2 train2 = sqlSessionManager.selectOne(StatementNameHelper.buildFindEntityByIdKey(ITrain2.class), IdFactory.IdString.from("1"));
+        Assertions.assertThat(train2.getWagons()).isNotNull().hasSize(5).extracting("position").containsExactly(1, 2, 3, 4, 5);
+        Assertions.assertThat(train2.getWagons()).isNotNull().hasSize(5).extracting("code").containsExactly("000000000002", "000000000003", "000000000005", "000000000004", "000000000001");
+
+        ITrain3 train3 = sqlSessionManager.selectOne(StatementNameHelper.buildFindEntityByIdKey(ITrain3.class), IdFactory.IdString.from("1"));
+        Assertions.assertThat(train3.getWagons()).isNotNull().hasSize(5).extracting("position").containsExactly(5, 4, 3, 2, 1);
+        Assertions.assertThat(train3.getWagons()).isNotNull().hasSize(5).extracting("code").containsExactly("000000000001", "000000000004", "000000000005", "000000000003", "000000000002");
+
+        ITrain4 train4 = sqlSessionManager.selectOne(StatementNameHelper.buildFindEntityByIdKey(ITrain4.class), IdFactory.IdString.from("2"));
+        Assertions.assertThat(train4.getWagons()).isNotNull().hasSize(5).extracting("position").containsExactly(1, 2, 3, 3, 3);
+        Assertions.assertThat(train4.getWagons()).isNotNull().hasSize(5).extracting("code").containsExactly("000000000001", "000000000002", "000000000001", "000000000003", "000000000004");
     }
 }

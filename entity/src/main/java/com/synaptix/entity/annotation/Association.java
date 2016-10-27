@@ -51,10 +51,4 @@ public @interface Association {
      */
     JoinTable[] joinTable() default {};
 
-    /**
-     * Order by
-     *
-     * @return order by
-     */
-    OrderBy[] orderBy() default {};
 }

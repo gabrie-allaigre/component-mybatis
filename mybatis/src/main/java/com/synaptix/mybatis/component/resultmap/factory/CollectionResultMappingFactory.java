@@ -7,6 +7,7 @@ import com.synaptix.entity.ICancelable;
 import com.synaptix.entity.annotation.Collection;
 import com.synaptix.entity.annotation.FetchType;
 import com.synaptix.entity.annotation.JoinTable;
+import com.synaptix.entity.annotation.OrderBy;
 import com.synaptix.entity.helper.EntityHelper;
 import com.synaptix.mybatis.component.helper.ComponentMyBatisHelper;
 import com.synaptix.mybatis.component.session.ComponentConfiguration;
@@ -67,23 +68,28 @@ public class CollectionResultMappingFactory extends AbstractResultMappingFactory
             }
 
             Class<? extends IComponent> subComponentClass = (Class<? extends IComponent>) ofType;
+            ComponentDescriptor<?> subComponentDescriptor = ComponentFactory.getInstance().getDescriptor(subComponentClass);
+
             String[] propertyTarget = collection.propertyTarget();
-            ComponentResultMapHelper.checkTarget(ComponentFactory.getInstance().getDescriptor(subComponentClass), propertyTarget);
+            ComponentResultMapHelper.checkTarget(subComponentDescriptor, propertyTarget);
 
             boolean ignoreCancel = ICancelable.class.isAssignableFrom(subComponentClass);
+
+            OrderBy[] orderBies = collection.orderBy();
+            List<Pair<String, String>> os = ComponentResultMapHelper.orderBies(subComponentDescriptor, orderBies);
 
             JoinTable[] joinTables = collection.joinTable();
             if (joinTables.length > 0) {
                 List<Pair<String, Pair<String[], String[]>>> joins = ComponentResultMapHelper.joinTables(componentDescriptor, propertyDescriptor, joinTables, propertySource, propertyTarget);
                 resultMappingBuilder.nestedQueryId(
-                        StatementNameHelper.buildFindComponentsByJoinTableKey(componentDescriptor.getComponentClass(), subComponentClass, ignoreCancel, joins, propertySource, propertyTarget));
+                        StatementNameHelper.buildFindComponentsByJoinTableKey(componentDescriptor.getComponentClass(), subComponentClass, ignoreCancel, joins, propertySource, propertyTarget, os));
             } else {
                 if (propertyTarget.length != propertySource.length) {
                     throw new IllegalArgumentException(
                             "Not same lenght property Association for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
                 }
 
-                resultMappingBuilder.nestedQueryId(StatementNameHelper.buildFindComponentsByKey(subComponentClass, ignoreCancel, propertyTarget));
+                resultMappingBuilder.nestedQueryId(StatementNameHelper.buildFindComponentsByKey(subComponentClass, ignoreCancel, propertyTarget, os));
             }
         }
         return resultMappingBuilder.build();

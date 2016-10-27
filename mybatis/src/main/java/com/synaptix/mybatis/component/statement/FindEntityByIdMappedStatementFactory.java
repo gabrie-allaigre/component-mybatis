@@ -30,13 +30,13 @@ public class FindEntityByIdMappedStatementFactory extends AbstractMappedStatemen
         if (StatementNameHelper.isFindEntityByIdKey(key)) {
             Class<? extends IComponent> componentClass = StatementNameHelper.extractComponentClassInFindEntityByIdKey(key);
             if (componentClass != null) {
-                return createFindEntityByIdMappedStatement(componentConfiguration,key, componentClass);
+                return createFindEntityByIdMappedStatement(componentConfiguration, key, componentClass);
             }
         }
         return null;
     }
 
-    private <E extends IComponent> MappedStatement createFindEntityByIdMappedStatement(ComponentConfiguration componentConfiguration,String key, Class<E> componentClass) {
+    private <E extends IComponent> MappedStatement createFindEntityByIdMappedStatement(ComponentConfiguration componentConfiguration, String key, Class<E> componentClass) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create findEntityById for " + componentClass);
         }
@@ -45,8 +45,8 @@ public class FindEntityByIdMappedStatementFactory extends AbstractMappedStatemen
 
         String idPropertyName = EntityHelper.findIdPropertyName(componentClass);
 
-        MappedStatement.Builder msBuilder = new MappedStatement.Builder(componentConfiguration, key, new FindComponentsByPropertyNameSqlSource<>(componentConfiguration, componentClass, false, idPropertyName),
-                SqlCommandType.SELECT);
+        MappedStatement.Builder msBuilder = new MappedStatement.Builder(componentConfiguration, key,
+                new FindComponentsByPropertyNameSqlSource<>(componentConfiguration, componentClass, false, new String[] { idPropertyName }, null), SqlCommandType.SELECT);
 
         msBuilder.resultMaps(Collections.singletonList(inlineResultMap));
         Cache cache = componentConfiguration.getCache(CacheNameHelper.buildCacheKey(componentClass));

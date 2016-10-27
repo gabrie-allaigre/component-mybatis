@@ -35,16 +35,19 @@ public class FindComponentsByJoinTableMappedStatementFactory extends AbstractMap
             String[] targetProperties = StatementNameHelper.extractTargetPropertiesInFindComponentsByJoinTableKey(key);
             List<Pair<String, Pair<String[], String[]>>> joins = StatementNameHelper.extractJoinInFindComponentsByJoinTableKey(key);
             boolean ignoreCancel = StatementNameHelper.isIgnoreCancelInFindComponentsByJoinTableKey(key);
+            List<Pair<String, String>> orderBies = StatementNameHelper.extractOrderBiesInFindComponentsByJoinTableKey(key);
             if (componentClass != null && sourceComponentClass != null && sourceProperties != null && sourceProperties.length > 0 && targetProperties != null && targetProperties.length > 0
                     && joins != null && !joins.isEmpty()) {
-                return createFindComponentsByJoinTableMappedStatement(componentConfiguration, key, componentClass, sourceComponentClass, sourceProperties, targetProperties, joins, ignoreCancel);
+                return createFindComponentsByJoinTableMappedStatement(componentConfiguration, key, componentClass, sourceComponentClass, sourceProperties, targetProperties, joins, ignoreCancel,
+                        orderBies);
             }
         }
         return null;
     }
 
     private <E extends IComponent> MappedStatement createFindComponentsByJoinTableMappedStatement(ComponentConfiguration componentConfiguration, String key, Class<? extends IComponent> componentClass,
-            Class<? extends IComponent> sourceComponentClass, String[] sourceProperties, String[] targetProperties, List<Pair<String, Pair<String[], String[]>>> joins, boolean ignoreCancel) {
+            Class<? extends IComponent> sourceComponentClass, String[] sourceProperties, String[] targetProperties, List<Pair<String, Pair<String[], String[]>>> joins, boolean ignoreCancel,
+            List<Pair<String, String>> orderBies) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create findComponentsByJoinTable for " + componentClass);
         }
@@ -52,7 +55,8 @@ public class FindComponentsByJoinTableMappedStatementFactory extends AbstractMap
         ResultMap inlineResultMap = componentConfiguration.getResultMap(ResultMapNameHelper.buildResultMapKey(componentClass));
 
         MappedStatement.Builder msBuilder = new MappedStatement.Builder(componentConfiguration, key,
-                new FindComponentsByJoinTableSqlSource<E>(componentConfiguration, componentClass, sourceComponentClass, sourceProperties, targetProperties, joins, ignoreCancel), SqlCommandType.SELECT);
+                new FindComponentsByJoinTableSqlSource<E>(componentConfiguration, componentClass, sourceComponentClass, sourceProperties, targetProperties, joins, ignoreCancel, orderBies),
+                SqlCommandType.SELECT);
         msBuilder.resultMaps(Collections.singletonList(inlineResultMap));
         Cache cache = componentConfiguration.getCache(CacheNameHelper.buildCacheKey(componentClass));
         msBuilder.flushCacheRequired(false);

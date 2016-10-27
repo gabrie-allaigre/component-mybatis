@@ -57,4 +57,12 @@ public @interface Collection {
      * @return join table
      */
     JoinTable[] joinTable() default {};
+
+    /**
+     * Order by
+     *
+     * @return order by
+     */
+    OrderBy[] orderBy() default {};
+
 }

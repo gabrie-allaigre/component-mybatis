@@ -3,6 +3,7 @@ package com.synaptix.mybatis.component.resultmap.factory;
 import com.synaptix.component.factory.ComponentDescriptor;
 import com.synaptix.entity.annotation.Column;
 import com.synaptix.entity.annotation.JoinTable;
+import com.synaptix.entity.annotation.OrderBy;
 import com.synaptix.mybatis.component.statement.StatementNameHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -137,8 +138,8 @@ public class ComponentResultMapHelper {
     /**
      * Check column
      *
-     * @param componentDescriptor
-     * @param propertyDescriptor
+     * @param componentDescriptor component descriptor
+     * @param propertyDescriptor  property descriptor
      */
     public static void checkColumn(ComponentDescriptor<?> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         if (propertyDescriptor == null) {
@@ -150,5 +151,23 @@ public class ComponentResultMapHelper {
         if (StringUtils.isBlank(propertyDescriptor.getMethod().getAnnotation(Column.class).name())) {
             throw new IllegalArgumentException("Not name in Column for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
         }
+    }
+
+    /**
+     * Check column
+     *
+     * @param componentDescriptor component descriptor
+     * @param orderBies           property descriptor
+     */
+    public static List<Pair<String, String>> orderBies(ComponentDescriptor<?> componentDescriptor, OrderBy[] orderBies) {
+        List<Pair<String, String>> res = new ArrayList<>();
+        if (orderBies != null && orderBies.length > 0) {
+            for (OrderBy orderBy : orderBies) {
+                ComponentDescriptor.PropertyDescriptor propertyDescriptor = componentDescriptor.getPropertyDescriptor(orderBy.property());
+                checkColumn(componentDescriptor, propertyDescriptor);
+                res.add(Pair.of(orderBy.property(), orderBy.sort().name()));
+            }
+        }
+        return res;
     }
 }

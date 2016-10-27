@@ -6,6 +6,7 @@ import com.synaptix.mybatis.component.resultmap.ResultMapNameHelper;
 import com.synaptix.mybatis.component.session.ComponentConfiguration;
 import com.synaptix.mybatis.component.session.factory.AbstractMappedStatementFactory;
 import com.synaptix.mybatis.component.statement.sqlsource.FindComponentsByPropertyNameSqlSource;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
@@ -14,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Collections;
+import java.util.List;
 
 public class FindComponentsByMappedStatementFactory extends AbstractMappedStatementFactory {
 
@@ -30,15 +32,16 @@ public class FindComponentsByMappedStatementFactory extends AbstractMappedStatem
             Class<? extends IComponent> componentClass = StatementNameHelper.extractComponentClassInFindComponentsByKey(key);
             String[] propertyNames = StatementNameHelper.extractPropertyNamesInFindComponentsByKey(key);
             boolean ignoreCancel = StatementNameHelper.isIgnoreCancelInFindComponentsByKey(key);
+            List<Pair<String, String>> orderBies = StatementNameHelper.extractOrderBiesInFindComponentsByKey(key);
             if (componentClass != null && propertyNames != null && propertyNames.length > 0) {
-                return createFindComponentsByMappedStatement(componentConfiguration, key, componentClass, ignoreCancel, propertyNames);
+                return createFindComponentsByMappedStatement(componentConfiguration, key, componentClass, ignoreCancel, propertyNames, orderBies);
             }
         }
         return null;
     }
 
     private <E extends IComponent> MappedStatement createFindComponentsByMappedStatement(ComponentConfiguration componentConfiguration, String key, Class<E> componentClass, boolean ignoreCancel,
-            String... propertyNames) {
+            String[] propertyNames, List<Pair<String, String>> orderBies) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Create findComponentsBy for " + componentClass);
         }
@@ -46,7 +49,7 @@ public class FindComponentsByMappedStatementFactory extends AbstractMappedStatem
         ResultMap inlineResultMap = componentConfiguration.getResultMap(ResultMapNameHelper.buildResultMapKey(componentClass));
 
         MappedStatement.Builder msBuilder = new MappedStatement.Builder(componentConfiguration, key,
-                new FindComponentsByPropertyNameSqlSource<>(componentConfiguration, componentClass, ignoreCancel, propertyNames), SqlCommandType.SELECT);
+                new FindComponentsByPropertyNameSqlSource<>(componentConfiguration, componentClass, ignoreCancel, propertyNames, orderBies), SqlCommandType.SELECT);
         msBuilder.resultMaps(Collections.singletonList(inlineResultMap));
         Cache cache = componentConfiguration.getCache(CacheNameHelper.buildCacheKey(componentClass));
         msBuilder.flushCacheRequired(false);

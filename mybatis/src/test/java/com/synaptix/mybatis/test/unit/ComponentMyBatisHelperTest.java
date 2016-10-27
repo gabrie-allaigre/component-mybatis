@@ -91,7 +91,6 @@ public class ComponentMyBatisHelperTest {
                 .buildSetNlsColumn(ComponentFactory.getInstance().getDescriptor(IFake.class), ComponentFactory.getInstance().getDescriptor(IFake.class).getPropertyDescriptor(FakeFields.name))).isNull();
     }
 
-
     @Test
     public void testBuildSetIdColumn() {
         Assertions.assertThat(ComponentMyBatisHelper

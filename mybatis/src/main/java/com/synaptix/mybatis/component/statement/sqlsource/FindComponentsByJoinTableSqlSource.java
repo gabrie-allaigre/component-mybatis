@@ -30,15 +30,15 @@ public class FindComponentsByJoinTableSqlSource<E extends IComponent> implements
 
     private final boolean ignoreCancel;
 
-    public FindComponentsByJoinTableSqlSource(ComponentConfiguration componentConfiguration, Class<? extends IComponent> componentClass, Class<? extends IComponent> sourceComponentClass, String[] sourceProperties,
-            String[] targetProperties, List<Pair<String, Pair<String[], String[]>>> joins, boolean ignoreCancel) {
+    public FindComponentsByJoinTableSqlSource(ComponentConfiguration componentConfiguration, Class<? extends IComponent> componentClass, Class<? extends IComponent> sourceComponentClass,
+            String[] sourceProperties, String[] targetProperties, List<Pair<String, Pair<String[], String[]>>> joins, boolean ignoreCancel, List<Pair<String, String>> orderBies) {
         super();
 
         this.ignoreCancel = ignoreCancel && ICancelable.class.isAssignableFrom(componentClass);
 
         SqlSourceBuilder sqlSourceParser = new SqlSourceBuilder(componentConfiguration);
 
-        String sql = buildFindComponentsByJoinTable(componentClass, sourceComponentClass, sourceProperties, targetProperties, joins);
+        String sql = buildFindComponentsByJoinTable(componentClass, sourceComponentClass, sourceProperties, targetProperties, joins, orderBies);
         sqlSource = sqlSourceParser.parse(sql, Map.class, new HashMap<>());
     }
 
@@ -52,7 +52,7 @@ public class FindComponentsByJoinTableSqlSource<E extends IComponent> implements
     }
 
     private String buildFindComponentsByJoinTable(Class<? extends IComponent> componentClass, Class<? extends IComponent> sourceComponentClass, String[] sourceProperties, String[] targetProperties,
-            List<Pair<String, Pair<String[], String[]>>> joins) {
+            List<Pair<String, Pair<String[], String[]>>> joins, List<Pair<String, String>> orderBies) {
         ComponentDescriptor<?> componentDescriptor = ComponentFactory.getInstance().getDescriptor(componentClass);
         ComponentDescriptor<?> sourceComponentDescriptor = ComponentFactory.getInstance().getDescriptor(sourceComponentClass);
 
@@ -77,7 +77,8 @@ public class FindComponentsByJoinTableSqlSource<E extends IComponent> implements
 
                     Column column = ComponentMyBatisHelper.getColumnAnnotation(componentDescriptor, propertyDescriptor);
                     if (column == null) {
-                        throw new IllegalArgumentException("Not present annotation Column for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+                        throw new IllegalArgumentException(
+                                "Not present annotation Column for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
                     }
                     ands.add(label + "." + rights[k] + " = t." + column.name());
                 }
@@ -105,7 +106,8 @@ public class FindComponentsByJoinTableSqlSource<E extends IComponent> implements
 
             Column column = ComponentMyBatisHelper.getColumnAnnotation(sourceComponentDescriptor, propertyDescriptor);
             if (column == null) {
-                throw new IllegalArgumentException("Not present annotation Column for Component=" + sourceComponentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+                throw new IllegalArgumentException(
+                        "Not present annotation Column for Component=" + sourceComponentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
             }
             sqlBuilder.WHERE("u" + i + "." + lefts[j] + " = " + ComponentMyBatisHelper.buildColumn(sourceComponentDescriptor, propertyDescriptor, column, StatementNameHelper.buildParam(param)));
 
@@ -115,6 +117,32 @@ public class FindComponentsByJoinTableSqlSource<E extends IComponent> implements
         if (ignoreCancel) {
             sqlBuilder.WHERE("t.canceled = #{canceled,javaType=java.lang.Boolean}");
         }
+        if (orderBies != null && !orderBies.isEmpty()) {
+            for (Pair<String, String> orderBy : orderBies) {
+                ComponentDescriptor.PropertyDescriptor propertyDescriptor = componentDescriptor.getPropertyDescriptor(orderBy.getLeft());
+
+                if (propertyDescriptor == null) {
+                    throw new IllegalArgumentException("Not exists property for Component=" + componentDescriptor.getComponentClass() + " with property=" + orderBy.getLeft());
+                }
+
+                Column column = ComponentMyBatisHelper.getColumnAnnotation(componentDescriptor, propertyDescriptor);
+                if (column == null) {
+                    throw new IllegalArgumentException(
+                            "Not present annotation Column for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
+                }
+                String sort;
+                switch (orderBy.getRight()) {
+                case "Desc":
+                    sort = "DESC";
+                    break;
+                default:
+                    sort = "ASC";
+                    break;
+                }
+                sqlBuilder.ORDER_BY("t." + column.name() + " " + sort);
+            }
+        }
+
         String sql = sqlBuilder.toString();
         if (LOG.isDebugEnabled()) {
             LOG.debug(sql);

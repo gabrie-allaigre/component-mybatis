@@ -57,20 +57,22 @@ public class AssociationResultMappingFactory extends AbstractResultMappingFactor
                 }
                 propertyTarget = new String[] { idPropertyName };
             }
-            ComponentResultMapHelper.checkTarget(ComponentFactory.getInstance().getDescriptor(subComponentClass), propertyTarget);
+
+            ComponentDescriptor<?> subComponentDescriptor = ComponentFactory.getInstance().getDescriptor(subComponentClass);
+            ComponentResultMapHelper.checkTarget(subComponentDescriptor, propertyTarget);
 
             JoinTable[] joinTables = assossiation.joinTable();
             if (joinTables.length > 0) {
                 List<Pair<String, Pair<String[], String[]>>> joins = ComponentResultMapHelper.joinTables(componentDescriptor, propertyDescriptor, joinTables, propertySource, propertyTarget);
-                resultMappingBuilder
-                        .nestedQueryId(StatementNameHelper.buildFindComponentsByJoinTableKey(componentDescriptor.getComponentClass(), subComponentClass, false, joins, propertySource, propertyTarget));
+                resultMappingBuilder.nestedQueryId(
+                        StatementNameHelper.buildFindComponentsByJoinTableKey(componentDescriptor.getComponentClass(), subComponentClass, false, joins, propertySource, propertyTarget, null));
             } else {
                 if (propertyTarget.length != propertySource.length) {
                     throw new IllegalArgumentException(
                             "Not same lenght property Association for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());
                 }
 
-                resultMappingBuilder.nestedQueryId(StatementNameHelper.buildFindComponentsByKey(subComponentClass, false, propertyTarget));
+                resultMappingBuilder.nestedQueryId(StatementNameHelper.buildFindComponentsByKey(subComponentClass, false, propertyTarget, null));
             }
         } else {
             throw new IllegalArgumentException("Not accept Association for Component=" + componentDescriptor.getComponentClass() + " with property=" + propertyDescriptor.getPropertyName());

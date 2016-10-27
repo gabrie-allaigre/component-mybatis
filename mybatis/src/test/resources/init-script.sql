@@ -94,6 +94,25 @@ CREATE TABLE t_categorie (
   LIB_CATEGORIE       VARCHAR(256)
 );
 
+DROP TABLE t_train
+IF EXISTS;
+
+CREATE TABLE t_train (
+  id      VARCHAR(256),
+  version INT,
+  code    VARCHAR(256)
+);
+
+DROP TABLE t_wagon
+IF EXISTS;
+
+CREATE TABLE t_wagon (
+  id       VARCHAR(256),
+  version  INT,
+  train_id VARCHAR(256),
+  code     VARCHAR(256),
+  position INT
+);
 
 INSERT INTO t_nls (table_name, column_name, language_code, table_id, meaning) VALUES ('T_COUNTRY', 'NAME', 'eng', '1', 'Cheese');
 INSERT INTO t_nls (table_name, column_name, language_code, table_id, meaning) VALUES ('T_COUNTRY', 'NAME', 'fra', '1', 'Fromage');
@@ -121,10 +140,24 @@ INSERT INTO t_group (id, version, user_id, name, created_date, created_by) VALUE
 INSERT INTO t_group (id, version, user_id, name, created_date, created_by) VALUES ('3', 0, '2', 'user', SYSDATE, 'GABY');
 INSERT INTO t_group (id, version, user_id, name, created_date, created_by, canceled, canceled_date, canceled_by) VALUES ('4', 0, '1', 'simple', SYSDATE, 'GABY', TRUE, SYSDATE, 'GABY');
 
-INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (0, null, 'ELISE');
+INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (0, NULL, 'ELISE');
 INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (1, 0, 'JOSE');
 INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (2, 0, 'BEATRICE');
 INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (3, 0, 'MARIE');
 INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (4, 2, 'GABRIEL');
 INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (5, 2, 'DAVID');
 INSERT INTO t_categorie (id_categorie, id_categorie_parent, LIB_CATEGORIE) VALUES (6, 1, 'LEA');
+
+INSERT INTO t_train (id, version, code) VALUES ('1', 0, '00001');
+INSERT INTO t_train (id, version, code) VALUES ('2', 0, '00002');
+
+INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('1', 0, '1', '000000000001', 5);
+INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('2', 0, '1', '000000000002', 1);
+INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('3', 0, '1', '000000000003', 2);
+INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('4', 0, '1', '000000000004', 4);
+INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('5', 0, '1', '000000000005', 3);
+INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('6', 0, '2', '000000000001', 1);
+INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('7', 0, '2', '000000000002', 2);
+INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('8', 0, '2', '000000000004', 3);
+INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('8', 0, '2', '000000000003', 3);
+INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('8', 0, '2', '000000000001', 3);

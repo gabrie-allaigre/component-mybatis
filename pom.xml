@@ -43,7 +43,7 @@
         <javassist.version>3.18.2-GA</javassist.version>
         <hsqldb.version>2.3.4</hsqldb.version>
         <rsql-parser.version>2.1.0</rsql-parser.version>
-        <rtext.version>1.0.0</rtext.version>
+        <rtext.version>1.0.1</rtext.version>
         <component-bean.version>1.0.0</component-bean.version>
     </properties>
     <organization>

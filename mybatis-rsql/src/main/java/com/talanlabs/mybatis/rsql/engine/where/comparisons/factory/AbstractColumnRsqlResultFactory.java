@@ -4,6 +4,7 @@ import com.talanlabs.component.factory.ComponentDescriptor;
 import com.talanlabs.mybatis.component.helper.ComponentMyBatisHelper;
 import com.talanlabs.mybatis.rsql.configuration.IRsqlConfiguration;
 import com.talanlabs.mybatis.rsql.engine.EngineContext;
+import com.talanlabs.mybatis.rsql.engine.ILikePolicy;
 import com.talanlabs.mybatis.rsql.engine.IStringPolicy;
 import com.talanlabs.mybatis.rsql.engine.SqlResult;
 import com.talanlabs.rtext.Rtext;
@@ -67,13 +68,15 @@ public abstract class AbstractColumnRsqlResultFactory<E extends Annotation> exte
         String name = (StringUtils.isNotBlank(tableJoinName) ? tableJoinName + "." : "") + columnName;
         IStringPolicy stringComparePolicy = configuration.getStringPolicy();
 
-        if (!node.getOperator().isMultiValue()) {
-            String text = node.getArguments().size() > 0 ? node.getArguments().get(0) : null;
+        List<String> arguments = node.getArguments();
 
-            if (text != null && text.contains("*") && type.likeSql != null) {
+        if (!node.getOperator().isMultiValue()) {
+            String text = arguments.size() > 0 ? arguments.get(0) : null;
+
+            if (text != null && type.likeSql != null && containWildcard(text)) {
                 if (stringComparePolicy != null) {
                     Pair<String, List<String>> res = stringComparePolicy
-                            .prepareNameAndParametersForWhere(componentDescriptor.getComponentClass(), propertyDescriptor.getPropertyName(), node.getOperator(), name, node.getArguments());
+                            .prepareNameAndParametersForWhere(componentDescriptor.getComponentClass(), propertyDescriptor.getPropertyName(), node.getOperator(), name, arguments);
                     name = res.getLeft();
                     text = res.getRight().get(0);
                 }
@@ -82,18 +85,17 @@ public abstract class AbstractColumnRsqlResultFactory<E extends Annotation> exte
             } else {
                 if (stringComparePolicy != null && String.class == javaType) {
                     Pair<String, List<String>> res = stringComparePolicy
-                            .prepareNameAndParametersForWhere(componentDescriptor.getComponentClass(), propertyDescriptor.getPropertyName(), node.getOperator(), name, node.getArguments());
+                            .prepareNameAndParametersForWhere(componentDescriptor.getComponentClass(), propertyDescriptor.getPropertyName(), node.getOperator(), name, arguments);
                     name = res.getLeft();
                     text = res.getRight().get(0);
                 }
 
-                return parseValue(type, propertyDescriptor, rtext, name, javaType, jdbcType, typeHandlerClass, text, context);
+                return parseValue(type, propertyDescriptor, rtext, name, javaType, jdbcType, typeHandlerClass, cleanSpecial(text), context);
             }
         } else {
-            List<String> arguments = node.getArguments();
             if (stringComparePolicy != null && String.class == javaType) {
                 Pair<String, List<String>> res = stringComparePolicy
-                        .prepareNameAndParametersForWhere(componentDescriptor.getComponentClass(), propertyDescriptor.getPropertyName(), node.getOperator(), name, node.getArguments());
+                        .prepareNameAndParametersForWhere(componentDescriptor.getComponentClass(), propertyDescriptor.getPropertyName(), node.getOperator(), name, arguments);
                 name = res.getLeft();
                 arguments = res.getRight();
             }
@@ -102,31 +104,82 @@ public abstract class AbstractColumnRsqlResultFactory<E extends Annotation> exte
         }
     }
 
-    private SqlResult parseString(OperatorConvert operatorConvert, String name, String argument, EngineContext context) {
-        String text = argument.replaceAll("\\*+", "*");
+    private boolean containWildcard(String text) {
+        int i = 0;
+        while (i < text.length()) {
+            if (text.charAt(i) == '*') {
+                return true;
+            } else if (text.charAt(i) == '\\') {
+                i++;
+            }
+            i++;
+        }
+        return false;
+    }
 
-        String likeSymbol = configuration.getLikeSymbol();
+    private String cleanSpecial(String text) {
+        StringBuilder sb = new StringBuilder();
+        int i = 0;
+        while (i < text.length()) {
+            if (text.charAt(i) == '\\') {
+                i++;
+                if (i < text.length()) {
+                    sb.append(text.charAt(i));
+                }
+            } else {
+                sb.append(text.charAt(i));
+            }
+            i++;
+        }
+        return sb.toString();
+    }
+
+    private SqlResult parseString(OperatorConvert operatorConvert, String name, String argument, EngineContext context) {
+        ILikePolicy likePolicy = configuration.getLikePolicy();
+        String likeSymbol = likePolicy.getLikeSymbol();
 
         Map<String, Object> parameterMap = new HashMap<>();
         StringJoiner sj = new StringJoiner(" || ");
-        while (!text.isEmpty()) {
-            int i = text.indexOf("*");
-            if (i >= 0) {
-                if (i > 0) {
+
+        StringBuilder sb = new StringBuilder();
+        boolean lastStar = false;
+        int i = 0;
+        while (i < argument.length()) {
+            if (argument.charAt(i) == '*') {
+                if (sb.length() > 0) {
                     String param = context.getNewParamName();
-                    parameterMap.put(param, text.substring(0, i));
+                    parameterMap.put(param, sb.toString());
                     sj.add(ComponentMyBatisHelper.buildColumn(String.class, null, null, param));
                 }
-                sj.add("'" + likeSymbol + "'");
-                text = text.substring(i + 1);
-            } else if (i == -1) {
-                String param = context.getNewParamName();
-                parameterMap.put(param, text);
-                sj.add(ComponentMyBatisHelper.buildColumn(String.class, null, null, param));
-                text = "";
+                if (!lastStar) {
+                    sj.add("'" + likeSymbol + "'");
+                    lastStar = true;
+                    sb = new StringBuilder();
+                }
+            } else if (argument.charAt(i) == '\\') {
+                i++;
+                if (i < argument.length()) {
+                    sb.append(argument.charAt(i));
+                    lastStar = false;
+                }
+            } else {
+                sb.append(argument.charAt(i));
+                lastStar = false;
             }
+            i++;
         }
-        return SqlResult.of(Collections.emptyList(), name + " " + operatorConvert.likeSql + " " + sj.toString(), parameterMap);
+        if (sb.length() > 0) {
+            String param = context.getNewParamName();
+            parameterMap.put(param, sb.toString());
+            sj.add(ComponentMyBatisHelper.buildColumn(String.class, null, null, param));
+        }
+
+        String res = name + " " + operatorConvert.likeSql + " " + sj.toString();
+        if (StringUtils.isNotBlank(likePolicy.getEscapeSymbol())) {
+            res += " ESCAPE '" + likePolicy.getEscapeSymbol() + "'";
+        }
+
+        return SqlResult.of(Collections.emptyList(), res, parameterMap);
     }
 
     private SqlResult parseValue(OperatorConvert operatorConvert, ComponentDescriptor.PropertyDescriptor propertyDescriptor, Rtext rtext, String name, Class<?> javaType, JdbcType jdbcType,

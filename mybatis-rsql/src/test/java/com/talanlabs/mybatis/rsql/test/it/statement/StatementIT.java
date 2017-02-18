@@ -21,7 +21,7 @@ public class StatementIT extends AbstractHSQLIntegration {
     @Test
     public void testSimple() {
         List<ICountry> countries = sqlSessionManager.selectList(RsqlStatementNameHelper.buildRsqlKey(ICountry.class));
-        Assertions.assertThat(countries).isNotNull().hasSize(6);
+        Assertions.assertThat(countries).isNotNull().hasSize(7);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class StatementIT extends AbstractHSQLIntegration {
     @Test
     public void testSimpleLikeFindCode() {
         List<ICountry> countries = sqlSessionManager.selectList(RsqlStatementNameHelper.buildRsqlKey(ICountry.class), "code==F*");
-        Assertions.assertThat(countries).isNotNull().hasSize(1);
+        Assertions.assertThat(countries).isNotNull().hasSize(2);
     }
 
     @Test

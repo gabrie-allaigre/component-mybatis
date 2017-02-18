@@ -28,6 +28,6 @@ public class StatementCountIT extends AbstractHSQLIntegration {
     @Test
     public void testSimple() {
         Integer count = sqlSessionManager.selectOne(RsqlStatementNameHelper.buildCountRsqlKey(ICountry.class));
-        Assertions.assertThat(count).isEqualTo(6);
+        Assertions.assertThat(count).isEqualTo(7);
     }
 }

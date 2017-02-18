@@ -2,6 +2,7 @@ package com.talanlabs.mybatis.rsql.configuration;
 
 import com.talanlabs.component.IComponent;
 import com.talanlabs.mybatis.rsql.engine.EngineContext;
+import com.talanlabs.mybatis.rsql.engine.ILikePolicy;
 import com.talanlabs.mybatis.rsql.engine.INlsColumnRsqlHandler;
 import com.talanlabs.mybatis.rsql.engine.IStringPolicy;
 import com.talanlabs.mybatis.rsql.engine.orderby.ComponentSortVisitor;
@@ -56,9 +57,9 @@ public interface IRsqlConfiguration {
     IStringPolicy getStringPolicy();
 
     /**
-     * @return A like symbol default %
+     * @return A like policy
      */
-    String getLikeSymbol();
+    ILikePolicy getLikePolicy();
 
     /**
      * @return A Page create page statement

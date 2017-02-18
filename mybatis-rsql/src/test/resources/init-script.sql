@@ -65,6 +65,8 @@ INSERT INTO t_country (id, version, code, name, created_date, created_by)
 VALUES ('5', 0, 'ITA', 'italie', SYSDATE, 'GABY');
 INSERT INTO t_country (id, version, code, name, created_date, created_by)
 VALUES ('6', 0, 'USA', 'etat-unis', SYSDATE, 'GABY');
+INSERT INTO t_country (id, version, code, name, created_date, created_by)
+VALUES ('7', 0, 'F%', 'f', SYSDATE, 'GABY');
 
 INSERT INTO t_address (id, version, city, postal_zip, country_id, created_date, created_by)
 VALUES ('1', 0, 'Versailles', '78000', '1', SYSDATE, 'GABY');

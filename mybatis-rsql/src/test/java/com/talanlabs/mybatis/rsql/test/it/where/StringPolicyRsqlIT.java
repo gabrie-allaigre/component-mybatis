@@ -18,6 +18,7 @@ public class StringPolicyRsqlIT {
 
     private static ComponentRsqlVisitor<ICountry> nothingCountryComponentRsqlVisitor;
     private static ComponentRsqlVisitor<ICountry> upperCountryComponentRsqlVisitor;
+    private static ComponentRsqlVisitor<ICountry> specialCountryComponentRsqlVisitor;
     private static RSQLParser rsqlParser;
 
     private EngineContext engineContext;
@@ -28,6 +29,8 @@ public class StringPolicyRsqlIT {
                 new DefaultComparisonOperatorManagerRegistry(RsqlConfigurationBuilder.newBuilder().nlsColumnRsqlHandler(new DefaultNlsColumnHandler()).build()));
         upperCountryComponentRsqlVisitor = new ComponentRsqlVisitor<>(ICountry.class, new DefaultComparisonOperatorManagerRegistry(
                 RsqlConfigurationBuilder.newBuilder().nlsColumnRsqlHandler(new DefaultNlsColumnHandler()).stringPolicy(new AlwaysUpperStringPolicy()).build()));
+        specialCountryComponentRsqlVisitor = new ComponentRsqlVisitor<>(ICountry.class,
+                new DefaultComparisonOperatorManagerRegistry(RsqlConfigurationBuilder.newBuilder().nlsColumnRsqlHandler(new DefaultNlsColumnHandler()).build()));
 
         rsqlParser = new RSQLParser();
     }
@@ -66,6 +69,15 @@ public class StringPolicyRsqlIT {
 
     @Test
     public void testUpperNlsStringRsql() {
+        SqlResult res = rsqlParser.parse("name==fra").accept(upperCountryComponentRsqlVisitor, engineContext);
+
+        Assertions.assertThat(res).isNotNull();
+        Assertions.assertThat(res.sql).isEqualTo("UPPER(NVL(j0.MEANING, t.NAME)) = #{3,javaType=java.lang.String}");
+        Assertions.assertThat(res.parameterMap).containsEntry("3", "FRA");
+    }
+
+    @Test
+    public void testSpecialCharacterRsql() {
         SqlResult res = rsqlParser.parse("name==fra").accept(upperCountryComponentRsqlVisitor, engineContext);
 
         Assertions.assertThat(res).isNotNull();

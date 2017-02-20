@@ -49,8 +49,8 @@ public class ComparisonOperatorJoinsRsqlIT {
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).extracting("sql", String.class).containsExactly("T_ADDRESS j0 ON j0.ID = t.ADDRESS_ID");
         Assertions.assertThat(res.joins).extracting("type", SqlResult.Join.Type.class).containsExactly(SqlResult.Join.Type.Inner);
-        Assertions.assertThat(res.sql)
-                .isEqualTo("(t.FIRST_NAME = #{0,javaType=java.lang.String} AND j0.CITY like #{1,javaType=java.lang.String} || '%' AND j0.POSTAL_ZIP like #{2,javaType=java.lang.String} || '%')");
+        Assertions.assertThat(res.sql).isEqualTo(
+                "(t.FIRST_NAME = #{0,javaType=java.lang.String} AND j0.CITY like #{1,javaType=java.lang.String} || '%' ESCAPE '\\' AND j0.POSTAL_ZIP like #{2,javaType=java.lang.String} || '%' ESCAPE '\\')");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "Gab").containsEntry("1", "V").containsEntry("2", "78");
     }
 

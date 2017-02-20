@@ -9,15 +9,18 @@ import cz.jirutka.rsql.parser.ast.Node;
 import model.ICountry;
 import model.IPerson;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class MainRsql {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedEncodingException {
         IRsqlConfiguration rsqlConfiguration = RsqlConfigurationBuilder.newBuilder().nlsColumnRsqlHandler(new DefaultNlsColumnHandler()).build();
 
         ComponentRsqlVisitor<ICountry> countryComponentRsqlVisitor = new ComponentRsqlVisitor<>(ICountry.class, new DefaultComparisonOperatorManagerRegistry(rsqlConfiguration));
         ComponentRsqlVisitor<IPerson> personComponentRsqlVisitor = new ComponentRsqlVisitor<>(IPerson.class, new DefaultComparisonOperatorManagerRegistry(rsqlConfiguration));
 
-        Node node = new RSQLParser().parse("name==USA");
+        Node node = new RSQLParser().parse("name==" + URLEncoder.encode("\\*USA*", "UTF-8"));
 
         SqlResult res = node.accept(countryComponentRsqlVisitor, EngineContext.newBulder().defaultTablePrefix("t").build());
         System.out.println(res.joins);

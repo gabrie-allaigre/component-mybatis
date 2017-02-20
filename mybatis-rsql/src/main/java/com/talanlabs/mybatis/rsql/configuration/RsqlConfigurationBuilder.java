@@ -4,11 +4,13 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.talanlabs.component.IComponent;
 import com.talanlabs.mybatis.rsql.engine.EngineContext;
+import com.talanlabs.mybatis.rsql.engine.ILikePolicy;
 import com.talanlabs.mybatis.rsql.engine.INlsColumnRsqlHandler;
 import com.talanlabs.mybatis.rsql.engine.IStringPolicy;
 import com.talanlabs.mybatis.rsql.engine.orderby.ComponentSortVisitor;
 import com.talanlabs.mybatis.rsql.engine.orderby.registry.DefaultSortDirectionManagerRegistry;
 import com.talanlabs.mybatis.rsql.engine.orderby.registry.ISortDirectionManagerRegistry;
+import com.talanlabs.mybatis.rsql.engine.policy.DefaultLikePolicy;
 import com.talanlabs.mybatis.rsql.engine.policy.NothingStringPolicy;
 import com.talanlabs.mybatis.rsql.engine.where.ComponentRsqlVisitor;
 import com.talanlabs.mybatis.rsql.engine.where.registry.DefaultComparisonOperatorManagerRegistry;
@@ -125,10 +127,10 @@ public class RsqlConfigurationBuilder {
     }
 
     /**
-     * @param likeSymbol a like symbole (default %)
+     * @param likePolicy a like policy (default %)
      */
-    public RsqlConfigurationBuilder likeSymbol(String likeSymbol) {
-        this.rsqlConfiguration.likeSymbol = likeSymbol;
+    public RsqlConfigurationBuilder likePolicy(ILikePolicy likePolicy) {
+        this.rsqlConfiguration.likePolicy = likePolicy;
         return this;
     }
 
@@ -161,7 +163,7 @@ public class RsqlConfigurationBuilder {
         private String defaultJoinPrefix = "j";
         private String defaultParamPrefix = "";
         private IStringPolicy stringPolicy;
-        private String likeSymbol = "%";
+        private ILikePolicy likePolicy;
         private IPageStatementFactory pageStatementFactory;
 
         private Cache<Class<? extends IComponent>, ComponentRsqlVisitor<? extends IComponent>> rsqlCache = CacheBuilder.newBuilder().build();
@@ -174,6 +176,7 @@ public class RsqlConfigurationBuilder {
             this.rsqlParser = new RSQLParser();
             this.sortParser = new SortParser();
             this.stringPolicy = new NothingStringPolicy();
+            this.likePolicy = new DefaultLikePolicy();
         }
 
         @Override
@@ -229,8 +232,8 @@ public class RsqlConfigurationBuilder {
         }
 
         @Override
-        public String getLikeSymbol() {
-            return likeSymbol;
+        public ILikePolicy getLikePolicy() {
+            return likePolicy;
         }
 
         @Override

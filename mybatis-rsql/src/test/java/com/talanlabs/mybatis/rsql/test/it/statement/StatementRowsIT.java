@@ -34,12 +34,12 @@ public class StatementRowsIT extends AbstractHSQLIntegration {
     @Test
     public void testSimpleRows3() {
         List<ICountry> countries = sqlSessionManager.selectList(RsqlStatementNameHelper.buildRsqlKey(ICountry.class), Request.newBuilder().sort("code").rows(Request.Rows.of(1, 3)).build());
-        Assertions.assertThat(countries).isNotNull().hasSize(3).extracting("code").containsExactly("ENG", "ESP", "FRA");
+        Assertions.assertThat(countries).isNotNull().hasSize(3).extracting("code").containsExactly("ENG", "ESP", "F%");
     }
 
     @Test
     public void testSimpleRows4() {
         List<ICountry> countries = sqlSessionManager.selectList(RsqlStatementNameHelper.buildRsqlKey(ICountry.class), Request.newBuilder().sort("-code").rows(Request.Rows.of(1, 3)).build());
-        Assertions.assertThat(countries).isNotNull().hasSize(3).extracting("code").containsExactly("ITA", "FRA", "ESP");
+        Assertions.assertThat(countries).isNotNull().hasSize(3).extracting("code").containsExactly("ITA", "FRA", "F%");
     }
 }

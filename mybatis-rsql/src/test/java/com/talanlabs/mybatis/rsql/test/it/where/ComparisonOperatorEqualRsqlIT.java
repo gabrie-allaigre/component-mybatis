@@ -47,7 +47,7 @@ public class ComparisonOperatorEqualRsqlIT {
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();
-        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME like #{0,javaType=java.lang.String} || '%'");
+        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME like #{0,javaType=java.lang.String} || '%' ESCAPE '\\'");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "FRA");
     }
 
@@ -57,7 +57,7 @@ public class ComparisonOperatorEqualRsqlIT {
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();
-        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME like '%' || #{0,javaType=java.lang.String}");
+        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME like '%' || #{0,javaType=java.lang.String} ESCAPE '\\'");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "FRA");
     }
 
@@ -67,7 +67,7 @@ public class ComparisonOperatorEqualRsqlIT {
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();
-        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME like '%' || #{0,javaType=java.lang.String} || '%'");
+        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME like '%' || #{0,javaType=java.lang.String} || '%' ESCAPE '\\'");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "FRA");
     }
 
@@ -77,7 +77,7 @@ public class ComparisonOperatorEqualRsqlIT {
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();
-        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME like '%' || #{0,javaType=java.lang.String} || '%' || #{1,javaType=java.lang.String} || '%'");
+        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME like '%' || #{0,javaType=java.lang.String} || '%' || #{1,javaType=java.lang.String} || '%' ESCAPE '\\'");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "F").containsEntry("1", "A");
     }
 
@@ -127,7 +127,7 @@ public class ComparisonOperatorEqualRsqlIT {
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();
-        Assertions.assertThat(res.sql).isEqualTo("WEIGHT like #{0,javaType=java.lang.String} || '%'");
+        Assertions.assertThat(res.sql).isEqualTo("WEIGHT like #{0,javaType=java.lang.String} || '%' ESCAPE '\\'");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "7");
     }
 
@@ -147,7 +147,7 @@ public class ComparisonOperatorEqualRsqlIT {
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();
-        Assertions.assertThat(res.sql).isEqualTo("SEXE like '%' || #{0,javaType=java.lang.String}");
+        Assertions.assertThat(res.sql).isEqualTo("SEXE like '%' || #{0,javaType=java.lang.String} ESCAPE '\\'");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "MAN");
     }
 }

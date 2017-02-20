@@ -24,25 +24,25 @@ public class StatementSortIT extends AbstractHSQLIntegration {
     @Test
     public void testSortCode() {
         List<ICountry> countries = sqlSessionManager.selectList(RsqlStatementNameHelper.buildRsqlKey(ICountry.class), Request.newBuilder().sort("code").build());
-        Assertions.assertThat(countries).isNotNull().hasSize(6).extracting(CountryFields.code).containsSequence("CHI", "ENG", "ESP", "FRA", "ITA", "USA");
+        Assertions.assertThat(countries).isNotNull().hasSize(7).extracting(CountryFields.code).containsSequence("CHI", "ENG", "ESP", "F%", "FRA", "ITA", "USA");
     }
 
     @Test
     public void testSortAscCode() {
         List<ICountry> countries = sqlSessionManager.selectList(RsqlStatementNameHelper.buildRsqlKey(ICountry.class), Request.newBuilder().sort("+code").build());
-        Assertions.assertThat(countries).isNotNull().hasSize(6).extracting(CountryFields.code).containsSequence("CHI", "ENG", "ESP", "FRA", "ITA", "USA");
+        Assertions.assertThat(countries).isNotNull().hasSize(7).extracting(CountryFields.code).containsSequence("CHI", "ENG", "ESP", "F%", "FRA", "ITA", "USA");
     }
 
     @Test
     public void testSortDescCode() {
         List<ICountry> countries = sqlSessionManager.selectList(RsqlStatementNameHelper.buildRsqlKey(ICountry.class), Request.newBuilder().sort("-code").build());
-        Assertions.assertThat(countries).isNotNull().hasSize(6).extracting(CountryFields.code).containsSequence("USA", "ITA", "FRA", "ESP", "ENG", "CHI");
+        Assertions.assertThat(countries).isNotNull().hasSize(7).extracting(CountryFields.code).containsSequence("USA", "ITA", "FRA", "F%", "ESP", "ENG", "CHI");
     }
 
     @Test
     public void testSortName() {
         List<ICountry> countries = sqlSessionManager.selectList(RsqlStatementNameHelper.buildRsqlKey(ICountry.class), Request.newBuilder().sort("name").build());
-        Assertions.assertThat(countries).isNotNull().hasSize(6).extracting(CountryFields.code).containsSequence("CHI", "ENG", "ESP", "FRA", "ITA", "USA");
+        Assertions.assertThat(countries).isNotNull().hasSize(7).extracting(CountryFields.code).containsSequence("CHI", "ENG", "ESP", "F%", "FRA", "ITA", "USA");
     }
 
     @Test

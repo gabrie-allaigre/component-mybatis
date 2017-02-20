@@ -58,7 +58,7 @@ public class ComparisonOperatorNlsRsqlIT {
         Assertions.assertThat(res.joins).extracting("sql", String.class).containsExactly(
                 "T_NLS j0 ON j0.TABLE_NAME = #{0,javaType=java.lang.String} AND j0.COLUMN_NAME = #{1,javaType=java.lang.String} AND j0.LANGUAGE_CODE = #{2,javaType=java.lang.String} AND j0.TABLE_ID = t.ID");
         Assertions.assertThat(res.joins).extracting("type", SqlResult.Join.Type.class).containsExactly(SqlResult.Join.Type.LeftOuter);
-        Assertions.assertThat(res.sql).isEqualTo("(NVL(j0.MEANING, t.NAME) = #{3,javaType=java.lang.String} OR NVL(j0.MEANING, t.NAME) like #{4,javaType=java.lang.String} || '%')");
+        Assertions.assertThat(res.sql).isEqualTo("(NVL(j0.MEANING, t.NAME) = #{3,javaType=java.lang.String} OR NVL(j0.MEANING, t.NAME) like #{4,javaType=java.lang.String} || '%' ESCAPE '\\')");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "T_COUNTRY").containsEntry("1", "NAME").containsEntry("2", "fra").containsEntry("3", "FRA").containsEntry("4", "USA");
     }
 
@@ -74,7 +74,7 @@ public class ComparisonOperatorNlsRsqlIT {
         Assertions.assertThat(res.joins).extracting("type", SqlResult.Join.Type.class)
                 .containsExactly(SqlResult.Join.Type.Inner, SqlResult.Join.Type.Inner, SqlResult.Join.Type.LeftOuter, SqlResult.Join.Type.Inner, SqlResult.Join.Type.Inner, SqlResult.Join.Type.Inner,
                         SqlResult.Join.Type.LeftOuter);
-        Assertions.assertThat(res.sql).isEqualTo("(NVL(j2.MEANING, j1.NAME) = #{3,javaType=java.lang.String} OR NVL(j5.MEANING, j4.NAME) like #{7,javaType=java.lang.String} || '%')");
+        Assertions.assertThat(res.sql).isEqualTo("(NVL(j2.MEANING, j1.NAME) = #{3,javaType=java.lang.String} OR NVL(j5.MEANING, j4.NAME) like #{7,javaType=java.lang.String} || '%' ESCAPE '\\')");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "T_COUNTRY").containsEntry("1", "NAME").containsEntry("2", "fra").containsEntry("3", "FRA").containsEntry("4", "T_COUNTRY")
                 .containsEntry("5", "NAME").containsEntry("6", "fra").containsEntry("7", "USA");
     }

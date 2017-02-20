@@ -47,7 +47,7 @@ public class ComparisonOperatorNotEqualRsqlIT {
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();
-        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME not like #{0,javaType=java.lang.String} || '%'");
+        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME not like #{0,javaType=java.lang.String} || '%' ESCAPE '\\'");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "FRA");
     }
 
@@ -57,7 +57,7 @@ public class ComparisonOperatorNotEqualRsqlIT {
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();
-        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME not like '%' || #{0,javaType=java.lang.String}");
+        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME not like '%' || #{0,javaType=java.lang.String} ESCAPE '\\'");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "FRA");
     }
 
@@ -67,7 +67,7 @@ public class ComparisonOperatorNotEqualRsqlIT {
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();
-        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME not like '%' || #{0,javaType=java.lang.String} || '%'");
+        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME not like '%' || #{0,javaType=java.lang.String} || '%' ESCAPE '\\'");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "FRA");
     }
 
@@ -77,7 +77,7 @@ public class ComparisonOperatorNotEqualRsqlIT {
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();
-        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME not like '%' || #{0,javaType=java.lang.String} || '%' || #{1,javaType=java.lang.String} || '%'");
+        Assertions.assertThat(res.sql).isEqualTo("FIRST_NAME not like '%' || #{0,javaType=java.lang.String} || '%' || #{1,javaType=java.lang.String} || '%' ESCAPE '\\'");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "F").containsEntry("1", "A");
     }
 
@@ -126,7 +126,7 @@ public class ComparisonOperatorNotEqualRsqlIT {
         SqlResult res = rsqlParser.parse("weight!=7*").accept(personComponentRsqlVisitor, engineContext);
 
         Assertions.assertThat(res).isNotNull();
-        Assertions.assertThat(res.sql).isEqualTo("WEIGHT not like #{0,javaType=java.lang.String} || '%'");
+        Assertions.assertThat(res.sql).isEqualTo("WEIGHT not like #{0,javaType=java.lang.String} || '%' ESCAPE '\\'");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "7");
     }
 
@@ -144,7 +144,7 @@ public class ComparisonOperatorNotEqualRsqlIT {
         SqlResult res = rsqlParser.parse("sexe!=*MAN").accept(personComponentRsqlVisitor, engineContext);
 
         Assertions.assertThat(res).isNotNull();
-        Assertions.assertThat(res.sql).isEqualTo("SEXE not like '%' || #{0,javaType=java.lang.String}");
+        Assertions.assertThat(res.sql).isEqualTo("SEXE not like '%' || #{0,javaType=java.lang.String} ESCAPE '\\'");
         Assertions.assertThat(res.parameterMap).containsEntry("0", "MAN");
     }
 }

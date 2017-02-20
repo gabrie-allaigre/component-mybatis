@@ -2,14 +2,14 @@ package com.talanlabs.mybatis.rsql.builder.impls.properties;
 
 import com.talanlabs.mybatis.rsql.builder.impls.AbstractField;
 
-public class IntegerProperty<Builder> extends AbstractNumberProperty<Builder, Integer> {
+public class DoubleProperty<Builder> extends AbstractNumberProperty<Builder, Double> {
 
-    public IntegerProperty(String field, AbstractField<Builder> fieldBuilder) {
+    public DoubleProperty(String field, AbstractField<Builder> fieldBuilder) {
         super(field, fieldBuilder);
     }
 
     @Override
-    protected String toString(Integer value) {
+    protected String toString(Double value) {
         return value != null ? value.toString() : "";
     }
 }

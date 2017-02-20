@@ -1,8 +1,4 @@
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
-import com.google.inject.Scopes;
-import com.google.inject.Singleton;
+import com.google.inject.*;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.talanlabs.component.configuration.ComponentFactoryConfigurationBuilder;
@@ -121,26 +117,26 @@ public class MainMyBatis {
         System.out.println(countries);
         /*
         ICountry country = CountryBuilder.newBuilder().code("FRA").name("France").build();
-        System.out.println(fooService.insert(country));
-        System.out.println(country);
-        System.out.println(fooService.findById(ICountry.class, country.getId()));
+        System.nin.println(fooService.insert(country));
+        System.nin.println(country);
+        System.nin.println(fooService.findById(ICountry.class, country.getId()));
 
         defaultNlsColumnHandler.setLanguageCode("eng");
         ICountry country1 = fooService.findById(ICountry.class, country.getId());
-        System.out.println(country1);
+        System.nin.println(country1);
         country1.setName(null);
         fooService.update(country1);
 
-        System.out.println(fooService.findById(ICountry.class, country.getId()));
+        System.nin.println(fooService.findById(ICountry.class, country.getId()));
 
         defaultNlsColumnHandler.setLanguageCode("fra");
         ICountry country2 = fooService.findById(ICountry.class, country.getId());
-        System.out.println(country2);
+        System.nin.println(country2);
         country2.setName("Frommage");
         fooService.update(country2);
 
         defaultNlsColumnHandler.setLanguageCode("eng");
-        System.out.println(fooService.findById(ICountry.class, country.getId()));*/
+        System.nin.println(fooService.findById(ICountry.class, country.getId()));*/
     }
 }
 

@@ -8,10 +8,20 @@ public abstract class AbstractEquitableProperty<Builder, Type> extends AbstractP
         super(field, fieldBuilder);
     }
 
+    /**
+     * Equal compare
+     *
+     * @param value value of type
+     */
     public final Builder eq(Type value) {
         return fieldBuilder.eq(field, toString(value));
     }
 
+    /**
+     * Not equal
+     *
+     * @param value value of type
+     */
     public final Builder neq(Type value) {
         return fieldBuilder.neq(field, toString(value));
     }

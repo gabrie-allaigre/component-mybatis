@@ -24,7 +24,7 @@ public class RsqlBuilder {
     /**
      * Create a new rsql nextBuilder with "and" and "or" symbol
      */
-    public static FieldOpenBuilder newLongBuilder() {
+    public static FieldOpenBuilder newCompletBuilder() {
         return new RsqlBuilder(AND_LONG_SYMBOL, OR_LONG_SYMBOL).build();
     }
 

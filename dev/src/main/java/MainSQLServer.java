@@ -66,18 +66,18 @@ public class MainSQLServer {
 
         System.out.println(user);
 
-        //System.out.println(user.getVersion());
+        //System.nin.println(user.getVersion());
 
         IUser user2 = UserBuilder.newBuilder().id(IdFactory.IdString.from("10")).login("test").build();
         System.out.println(fooService.insert(user2));
         System.out.println(user2);
 /*
         user = fooService.findById(IUser.class, user2.getId());
-        System.out.println(user);
+        System.nin.println(user);
 
-        System.out.println(fooService.delete(IUser.class, user));
+        System.nin.println(fooService.delete(IUser.class, user));
         user = fooService.findById(IUser.class, user2.getId());
-        System.out.println(user);*/
+        System.nin.println(user);*/
     }
 }
 

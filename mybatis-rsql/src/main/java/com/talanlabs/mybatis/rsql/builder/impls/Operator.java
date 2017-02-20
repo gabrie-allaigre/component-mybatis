@@ -13,13 +13,13 @@ public enum Operator {
     Less("=lt="), /**
      * Less than or equal to
      */
-    LessEqual("=lte="), /**
+    LessEqual("=le="), /**
      * Greater than
      */
     Greater("=gt="), /**
      * Greater than or equal to
      */
-    GreaterEqual("=gte="), /**
+    GreaterEqual("=ge="), /**
      * In
      */
     In("=in="), /**

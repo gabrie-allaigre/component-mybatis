@@ -43,7 +43,7 @@ public class ComparisonOperatorInOutRsqlIT {
 
     @Test
     public void testSimpleOutRsql() {
-        SqlResult res = rsqlParser.parse("firstName=out=(FRA,ITA,ESP)").accept(personComponentRsqlVisitor, engineContext);
+        SqlResult res = rsqlParser.parse("firstName=nin=(FRA,ITA,ESP)").accept(personComponentRsqlVisitor, engineContext);
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();

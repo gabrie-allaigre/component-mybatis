@@ -98,7 +98,7 @@ public class StatementIT extends AbstractHSQLIntegration {
 
     @Test
     public void testSimpleOut() {
-        List<IPerson> persons = sqlSessionManager.selectList(RsqlStatementNameHelper.buildRsqlKey(IPerson.class), "firstName=out=(Gabriel,Sandra,Laureline)");
+        List<IPerson> persons = sqlSessionManager.selectList(RsqlStatementNameHelper.buildRsqlKey(IPerson.class), "firstName=nin=(Gabriel,Sandra,Laureline)");
         Assertions.assertThat(persons).isNotNull().hasSize(2);
     }
 

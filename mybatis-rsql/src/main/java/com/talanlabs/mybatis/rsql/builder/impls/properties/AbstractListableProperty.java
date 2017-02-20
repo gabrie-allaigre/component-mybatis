@@ -12,20 +12,40 @@ public abstract class AbstractListableProperty<Builder, Type> extends AbstractEq
         super(field, fieldBuilder);
     }
 
+    /**
+     * In
+     *
+     * @param values arrays of type
+     */
     public final Builder in(Type... values) {
         return in(Arrays.asList(values));
     }
 
+    /**
+     * In
+     *
+     * @param values collection of type
+     */
     public final Builder in(Collection<Type> values) {
         return fieldBuilder.in(field, toString(values));
     }
 
-    public final Builder out(Type... values) {
-        return out(Arrays.asList(values));
+    /**
+     * Not in
+     *
+     * @param values arrays of type
+     */
+    public final Builder nin(Type... values) {
+        return nin(Arrays.asList(values));
     }
 
-    public final Builder out(Collection<Type> values) {
-        return fieldBuilder.out(field, toString(values));
+    /**
+     * Not in
+     *
+     * @param values collection of type
+     */
+    public final Builder nin(Collection<Type> values) {
+        return fieldBuilder.nin(field, toString(values));
     }
 
     private String toString(Collection<Type> values) {

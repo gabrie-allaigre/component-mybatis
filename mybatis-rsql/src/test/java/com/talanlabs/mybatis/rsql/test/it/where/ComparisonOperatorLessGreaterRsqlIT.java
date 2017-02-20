@@ -43,7 +43,7 @@ public class ComparisonOperatorLessGreaterRsqlIT {
 
     @Test
     public void testSimpleAgeGeRsql() {
-        SqlResult res = rsqlParser.parse("age=gte=12").accept(personComponentRsqlVisitor, engineContext);
+        SqlResult res = rsqlParser.parse("age=ge=12").accept(personComponentRsqlVisitor, engineContext);
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();
@@ -63,7 +63,7 @@ public class ComparisonOperatorLessGreaterRsqlIT {
 
     @Test
     public void testSimpleAgeLeRsql() {
-        SqlResult res = rsqlParser.parse("age=lte=12").accept(personComponentRsqlVisitor, engineContext);
+        SqlResult res = rsqlParser.parse("age=le=12").accept(personComponentRsqlVisitor, engineContext);
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();

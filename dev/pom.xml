@@ -97,11 +97,5 @@
             <artifactId>dbunit</artifactId>
             <version>2.5.3</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.github.rutledgepaulv</groupId>
-            <artifactId>q-builders</artifactId>
-            <version>1.5</version>
-        </dependency>
     </dependencies>
 </project>

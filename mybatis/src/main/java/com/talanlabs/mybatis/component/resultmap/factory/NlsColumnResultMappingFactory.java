@@ -84,7 +84,7 @@ public class NlsColumnResultMappingFactory extends AbstractResultMappingFactory<
             resultMappingBuilder.jdbcType(nlsColumn.jdbcType());
         }
         if (!UnknownTypeHandler.class.equals(nlsColumn.typeHandler())) {
-            resultMappingBuilder.typeHandler(componentConfiguration.getTypeHandlerRegistry().getTypeHandler(nlsColumn.typeHandler()));
+            resultMappingBuilder.typeHandler(componentConfiguration.getTypeHandler(nlsColumn.typeHandler()));
         }
         return resultMappingBuilder.build();
     }

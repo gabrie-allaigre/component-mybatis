@@ -6,6 +6,7 @@ import com.talanlabs.mybatis.component.session.ComponentConfiguration;
 import com.talanlabs.mybatis.component.session.factory.ICacheFactory;
 import com.talanlabs.mybatis.component.session.factory.IMappedStatementFactory;
 import com.talanlabs.mybatis.component.session.factory.IResultMapFactory;
+import com.talanlabs.mybatis.component.session.factory.ITypeHandlerFactory;
 import com.talanlabs.mybatis.component.session.handler.INlsColumnHandler;
 import com.talanlabs.mybatis.component.session.observer.ITriggerObserver;
 import org.apache.ibatis.executor.loader.ProxyFactory;
@@ -34,6 +35,12 @@ public class ComponentConfigurationProvider extends ConfigurationProvider {
 
     @Inject(optional = true)
     private ProxyFactory proxyFactory = new ComponentProxyFactory();
+
+    @Inject(optional = true)
+    private ITypeHandlerFactory typeHandlerFactory;
+
+    @Inject
+    private GuiceTypeHandlerFactory guiceTypeHandlerFactory;
 
     @Inject
     public ComponentConfigurationProvider(Environment environment) {
@@ -69,6 +76,8 @@ public class ComponentConfigurationProvider extends ConfigurationProvider {
                 componentConfiguration.getTriggerDispatcher().addTriggerObserver(triggerObserver);
             }
         }
+
+        componentConfiguration.setTypeHandlerFactory(typeHandlerFactory != null ? typeHandlerFactory : guiceTypeHandlerFactory);
 
         return componentConfiguration;
     }

@@ -2,15 +2,8 @@ package com.talanlabs.mybatis.guice;
 
 import com.talanlabs.mybatis.component.cache.ComponentCacheFactory;
 import com.talanlabs.mybatis.component.resultmap.ComponentResultMapFactory;
-import com.talanlabs.mybatis.component.statement.DeleteComponentsByMappedStatementFactory;
-import com.talanlabs.mybatis.component.statement.DeleteEntityByIdMappedStatementFactory;
-import com.talanlabs.mybatis.component.statement.DeleteMappedStatementFactory;
-import com.talanlabs.mybatis.component.statement.FindComponentsByJoinTableMappedStatementFactory;
-import com.talanlabs.mybatis.component.statement.FindComponentsByMappedStatementFactory;
-import com.talanlabs.mybatis.component.statement.FindEntityByIdMappedStatementFactory;
-import com.talanlabs.mybatis.component.statement.FindNlsColumnMappedStatementFactory;
-import com.talanlabs.mybatis.component.statement.InsertMappedStatementFactory;
-import com.talanlabs.mybatis.component.statement.UpdateMappedStatementFactory;
+import com.talanlabs.mybatis.component.statement.*;
+import com.talanlabs.mybatis.guice.configuration.GuiceTypeHandlerFactory;
 import com.talanlabs.mybatis.simple.handler.IdTypeHandler;
 
 public final class DefaultComponentMyBatisModule extends AbstractComponentMyBatisModule {
@@ -32,5 +25,7 @@ public final class DefaultComponentMyBatisModule extends AbstractComponentMyBati
         addMappedStatementFactoryClass(DeleteComponentsByMappedStatementFactory.class);
 
         addCacheFactoryClass(ComponentCacheFactory.class);
+
+        setTypeHandlerFactory(GuiceTypeHandlerFactory.class);
     }
 }

@@ -114,6 +114,14 @@ CREATE TABLE t_wagon (
   position INT
 );
 
+DROP TABLE t_container
+IF EXISTS;
+
+CREATE TABLE t_container (
+  wagon_id VARCHAR(256),
+  code     VARCHAR(256)
+);
+
 INSERT INTO t_nls (table_name, column_name, language_code, table_id, meaning) VALUES ('T_COUNTRY', 'NAME', 'eng', '1', 'Cheese');
 INSERT INTO t_nls (table_name, column_name, language_code, table_id, meaning) VALUES ('T_COUNTRY', 'NAME', 'fra', '1', 'Fromage');
 INSERT INTO t_nls (table_name, column_name, language_code, table_id, meaning) VALUES ('T_ADDRESS', 'MEANING', 'eng', '1', 'Nothing');
@@ -161,3 +169,9 @@ INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('7', 0, '2',
 INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('8', 0, '2', '000000000004', 3);
 INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('8', 0, '2', '000000000003', 3);
 INSERT INTO t_wagon (id, version, train_id, code, position) VALUES ('8', 0, '2', '000000000001', 3);
+
+INSERT INTO t_container (wagon_id, code) VALUES ('1', 'AAAAA');
+INSERT INTO t_container (wagon_id, code) VALUES ('1', 'BBBBB');
+INSERT INTO t_container (wagon_id, code) VALUES ('1', 'CCCCC');
+
+INSERT INTO t_container (wagon_id, code) VALUES ('2', 'DDDDD');

@@ -20,7 +20,7 @@ public class ColumnResultMappingFactory extends AbstractResultMappingFactory<Col
 
     @Override
     public ResultMapping buildColumnResultMapping(ComponentConfiguration componentConfiguration, ComponentDescriptor<?> componentDescriptor,
-            ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
+                                                  ComponentDescriptor.PropertyDescriptor propertyDescriptor) {
         Column column = propertyDescriptor.getMethod().getAnnotation(Column.class);
 
         String columnName = column.name();
@@ -38,7 +38,7 @@ public class ColumnResultMappingFactory extends AbstractResultMappingFactory<Col
             resultMappingBuilder.jdbcType(column.jdbcType());
         }
         if (!UnknownTypeHandler.class.equals(column.typeHandler())) {
-            resultMappingBuilder.typeHandler(componentConfiguration.getTypeHandlerRegistry().getTypeHandler(column.typeHandler()));
+            resultMappingBuilder.typeHandler(componentConfiguration.getTypeHandler(column.typeHandler()));
         }
         return resultMappingBuilder.build();
     }

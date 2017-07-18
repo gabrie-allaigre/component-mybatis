@@ -8,6 +8,7 @@ import com.google.inject.util.Providers;
 import com.talanlabs.mybatis.component.session.factory.ICacheFactory;
 import com.talanlabs.mybatis.component.session.factory.IMappedStatementFactory;
 import com.talanlabs.mybatis.component.session.factory.IResultMapFactory;
+import com.talanlabs.mybatis.component.session.factory.ITypeHandlerFactory;
 import com.talanlabs.mybatis.component.session.observer.ITriggerObserver;
 import org.apache.ibatis.type.TypeHandler;
 import org.mybatis.guice.configuration.Mappers;
@@ -25,6 +26,7 @@ public abstract class AbstractComponentMyBatisModule extends AbstractModule {
     private Multibinder<ICacheFactory> cacheFactoryMultibinder;
     private Multibinder<ITriggerObserver> triggerObserverMultibinder;
     private Multibinder<Class<?>> mappers;
+    private ITypeHandlerFactory typeHandlerFactory;
 
     @Override
     protected void configure() {
@@ -66,6 +68,10 @@ public abstract class AbstractComponentMyBatisModule extends AbstractModule {
     protected final void addMapperClass(Class<?> mapperClass) {
         this.mappers.addBinding().toInstance(mapperClass);
         this.bindMapper(mapperClass);
+    }
+
+    public void setTypeHandlerFactory(Class<? extends ITypeHandlerFactory> typeHandlerFactoryClass) {
+        bind(ITypeHandlerFactory.class).to(typeHandlerFactoryClass);
     }
 
     final <TH extends TypeHandler<? extends T>, T> void bindTypeHandler(Class<TH> typeHandlerType, Class<T> type) {

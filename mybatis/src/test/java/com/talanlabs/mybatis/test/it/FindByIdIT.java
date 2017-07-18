@@ -2,13 +2,7 @@ package com.talanlabs.mybatis.test.it;
 
 import com.talanlabs.entity.factory.IdFactory;
 import com.talanlabs.mybatis.component.statement.StatementNameHelper;
-import com.talanlabs.mybatis.test.data.IAddress;
-import com.talanlabs.mybatis.test.data.ICountry;
-import com.talanlabs.mybatis.test.data.ITrain;
-import com.talanlabs.mybatis.test.data.ITrain2;
-import com.talanlabs.mybatis.test.data.ITrain3;
-import com.talanlabs.mybatis.test.data.ITrain4;
-import com.talanlabs.mybatis.test.data.IUser;
+import com.talanlabs.mybatis.test.data.*;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
@@ -112,5 +106,27 @@ public class FindByIdIT extends AbstractHSQLIntegration {
         ITrain4 train4 = sqlSessionManager.selectOne(StatementNameHelper.buildFindEntityByIdKey(ITrain4.class), IdFactory.IdString.from("2"));
         Assertions.assertThat(train4.getWagons()).isNotNull().hasSize(5).extracting("position").containsExactly(1, 2, 3, 3, 3);
         Assertions.assertThat(train4.getWagons()).isNotNull().hasSize(5).extracting("code").containsExactly("000000000001", "000000000002", "000000000001", "000000000003", "000000000004");
+    }
+
+    @Test
+    public void testTypeHandlerCustom() {
+        defaultNlsColumnHandler.setLanguageCode("fra");
+        ICountry2 country = sqlSessionManager.selectOne(StatementNameHelper.buildFindEntityByIdKey(ICountry2.class), IdFactory.IdString.from("1"));
+
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(country.getId()).isEqualTo(IdFactory.IdString.from("1"));
+        softAssertions.assertThat(country.getVersion()).isEqualTo(0);
+        softAssertions.assertThat(country.getCode()).isEqualTo("test");
+        softAssertions.assertThat(country.getName()).isEqualTo("Fromage");
+        softAssertions.assertThat(country.getCreatedBy()).isEqualTo("GABY");
+        softAssertions.assertAll();
+    }
+
+    @Test
+    public void test2() {
+        defaultNlsColumnHandler.setLanguageCode("fra");
+        IWagon wagon = sqlSessionManager.selectOne(StatementNameHelper.buildFindEntityByIdKey(IWagon.class), IdFactory.IdString.from("1"));
+        Assertions.assertThat(wagon).isNotNull();
+        Assertions.assertThat(wagon.getContainers()).isNotNull().hasSize(3);
     }
 }

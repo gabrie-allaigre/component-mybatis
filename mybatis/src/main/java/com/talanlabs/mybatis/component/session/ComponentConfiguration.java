@@ -1,9 +1,11 @@
 package com.talanlabs.mybatis.component.session;
 
+import com.talanlabs.mybatis.component.session.defaults.DefaultTypeHandlerFactory;
 import com.talanlabs.mybatis.component.session.dispatcher.TriggerDispatcher;
 import com.talanlabs.mybatis.component.session.factory.ICacheFactory;
 import com.talanlabs.mybatis.component.session.factory.IMappedStatementFactory;
 import com.talanlabs.mybatis.component.session.factory.IResultMapFactory;
+import com.talanlabs.mybatis.component.session.factory.ITypeHandlerFactory;
 import com.talanlabs.mybatis.component.session.handler.INlsColumnHandler;
 import com.talanlabs.mybatis.component.session.registry.CacheFactoryRegistry;
 import com.talanlabs.mybatis.component.session.registry.MappedStatementFactoryRegistry;
@@ -13,6 +15,7 @@ import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.TypeHandler;
 
 public class ComponentConfiguration extends Configuration {
 
@@ -25,6 +28,8 @@ public class ComponentConfiguration extends Configuration {
     protected INlsColumnHandler nlsColumnHandler = null;
 
     protected TriggerDispatcher triggerDispatcher = new TriggerDispatcher();
+
+    protected ITypeHandlerFactory typeHandlerFactory = new DefaultTypeHandlerFactory();
 
     public ComponentConfiguration() {
         super();
@@ -102,6 +107,34 @@ public class ComponentConfiguration extends Configuration {
      */
     public void setTriggerDispatcher(TriggerDispatcher triggerDispatcher) {
         this.triggerDispatcher = triggerDispatcher;
+    }
+
+    /**
+     * @return get type handler factory
+     */
+    public ITypeHandlerFactory getTypeHandlerFactory() {
+        return typeHandlerFactory;
+    }
+
+    /**
+     * @param typeHandlerFactory type handler factory
+     */
+    public void setTypeHandlerFactory(ITypeHandlerFactory typeHandlerFactory) {
+        this.typeHandlerFactory = typeHandlerFactory;
+    }
+
+    /**
+     * Get a type handler
+     *
+     * @param typeHandlerClass class
+     * @return instance of type handler
+     */
+    public <E extends TypeHandler<?>> E getTypeHandler(Class<E> typeHandlerClass) {
+        E typeHandler = (E) getTypeHandlerRegistry().getTypeHandler(typeHandlerClass);
+        if (typeHandler == null) {
+            typeHandler = getTypeHandlerFactory().create(typeHandlerClass);
+        }
+        return typeHandler;
     }
 
     @Override

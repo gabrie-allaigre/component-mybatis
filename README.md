@@ -17,7 +17,7 @@ To use it, add the dependencies in the 'pom.xml' of the project:
     <dependency>
         <groupId>com.talanlabs</groupId>
         <artifactId>component-mybatis</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.4</version>
     </dependency>
 </dependencies>
 ```
@@ -29,7 +29,7 @@ With Guice
     <dependency>
         <groupId>com.talanlabs</groupId>
         <artifactId>component-mybatis-guice</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.4</version>
     </dependency>
 </dependencies>
 ```
@@ -41,7 +41,7 @@ Extension Rsql
     <dependency>
         <groupId>com.talanlabs</groupId>
         <artifactId>component-mybatis-rsql</artifactId>
-        <version>1.0.2</version>
+        <version>1.0.4</version>
     </dependency>
 </dependencies>
 ```

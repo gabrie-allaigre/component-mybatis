@@ -31,7 +31,7 @@ public class ResultMapNameHelper {
         if (componentClass == null) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + RESULT_MAP_NAME;
+        return ComponentMyBatisHelper.componentClassToString(componentClass) + "/" + RESULT_MAP_NAME;
     }
 
     /**

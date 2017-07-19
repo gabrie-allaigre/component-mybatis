@@ -3,6 +3,7 @@ package com.talanlabs.mybatis.test.unit;
 import com.talanlabs.mybatis.component.statement.StatementNameHelper;
 import com.talanlabs.mybatis.test.data.IGroup;
 import com.talanlabs.mybatis.test.data.IUser;
+import com.talanlabs.mybatis.test.data.IWagon;
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
@@ -18,6 +19,7 @@ public class StatementNameHelperTest {
         SoftAssertions softAssertions = new SoftAssertions();
         softAssertions.assertThat(StatementNameHelper.buildFindEntityByIdKey(null)).isNull();
         softAssertions.assertThat(StatementNameHelper.buildFindEntityByIdKey(IUser.class)).isEqualTo("com.talanlabs.mybatis.test.data.IUser/findEntityById");
+        softAssertions.assertThat(StatementNameHelper.buildFindEntityByIdKey(IWagon.IWheel.class)).isEqualTo("com.talanlabs.mybatis.test.data.IWagon$IWheel/findEntityById");
         softAssertions.assertAll();
     }
 
@@ -29,6 +31,7 @@ public class StatementNameHelperTest {
         softAssertions.assertThat(StatementNameHelper.isFindEntityByIdKey("com.model.IUser1/findEntityById")).isTrue();
         softAssertions.assertThat(StatementNameHelper.isFindEntityByIdKey("model.IUser/findEntityById")).isTrue();
         softAssertions.assertThat(StatementNameHelper.isFindEntityByIdKey("com.talanlabs.mybatis.test.data.IUser/findEntityById")).isTrue();
+        softAssertions.assertThat(StatementNameHelper.isFindEntityByIdKey("com.talanlabs.mybatis.test.data.IWagon$IWheel/findEntityById")).isTrue();
         softAssertions.assertThat(StatementNameHelper.isFindEntityByIdKey("model.IUser")).isFalse();
         softAssertions.assertThat(StatementNameHelper.isFindEntityByIdKey("/findEntityById")).isFalse();
         softAssertions.assertThat(StatementNameHelper.isFindEntityByIdKey("model-IUser/findEntityById")).isFalse();
@@ -40,6 +43,7 @@ public class StatementNameHelperTest {
         SoftAssertions softAssertions = new SoftAssertions();
         softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindEntityByIdKey(null)).isNull();
         softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindEntityByIdKey("com.talanlabs.mybatis.test.data.IUser/findEntityById")).isEqualTo(IUser.class);
+        softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindEntityByIdKey("com.talanlabs.mybatis.test.data.IWagon$IWheel/findEntityById")).isEqualTo(IWagon.IWheel.class);
         softAssertions.assertThat(StatementNameHelper.extractComponentClassInFindEntityByIdKey("model.IUser/findEntityById")).isNull();
         softAssertions.assertAll();
     }

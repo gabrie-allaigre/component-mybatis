@@ -37,8 +37,8 @@
         <generated.sources.dir>${project.build.directory}/generated-sources/apt</generated.sources.dir>
         <generated.test.sources.dir>${project.build.directory}/generated-test-sources/apt</generated.test.sources.dir>
 
-        <mybatis.version>3.4.1</mybatis.version>
-        <mybatis-guice.version>3.8</mybatis-guice.version>
+      <mybatis.version>3.4.4</mybatis.version>
+      <mybatis-guice.version>3.9</mybatis-guice.version>
         <guice.version>4.1.0</guice.version>
         <javassist.version>3.18.2-GA</javassist.version>
         <hsqldb.version>2.3.4</hsqldb.version>

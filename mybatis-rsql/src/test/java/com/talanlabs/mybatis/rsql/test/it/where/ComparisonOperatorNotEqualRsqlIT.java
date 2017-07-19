@@ -135,7 +135,7 @@ public class ComparisonOperatorNotEqualRsqlIT {
         SqlResult res = rsqlParser.parse("sexe!=WOMAN").accept(personComponentRsqlVisitor, engineContext);
 
         Assertions.assertThat(res).isNotNull();
-        Assertions.assertThat(res.sql).isEqualTo("SEXE <> #{0,javaType=com.talanlabs.mybatis.rsql.test.data.IPerson.Sexe}");
+        Assertions.assertThat(res.sql).isEqualTo("SEXE <> #{0,javaType=com.talanlabs.mybatis.rsql.test.data.IPerson$Sexe}");
         Assertions.assertThat(res.parameterMap).containsEntry("0", IPerson.Sexe.WOMAN);
     }
 

@@ -31,7 +31,7 @@ public class CacheNameHelper {
         if (componentClass == null) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + CACHE_NAME;
+        return ComponentMyBatisHelper.componentClassToString(componentClass) + "/" + CACHE_NAME;
     }
 
     /**

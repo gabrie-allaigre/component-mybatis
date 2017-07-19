@@ -31,7 +31,7 @@ public class RsqlStatementNameHelper {
         if (componentClass == null) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + RSQL_NAME;
+        return ComponentMyBatisHelper.componentClassToString(componentClass) + "/" + RSQL_NAME;
     }
 
     /**
@@ -77,7 +77,7 @@ public class RsqlStatementNameHelper {
         if (componentClass == null) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + COUNT_RSQL_NAME;
+        return ComponentMyBatisHelper.componentClassToString(componentClass) + "/" + COUNT_RSQL_NAME;
     }
 
     /**

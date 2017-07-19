@@ -116,7 +116,7 @@ public class StatementNameHelper {
         if (componentClass == null) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + FIND_ENTITY_BY_ID_NAME;
+        return ComponentMyBatisHelper.componentClassToString(componentClass) + "/" + FIND_ENTITY_BY_ID_NAME;
     }
 
     /**
@@ -166,7 +166,7 @@ public class StatementNameHelper {
             return null;
         }
         List<String> os = orderBys != null && !orderBys.isEmpty() ? orderBys.stream().map(o -> o.getLeft() + ";" + o.getRight()).collect(Collectors.toList()) : null;
-        return componentClass.getCanonicalName() + "/" + FIND_COMPONENTS_BY_NAME + "?" + PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, propertyNames) + (os != null ?
+        return ComponentMyBatisHelper.componentClassToString(componentClass) + "/" + FIND_COMPONENTS_BY_NAME + "?" + PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, propertyNames) + (os != null ?
                 "&" + ORDER_BY + "=" + String.join("#", os) :
                 "") + (useCheckCancel ? "&" + IGNORE_CANCEL : "");
     }
@@ -283,7 +283,7 @@ public class StatementNameHelper {
                 .map(join -> join.getLeft() + ";" + String.join(PROPERTIES_SEPARATOR, join.getRight().getLeft()) + ";" + String.join(PROPERTIES_SEPARATOR, join.getRight().getRight()))
                 .collect(Collectors.toList());
         List<String> os = orderBys != null && !orderBys.isEmpty() ? orderBys.stream().map(o -> o.getLeft() + ";" + o.getRight()).collect(Collectors.toList()) : null;
-        return targetComponentClass.getCanonicalName() + "/" + FIND_COMPONENTS_BY_JOIN_TABLE_NAME + "?" + SOURCE_COMPONENT + "=" + sourceComponentClass.getCanonicalName() + "&" + SOURCE_PROPERTIES
+        return ComponentMyBatisHelper.componentClassToString(targetComponentClass) + "/" + FIND_COMPONENTS_BY_JOIN_TABLE_NAME + "?" + SOURCE_COMPONENT + "=" + ComponentMyBatisHelper.componentClassToString(sourceComponentClass) + "&" + SOURCE_PROPERTIES
                 + "=" + String.join(PROPERTIES_SEPARATOR, sourceProperties) + "&" + TARGET_PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, targetProperties) + "&" + JOIN + "=" + String
                 .join("#", js) + (os != null ? "&" + ORDER_BY + "=" + String.join("#", os) : "") + (useCheckCancel ? "&" + IGNORE_CANCEL : "");
     }
@@ -445,7 +445,7 @@ public class StatementNameHelper {
         if (componentClass == null) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + INSERT_NAME;
+        return ComponentMyBatisHelper.componentClassToString(componentClass) + "/" + INSERT_NAME;
     }
 
     /**
@@ -491,7 +491,7 @@ public class StatementNameHelper {
         if (componentClass == null) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + UPDATE_NAME + "?" + NLS_PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, nlsPropertyNames);
+        return ComponentMyBatisHelper.componentClassToString(componentClass) + "/" + UPDATE_NAME + "?" + NLS_PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, nlsPropertyNames);
     }
 
     /**
@@ -555,7 +555,7 @@ public class StatementNameHelper {
         if (componentClass == null) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + DELETE_NAME;
+        return ComponentMyBatisHelper.componentClassToString(componentClass) + "/" + DELETE_NAME;
     }
 
     /**
@@ -602,7 +602,7 @@ public class StatementNameHelper {
         if (componentClass == null) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + FIND_NLS_COLUMN_NAME + "?" + PROPERTY + "=" + property;
+        return ComponentMyBatisHelper.componentClassToString(componentClass) + "/" + FIND_NLS_COLUMN_NAME + "?" + PROPERTY + "=" + property;
     }
 
     /**
@@ -665,7 +665,7 @@ public class StatementNameHelper {
         if (componentClass == null) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + DELETE_ENTITY_BY_ID_NAME;
+        return ComponentMyBatisHelper.componentClassToString(componentClass) + "/" + DELETE_ENTITY_BY_ID_NAME;
     }
 
     /**
@@ -712,7 +712,7 @@ public class StatementNameHelper {
         if (componentClass == null || propertyNames == null || propertyNames.length == 0) {
             return null;
         }
-        return componentClass.getCanonicalName() + "/" + DELETE_COMPONENTS_BY_NAME + "?" + PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, propertyNames);
+        return ComponentMyBatisHelper.componentClassToString(componentClass) + "/" + DELETE_COMPONENTS_BY_NAME + "?" + PROPERTIES + "=" + String.join(PROPERTIES_SEPARATOR, propertyNames);
     }
 
     /**

@@ -123,10 +123,19 @@ public class FindByIdIT extends AbstractHSQLIntegration {
     }
 
     @Test
-    public void test2() {
+    public void testContainers() {
         defaultNlsColumnHandler.setLanguageCode("fra");
         IWagon wagon = sqlSessionManager.selectOne(StatementNameHelper.buildFindEntityByIdKey(IWagon.class), IdFactory.IdString.from("1"));
         Assertions.assertThat(wagon).isNotNull();
         Assertions.assertThat(wagon.getContainers()).isNotNull().hasSize(3);
+    }
+
+    @Test
+    public void testWheels() {
+        defaultNlsColumnHandler.setLanguageCode("fra");
+        IWagon wagon = sqlSessionManager.selectOne(StatementNameHelper.buildFindEntityByIdKey(IWagon.class), IdFactory.IdString.from("1"));
+        Assertions.assertThat(wagon).isNotNull();
+        Assertions.assertThat(wagon.getWheels()).isNotNull().hasSize(3);
+        Assertions.assertThat(wagon.getWheels()).isNotNull().extracting("size").contains(IWagon.IWheel.Size.A, IWagon.IWheel.Size.B, IWagon.IWheel.Size.C);
     }
 }

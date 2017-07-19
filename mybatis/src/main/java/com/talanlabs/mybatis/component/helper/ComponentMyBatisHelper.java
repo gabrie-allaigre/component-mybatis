@@ -5,18 +5,13 @@ import com.talanlabs.component.IComponent;
 import com.talanlabs.component.factory.ComponentDescriptor;
 import com.talanlabs.component.factory.ComponentFactory;
 import com.talanlabs.component.helper.ComponentHelper;
-import com.talanlabs.entity.annotation.Association;
-import com.talanlabs.entity.annotation.Cache;
-import com.talanlabs.entity.annotation.Collection;
-import com.talanlabs.entity.annotation.Column;
-import com.talanlabs.entity.annotation.Entity;
-import com.talanlabs.entity.annotation.Id;
-import com.talanlabs.entity.annotation.NlsColumn;
-import com.talanlabs.entity.annotation.Version;
+import com.talanlabs.entity.annotation.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.UnknownTypeHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -27,8 +22,20 @@ import java.util.stream.Collectors;
 
 public class ComponentMyBatisHelper {
 
+    private static final Logger LOG = LogManager.getLogger(ComponentMyBatisHelper.class);
+
     private ComponentMyBatisHelper() {
         super();
+    }
+
+    /**
+     * Get name for component class
+     *
+     * @param componentClass component class
+     * @return name
+     */
+    public static String componentClassToString(Class<? extends IComponent> componentClass) {
+        return componentClass.getName();
     }
 
     /**
@@ -41,6 +48,7 @@ public class ComponentMyBatisHelper {
         try {
             return ComponentHelper.loadComponentClass(componentClassString);
         } catch (ClassNotFoundException e) {
+            LOG.error("Failed to load component class {}", componentClassString, e);
             return null;
         }
     }
@@ -223,8 +231,8 @@ public class ComponentMyBatisHelper {
      * @return
      */
     public static String buildColumn(Class<?> javaType, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandlerClass, String param) {
-        return "#{" + param + ",javaType=" + javaType.getCanonicalName() + (jdbcType != null ? ",jdbcType=" + jdbcType.name() : "") + (typeHandlerClass != null ?
-                ",typeHandler=" + typeHandlerClass.getCanonicalName() :
+        return "#{" + param + ",javaType=" + javaType.getName() + (jdbcType != null ? ",jdbcType=" + jdbcType.name() : "") + (typeHandlerClass != null ?
+                ",typeHandler=" + typeHandlerClass.getName() :
                 "") + "}";
     }
 
@@ -254,8 +262,8 @@ public class ComponentMyBatisHelper {
         JdbcType jdbcType = !JdbcType.UNDEFINED.equals(nlsColumn.jdbcType()) ? nlsColumn.jdbcType() : null;
         Class<? extends TypeHandler<?>> typeHandlerClass = !UnknownTypeHandler.class.equals(nlsColumn.typeHandler()) ? nlsColumn.typeHandler() : null;
 
-        return "#{" + param + ",javaType=" + javaType.getCanonicalName() + (jdbcType != null ? ",jdbcType=" + jdbcType.name() : "") + (typeHandlerClass != null ?
-                ",typeHandler=" + typeHandlerClass.getCanonicalName() :
+        return "#{" + param + ",javaType=" + javaType.getName() + (jdbcType != null ? ",jdbcType=" + jdbcType.name() : "") + (typeHandlerClass != null ?
+                ",typeHandler=" + typeHandlerClass.getName() :
                 "") + "}";
     }
 
@@ -335,7 +343,7 @@ public class ComponentMyBatisHelper {
      * @return element type
      */
     public static <E extends IComponent> Class<?> getCollectionElementClass(ComponentDescriptor<E> componentDescriptor, ComponentDescriptor.PropertyDescriptor propertyDescriptor,
-            Collection collection) {
+                                                                            Collection collection) {
         Class<?> ofType = collection.ofType();
         if (ofType == void.class) {
             Type type = getCollectionElementType(TypeToken.of(propertyDescriptor.getPropertyType()));

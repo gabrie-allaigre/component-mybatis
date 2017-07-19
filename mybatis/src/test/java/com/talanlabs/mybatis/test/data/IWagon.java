@@ -1,5 +1,6 @@
 package com.talanlabs.mybatis.test.data;
 
+import com.talanlabs.component.IComponent;
 import com.talanlabs.component.annotation.ComponentBean;
 import com.talanlabs.entity.IEntity;
 import com.talanlabs.entity.IId;
@@ -33,4 +34,30 @@ public interface IWagon extends IEntity {
 
     void setContainers(List<IContainer> containers);
 
+    @Collection(propertyTarget = WheelFields.wagonId)
+    List<IWheel> getWheels();
+
+    void setWheels(List<IWheel> wheels);
+
+    @Entity(name = "T_WHEEL")
+    @ComponentBean
+    interface IWheel extends IComponent {
+
+        @Column(name = "WAGON_ID")
+        IId getWagonId();
+
+        void setWagonId(IId wagonId);
+
+        @Column(name = "SIZE")
+        Size getSize();
+
+        void setSize(Size size);
+
+        enum Size {
+
+            A, B, C
+
+        }
+
+    }
 }

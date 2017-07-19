@@ -137,7 +137,7 @@ public class ComparisonOperatorEqualRsqlIT {
 
         Assertions.assertThat(res).isNotNull();
         Assertions.assertThat(res.joins).isEmpty();
-        Assertions.assertThat(res.sql).isEqualTo("SEXE = #{0,javaType=com.talanlabs.mybatis.rsql.test.data.IPerson.Sexe}");
+        Assertions.assertThat(res.sql).isEqualTo("SEXE = #{0,javaType=com.talanlabs.mybatis.rsql.test.data.IPerson$Sexe}");
         Assertions.assertThat(res.parameterMap).containsEntry("0", IPerson.Sexe.WOMAN);
     }
 

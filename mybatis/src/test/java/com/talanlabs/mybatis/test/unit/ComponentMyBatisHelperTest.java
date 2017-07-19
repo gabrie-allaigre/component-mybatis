@@ -2,15 +2,7 @@ package com.talanlabs.mybatis.test.unit;
 
 import com.talanlabs.component.factory.ComponentFactory;
 import com.talanlabs.mybatis.component.helper.ComponentMyBatisHelper;
-import com.talanlabs.mybatis.test.data.CountryFields;
-import com.talanlabs.mybatis.test.data.FakeFields;
-import com.talanlabs.mybatis.test.data.IAddress;
-import com.talanlabs.mybatis.test.data.ICountry;
-import com.talanlabs.mybatis.test.data.IFake;
-import com.talanlabs.mybatis.test.data.IFake2;
-import com.talanlabs.mybatis.test.data.IGroup;
-import com.talanlabs.mybatis.test.data.IUser;
-import com.talanlabs.mybatis.test.data.UserFields;
+import com.talanlabs.mybatis.test.data.*;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Test;
@@ -18,10 +10,19 @@ import org.junit.Test;
 public class ComponentMyBatisHelperTest {
 
     @Test
+    public void testComponentClassToString() {
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(ComponentMyBatisHelper.componentClassToString(IUser.class)).isEqualTo("com.talanlabs.mybatis.test.data.IUser");
+        softAssertions.assertThat(ComponentMyBatisHelper.componentClassToString(IWagon.IWheel.class)).isEqualTo("com.talanlabs.mybatis.test.data.IWagon$IWheel");
+        softAssertions.assertAll();
+    }
+
+    @Test
     public void testLoadComponentClass() {
         SoftAssertions softAssertions = new SoftAssertions();
         softAssertions.assertThat(ComponentMyBatisHelper.loadComponentClass("toto.IFake")).isNull();
         softAssertions.assertThat(ComponentMyBatisHelper.loadComponentClass("com.talanlabs.mybatis.test.data.IUser")).isEqualTo(IUser.class);
+        softAssertions.assertThat(ComponentMyBatisHelper.loadComponentClass(ComponentMyBatisHelper.componentClassToString(IWagon.IWheel.class))).isEqualTo(IWagon.IWheel.class);
         softAssertions.assertAll();
     }
 

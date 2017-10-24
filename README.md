@@ -13,8 +13,56 @@ The overlay allows:
 - Managing a legacy cache for component beans
 - Management of multi-lingual on multiple fields in component bean
 - Complex request generation, Rsql format, sorting and pagination (extension Rsql)
+- Use MyBatis normally, add ResultMap, Mapper, Cache, it's just a extension
 
-## Usage
+## Example
+
+```java
+@ComponentBean
+@Entity(name = "T_COUNTRY")
+public interface ICountry extends IComponent {
+
+    @Id
+    @Column(name = "ID")
+    String getId();
+    
+    void setId(String id);
+
+    @Version
+    @Column(name = "VERSION")
+    int getVersion();
+    
+    void setVersion(int version);
+
+    @Column(name = "CODE")
+    String getCode();
+    
+    void setCode(String code);
+
+    @NlsColumn(name = "NAME")
+    String getName();
+    
+    void setName(String name);
+
+    @Column(name = "CONTINENT_ID")
+    IId getContinentId();
+    
+    void setContinentId(IId continentId);
+
+    @Association(propertySource = CountryFields.continentId)
+    IContinent getContinent();
+    
+    void setContinent(IContinent continent);
+
+    @Collection(propertyTarget = StateFields.countryId, orderBy = @OrderBy(StateFields.code)
+    List<IState> getStates();
+    
+    void setStates(List<IState> states);
+
+}
+```
+
+# Usage
 
 To use it, add the dependencies in the 'pom.xml' of the project:
 
@@ -52,9 +100,7 @@ Extension Rsql
 </dependencies>
 ```
 
-# Usage
-
-## With Guice (Simpler)
+## With Guice (Simple)
 
 Example with an HSQLDB database:
 
@@ -536,7 +582,7 @@ Let the simple request be a String "code == 10" or be from the object of the `Re
 
 More info on the Rsql: https://github.com/jirutka/rsql-parser and RsqlBuilder https://github.com/gabrie-allaigre/rsql-builder
 
-# Avancé
+# Advanced
 
 The various keys generated automatically:
 

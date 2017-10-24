@@ -1,3 +1,7 @@
+# MyBatis Component Bean
+
+## Description
+
 Simplifies the use of MyBatis with Component Bean https://github.com/gabrie-allaigre/component-bean
 
 The overlay allows:
@@ -9,6 +13,8 @@ The overlay allows:
 - Managing a legacy cache for component beans
 - Management of multi-lingual on multiple fields in component bean
 - Complex request generation, Rsql format, sorting and pagination (extension Rsql)
+
+## Usage
 
 To use it, add the dependencies in the 'pom.xml' of the project:
 
